@@ -13,10 +13,14 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const DESCRIPTION = "Your classic console collection, playable in the browser. Local-first, installable, no downloads.";
 
+// Two live deployments share this repo: GitHub Pages (only build that sets
+// NEXT_BASE_PATH, served under /EmuRM/) and Cloudflare at the production
+// custom domain (root path). Social crawlers need og:image/og:url resolved
+// against whichever origin actually served the page.
+const metadataBase = process.env.NEXT_BASE_PATH ? "https://abu00salman.github.io/EmuRM/" : "https://www.emurm.com/";
+
 export const metadata: Metadata = {
-  // The canonical origin social crawlers resolve og:image/og:url against. Update this
-  // (and re-deploy) once a custom domain is live — see AGENTS/session notes.
-  metadataBase: new URL("https://abu00salman.github.io/EmuRM/"),
+  metadataBase: new URL(metadataBase),
   title: { default: "EmuRM", template: "%s — EmuRM" },
   description: DESCRIPTION,
   applicationName: "EmuRM",
@@ -35,13 +39,16 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "EmuRM",
     type: "website",
-    images: [{ url: `${BASE}/og-image.png`, width: 1200, height: 630, alt: "EmuRM" }],
+    // Relative (no BASE prefix): Next concatenates this onto metadataBase's full
+    // href, path included, so a leading "/EmuRM/" here would double up with the
+    // "/EmuRM/" metadataBase already carries on the GitHub Pages build.
+    images: [{ url: "og-image.png", width: 1200, height: 630, alt: "EmuRM" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "EmuRM",
     description: DESCRIPTION,
-    images: [`${BASE}/og-image.png`],
+    images: ["og-image.png"],
   },
   formatDetection: { telephone: false },
 };
