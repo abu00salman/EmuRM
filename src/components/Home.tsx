@@ -10,6 +10,9 @@ import { ConsoleHall } from "./ConsoleHall";
 import { QuickResume } from "./QuickResume";
 
 const INTRO_KEY = "rv:intro-seen";
+// Raw <img src> isn't rewritten for GitHub Pages' /<repo>/ subpath the way next/link
+// and metadata are — see layout.tsx for the same pattern.
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function Home() {
   const [accent, setAccent] = useState<string | null>(null);
@@ -38,12 +41,24 @@ export function Home() {
 
   return (
     <div className="relative min-h-dvh overflow-hidden">
+      {/* Hero backdrop: the console lineup photo, quiet at the top for the headline,
+          fading into the plain dark background before the hall of cards begins. */}
+      <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-[54vh] min-h-[380px] overflow-hidden sm:h-[62vh]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`${BASE}/images/hero-consoles.jpg`}
+          alt=""
+          className="h-full w-full object-cover object-[center_68%] opacity-80"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black" />
+      </div>
+
       {/* Ambient room light — follows the console in focus */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 transition-[background] duration-[900ms] ease-[var(--ease-out-quint)]"
         style={{
-          background: `radial-gradient(80% 60% at 50% 38%, color-mix(in oklab, ${accent ?? "#3a3d45"} ${accent ? 22 : 14}%, transparent) 0%, transparent 70%)`,
+          background: `radial-gradient(80% 60% at 50% 38%, color-mix(in oklab, ${accent ?? "#3a3d45"} ${accent ? 28 : 16}%, transparent) 0%, transparent 70%)`,
         }}
       />
       <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 h-[38vh] bg-gradient-to-t from-graphite/80 to-transparent" />
