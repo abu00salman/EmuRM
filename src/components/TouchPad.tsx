@@ -36,11 +36,17 @@ export function TouchPad({ console: c, onPress, mode, style = "fixed" }: { conso
     <div
       className={
         overlay
-          ? "pointer-events-none absolute inset-0 z-20 flex items-end justify-between px-[max(1.5rem,var(--safe-l))] pb-[max(1.25rem,var(--safe-b))]"
+          ? "pointer-events-none absolute inset-0 z-20 flex select-none items-end justify-between px-[max(1.5rem,var(--safe-l))] pb-[max(1.25rem,var(--safe-b))]"
           : "relative flex shrink-0 select-none flex-col gap-4 px-5 pb-[max(1.5rem,var(--safe-b))] pt-4"
       }
       dir="ltr"
-      style={{ ["--accent" as string]: c.accent, touchAction: "none" }}
+      style={{
+        ["--accent" as string]: c.accent,
+        touchAction: "none",
+        WebkitUserSelect: "none",
+        userSelect: "none",
+        WebkitTouchCallout: "none",
+      }}
     >
       {/* Floating mode (overlay/landscape only): a big invisible zone behind everything else,
           so the thumb can come down anywhere on the left side, like PUBG/COD Mobile's stick,
