@@ -12,6 +12,9 @@ import { LOCALE_INIT_SCRIPT } from "@/lib/i18n";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const DESCRIPTION = "Your classic console collection, playable in the browser. Local-first, installable, no downloads.";
+// Share-preview text (WhatsApp/Twitter/etc.) is a single static snapshot — it can't
+// negotiate language per viewer — so this is set to Arabic to match the site's audience.
+const SHARE_DESCRIPTION = "مجموعتك من الأجهزة الكلاسيكية، تلعبها من المتصفح مباشرة. محفوظة على جهازك، قابلة للتثبيت، بدون تنزيلات.";
 
 // Two live deployments share this repo: GitHub Pages (only build that sets
 // NEXT_BASE_PATH, served under /EmuRM/) and Cloudflare at the production
@@ -35,10 +38,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "EmuRM",
-    description: DESCRIPTION,
+    description: SHARE_DESCRIPTION,
     url: "/",
     siteName: "EmuRM",
     type: "website",
+    locale: "ar_SA",
     // Relative (no BASE prefix): Next concatenates this onto metadataBase's full
     // href, path included, so a leading "/EmuRM/" here would double up with the
     // "/EmuRM/" metadataBase already carries on the GitHub Pages build.
@@ -47,7 +51,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "EmuRM",
-    description: DESCRIPTION,
+    description: SHARE_DESCRIPTION,
     images: ["og-image.png"],
   },
   formatDetection: { telephone: false },
