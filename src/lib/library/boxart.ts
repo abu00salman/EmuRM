@@ -26,6 +26,13 @@ const THUMBS_REPO: Partial<Record<ConsoleId, string>> = {
   a2600: "Atari_-_2600",
 };
 
+// libretro-thumbnails files every entry with its dump region in the name (e.g.
+// "Road Fighter (Japan).png") — there's no untagged fallback in the set itself. Most
+// people's own ROM files don't carry that tag at all, so a bare-title lookup alone
+// misses constantly. Trying these common ones after the bare title covers the large
+// majority of single-region and multi-region releases without an unbounded search.
+const REGION_GUESSES = ["(USA)", "(World)", "(USA, Europe)", "(Europe)", "(Japan)", "(Japan, USA)"];
+
 async function tryFetch(url: string, signal: AbortSignal): Promise<Blob | null> {
   try {
     const res = await fetch(url, { mode: "cors", signal });
@@ -37,18 +44,26 @@ async function tryFetch(url: string, signal: AbortSignal): Promise<Blob | null> 
   }
 }
 
+function candidateNames(fileName: string, title: string): string[] {
+  const withoutExt = fileName.replace(/\.[^.]+$/, "");
+  const bases = Array.from(new Set([withoutExt, title]));
+  const names: string[] = [...bases];
+  for (const base of bases) {
+    if (/\)\s*$/.test(base)) continue; // already carries its own (Region) tag
+    for (const region of REGION_GUESSES) names.push(`${base} ${region}`);
+  }
+  return Array.from(new Set(names));
+}
+
 /** Best-effort box-art lookup by filename. Returns null (never throws) on any miss. */
 export async function fetchBoxArt(consoleId: ConsoleId, fileName: string, title: string): Promise<Blob | null> {
   const repo = THUMBS_REPO[consoleId];
   if (!repo) return null;
 
-  const withoutExt = fileName.replace(/\.[^.]+$/, "");
-  const candidates = Array.from(new Set([withoutExt, title]));
-
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 4000);
+  const timeout = setTimeout(() => controller.abort(), 6000);
   try {
-    for (const name of candidates) {
+    for (const name of candidateNames(fileName, title)) {
       const url = `https://raw.githubusercontent.com/libretro-thumbnails/${repo}/master/Named_Boxarts/${encodeURIComponent(name)}.png`;
       const blob = await tryFetch(url, controller.signal);
       if (blob) return blob;
