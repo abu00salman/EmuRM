@@ -1,0 +1,40 @@
+{
+  "name": "emurm",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EmuRM — a local-first, installable console museum that plays classic games in the browser.",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "npx serve@latest out -s",
+    "typecheck": "tsc --noEmit",
+    "icons": "node scripts/make-icons.mjs"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@fontsource-variable/big-shoulders-display": "^5.3.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
+    "dexie": "^4.4.6",
+    "dexie-react-hooks": "^4.4.0",
+    "fflate": "^0.8.3",
+    "motion": "^13.4.4",
+    "next": "^16.3.6",
+    "nostalgist": "0.22.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  }
+}

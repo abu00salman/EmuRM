@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* ---------- Tokens ---------- */
+@theme {
+  --color-ink: #000000;
+  --color-graphite: #141518;
+  --color-graphite-2: #1d1f24;
+  --color-graphite-3: #2a2d33;
+  --color-line: rgb(255 255 255 / 0.09);
+  --color-text: #ecedf0;
+  --color-muted: #8d919b;
+  --color-faint: #5b5f69;
+
+  --font-display: "Big Shoulders Display Variable", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: "Instrument Sans Variable", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: dark;
+  --accent: #8d919b;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+body[data-playing="true"] {
+  overflow: hidden;
+  touch-action: none;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 45%, transparent);
+}
+
+/* Keyboard / gamepad focus: an accent halo, never the default blue ring. */
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--accent) 85%, white);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* ---------- Surfaces ---------- */
+@utility glass {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.025));
+  border: 1px solid var(--color-line);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+@utility glass-strong {
+  background: linear-gradient(180deg, rgb(28 29 34 / 0.86), rgb(16 17 20 / 0.9));
+  border: 1px solid var(--color-line);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------- Screen filters (GPU-composited overlays, zero emulator cost) ---------- */
+.filter-scanlines::after,
+.filter-crt::after,
+.filter-lcd::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.filter-scanlines::after {
+  background: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0) 0 2px, rgb(0 0 0 / 0.28) 2px 3px);
+  mix-blend-mode: multiply;
+}
+.filter-crt::after {
+  background:
+    radial-gradient(ellipse at center, transparent 58%, rgb(0 0 0 / 0.55) 100%),
+    repeating-linear-gradient(to bottom, rgb(0 0 0 / 0) 0 2px, rgb(0 0 0 / 0.32) 2px 3px),
+    repeating-linear-gradient(to right, rgb(255 0 60 / 0.035) 0 1px, rgb(0 255 120 / 0.035) 1px 2px, rgb(40 120 255 / 0.035) 2px 3px);
+}
+.filter-crt canvas {
+  filter: saturate(1.12) contrast(1.06) brightness(1.06);
+}
+.filter-lcd::after {
+  background:
+    repeating-linear-gradient(to bottom, rgb(0 0 0 / 0) 0 2px, rgb(0 0 0 / 0.18) 2px 3px),
+    repeating-linear-gradient(to right, rgb(0 0 0 / 0) 0 2px, rgb(0 0 0 / 0.18) 2px 3px);
+}
+
+/* ---------- Motion safety ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* TV browsers: bigger type, more room for the focus halo */
+@media (min-width: 1800px) {
+  html {
+    font-size: 18px;
+  }
+}
