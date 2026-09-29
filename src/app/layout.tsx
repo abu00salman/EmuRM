@@ -7,15 +7,19 @@ import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 import { LOCALE_INIT_SCRIPT } from "@/lib/i18n";
 
+// Next doesn't rewrite metadata.manifest/icons with `basePath` on its own, unlike
+// next/link and next/image — so this mirrors it manually (see next.config.ts).
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: { default: "EmuRM", template: "%s — EmuRM" },
   description: "Your classic console collection, playable in the browser. Local-first, installable, no downloads.",
   applicationName: "EmuRM",
-  manifest: "/manifest.webmanifest",
+  manifest: `${BASE}/manifest.webmanifest`,
   appleWebApp: { capable: true, title: "EmuRM", statusBarStyle: "black-translucent" },
   icons: {
-    icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }, { url: "/icons/icon-192.png", sizes: "192x192" }],
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+    icon: [{ url: `${BASE}/icons/icon.svg`, type: "image/svg+xml" }, { url: `${BASE}/icons/icon-192.png`, sizes: "192x192" }],
+    apple: [{ url: `${BASE}/icons/apple-touch-icon.png`, sizes: "180x180" }],
   },
   formatDetection: { telephone: false },
 };

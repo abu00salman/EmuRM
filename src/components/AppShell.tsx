@@ -16,6 +16,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const inPlayer = pathname?.startsWith("/play");
 
+  // Next's usePathname() is already basePath-normalized (unlike window.location.pathname,
+  // which under a GitHub Pages subpath would be "/EmuRM/" on the home page, not "/").
+  // Kept in a ref since the effect below subscribes once and reads the latest value lazily.
+  const pathRef = useRef(pathname);
+  useEffect(() => {
+    pathRef.current = pathname;
+  }, [pathname]);
+
   useEffect(() => {
     useLocaleStore.getState().hydrateFromStorage();
     registerServiceWorker();
@@ -26,7 +34,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       const handled = !window.dispatchEvent(new CustomEvent("rv:back", { cancelable: true }));
       if (handled) return;
       if (useUI.getState().importOpen) useUI.getState().closeImport();
-      else if (window.location.pathname !== "/") router.back();
+      else if (pathRef.current !== "/") router.back();
     });
     return () => {
       window.removeEventListener("keydown", onKey);
