@@ -4,6 +4,7 @@ import { requestPersistence } from "@/lib/db/repo";
 import type { ConsoleId } from "@/lib/consoles/types";
 import type { ParsedRom } from "@/workers/rom.protocol";
 import { makeThumbnail, parseFiles } from "./worker-client";
+import { fetchBoxArt } from "./boxart";
 
 export interface ImportOptions {
   /** Called when the bytes fit more than one system (e.g. a bare .bin). */
@@ -84,6 +85,11 @@ async function importBuffers(payload: { name: string; buffer: ArrayBuffer }[], o
       continue;
     }
 
+    // Explicit cover (demo catalog, custom import) wins; otherwise best-effort box art
+    // for a known official title, so a plain drag-and-drop still gets real cover art
+    // instead of only ever showing the generated placeholder.
+    const rawCover = opts.cover ?? (await fetchBoxArt(consoleId, rom.fileName, rom.title).catch(() => null)) ?? undefined;
+
     const game: GameRecord = {
       id: rom.id,
       title: opts.titleOverride ?? rom.title,
@@ -98,7 +104,7 @@ async function importBuffers(payload: { name: string; buffer: ArrayBuffer }[], o
       source: opts.source ?? "file",
       sourceUrl: opts.sourceUrl,
       author: opts.author,
-      cover: opts.cover ? await makeThumbnail(opts.cover, 480).catch(() => opts.cover) : undefined,
+      cover: rawCover ? await makeThumbnail(rawCover, 480).catch(() => rawCover) : undefined,
     };
     const d = db();
     await d.transaction("rw", [d.games, d.roms], async () => {
