@@ -66,14 +66,14 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "gb", name: "Game Boy", short: "GB", aliases: ["DMG"],
     maker: "Nintendo", year: 1989, family: "gameboy", form: "handheld-v",
-    accent: "#8FB573", extensions: ["gb"],
+    accent: "#8FB573", photo: "gb.jpg", extensions: ["gb"],
     cores: [CORES.gambatte, CORES.mgba, CORES.gearboy], aspect: 10 / 9,
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
     id: "gg", name: "Game Gear", short: "GG", aliases: [],
     maker: "Sega", year: 1990, family: "sega", form: "handheld-h",
-    accent: "#5AA2FF", extensions: ["gg"],
+    accent: "#5AA2FF", photo: "gg.jpg", extensions: ["gg"],
     cores: [CORES.genesis_plus_gx, CORES.gearsystem], aspect: 10 / 9,
     faceButtons: [{ pad: "b", label: "1" }, { pad: "a", label: "2" }], shoulderButtons: [], hasSelect: false, bios: [], status: "ready",
   },
@@ -87,7 +87,7 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "tdo", name: "3DO", short: "3DO", aliases: ["3DO Interactive Multiplayer"],
     maker: "Panasonic · Sanyo · GoldStar", year: 1993, family: "3do", form: "disc",
-    accent: "#8A5FC7", extensions: ["iso", "cue", "chd"],
+    accent: "#8A5FC7", photo: "tdo.jpg", extensions: ["iso", "cue", "chd"],
     cores: [CORES.opera], aspect: 4 / 3,
     faceButtons: [{ pad: "y", label: "C" }, { pad: "x", label: "B" }, { pad: "b", label: "A" }],
     shoulderButtons: [{ pad: "l", label: "L" }, { pad: "r", label: "R" }],
@@ -120,14 +120,14 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "gbc", name: "Game Boy Color", short: "GBC", aliases: [],
     maker: "Nintendo", year: 1998, family: "gameboy", form: "handheld-v",
-    accent: "#4FB79C", extensions: ["gbc"],
+    accent: "#4FB79C", photo: "gbc.jpg", extensions: ["gbc"],
     cores: [CORES.gambatte, CORES.mgba, CORES.gearboy], aspect: 10 / 9,
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
     id: "gba", name: "Game Boy Advance", short: "GBA", aliases: ["AGB"],
     maker: "Nintendo", year: 2001, family: "gameboy", form: "handheld-h",
-    accent: "#8A9BE0", extensions: ["gba"],
+    accent: "#8A9BE0", photo: "gba.jpg", extensions: ["gba"],
     cores: [CORES.mgba], aspect: 3 / 2,
     faceButtons: nintendoFace, shoulderButtons: [{ pad: "l", label: "L" }, { pad: "r", label: "R" }], hasSelect: true,
     bios: [{ fileName: "gba_bios.bin", required: false, description: "Optional — mGBA ships an HLE BIOS" }],
