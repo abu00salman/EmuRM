@@ -11,9 +11,14 @@ import { LOCALE_INIT_SCRIPT } from "@/lib/i18n";
 // next/link and next/image — so this mirrors it manually (see next.config.ts).
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+const DESCRIPTION = "Your classic console collection, playable in the browser. Local-first, installable, no downloads.";
+
 export const metadata: Metadata = {
+  // The canonical origin social crawlers resolve og:image/og:url against. Update this
+  // (and re-deploy) once a custom domain is live — see AGENTS/session notes.
+  metadataBase: new URL("https://abu00salman.github.io/EmuRM/"),
   title: { default: "EmuRM", template: "%s — EmuRM" },
-  description: "Your classic console collection, playable in the browser. Local-first, installable, no downloads.",
+  description: DESCRIPTION,
   applicationName: "EmuRM",
   manifest: `${BASE}/manifest.webmanifest`,
   appleWebApp: { capable: true, title: "EmuRM", statusBarStyle: "black-translucent" },
@@ -23,6 +28,20 @@ export const metadata: Metadata = {
       { url: `${BASE}/icons/icon-512.png`, sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: `${BASE}/icons/apple-touch-icon.png`, sizes: "180x180" }],
+  },
+  openGraph: {
+    title: "EmuRM",
+    description: DESCRIPTION,
+    url: "/",
+    siteName: "EmuRM",
+    type: "website",
+    images: [{ url: `${BASE}/og-image.png`, width: 1200, height: 630, alt: "EmuRM" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EmuRM",
+    description: DESCRIPTION,
+    images: [`${BASE}/og-image.png`],
   },
   formatDetection: { telephone: false },
 };

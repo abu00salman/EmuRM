@@ -49,10 +49,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {!inPlayer && <TopBar />}
       <main id="main">{children}</main>
       {!inPlayer && <GlobalDrop />}
+      {!inPlayer && <Footer />}
       <ImportDialog />
       <ConsolePicker />
       <Toasts />
     </>
+  );
+}
+
+function Footer() {
+  const t = useT();
+  return (
+    <footer className="px-[max(1rem,var(--safe-l))] pb-[max(1.5rem,var(--safe-b))] pt-8 text-center text-xs text-faint">
+      {t("footer.copyright", { year: new Date().getFullYear() })}
+    </footer>
   );
 }
 

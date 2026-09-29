@@ -12,6 +12,8 @@ export const en = {
   "nav.settings": "Settings",
   "nav.addGames": "Add games",
 
+  "footer.copyright": "© {year} @abu00salman — All rights reserved",
+
   "home.headline": "Choose your console",
   "home.tagline.empty": "Thirteen systems, from the MSX to the PlayStation. Add games you own, or start with free homebrew.",
   "home.tagline.withGames": "{count} {games} across {systems} systems, stored on this device.",
@@ -322,6 +324,8 @@ export const ar: Record<TranslationKey, string> = {
   "nav.library": "المكتبة",
   "nav.settings": "الإعدادات",
   "nav.addGames": "أضف ألعابًا",
+
+  "footer.copyright": "جميع الحقوق محفوظة لـ @abu00salman | {year}",
 
   "home.headline": "اختر جهازك",
   "home.tagline.empty": "ثلاثة عشر نظامًا، من MSX إلى بلايستيشن. أضف ألعابًا تملكها، أو ابدأ بألعاب هواة مجانية.",
