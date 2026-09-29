@@ -60,9 +60,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 function Footer() {
   const t = useT();
   return (
-    <footer className="px-[max(1rem,var(--safe-l))] pb-[max(1.5rem,var(--safe-b))] pt-8 text-center text-xs text-faint">
-      {t("footer.copyright", { year: new Date().getFullYear() })}
+    <footer className="flex flex-col items-center gap-2 px-[max(1rem,var(--safe-l))] pb-[max(1.5rem,var(--safe-b))] pt-8 text-center text-xs text-faint">
+      <p>{t("footer.copyright", { year: new Date().getFullYear() })}</p>
+      <VisitorCounter />
     </footer>
+  );
+}
+
+/**
+ * hits.sh: a free, no-signup hit counter (shields.io-compatible badge). It counts a request
+ * to this exact URL each time the badge image loads, so the number is real cross-visitor
+ * traffic — not per-device localStorage, which would only ever count "1" for a returning
+ * visitor. The badge's own font can't render Arabic, hence the separate label beside it.
+ */
+function VisitorCounter() {
+  const t = useT();
+  return (
+    <span className="flex items-center gap-1.5 opacity-80">
+      {t("footer.visitors")}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="https://hits.sh/emurm.com.svg?style=flat-square&label=visits&color=15161a&labelColor=15161a&logo=none"
+        alt=""
+        className="h-[18px] rounded"
+        loading="lazy"
+      />
+    </span>
   );
 }
 

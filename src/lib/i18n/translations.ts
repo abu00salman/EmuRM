@@ -13,6 +13,7 @@ export const en = {
   "nav.addGames": "Add games",
 
   "footer.copyright": "© {year} @abu00salman — All rights reserved",
+  "footer.visitors": "Site visitors:",
 
   "home.headline": "Choose your console",
   "home.tagline.empty": "Fourteen systems, from the Atari 2600 to the PlayStation. Add games you own, or start with free homebrew.",
@@ -326,6 +327,7 @@ export const ar: Record<TranslationKey, string> = {
   "nav.addGames": "أضف ألعابًا",
 
   "footer.copyright": "جميع الحقوق محفوظة لـ @abu00salman | {year}",
+  "footer.visitors": "زوار الموقع:",
 
   "home.headline": "اختر جهازك",
   "home.tagline.empty": "أربعة عشر نظامًا، من أتاري 2600 إلى بلايستيشن. أضف ألعابًا تملكها، أو ابدأ بألعاب هواة مجانية.",
