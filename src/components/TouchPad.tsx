@@ -111,34 +111,107 @@ function useHold(pad: PadButton, onPress: Press) {
   return [pressed, handlers] as const;
 }
 
+/**
+ * The face buttons share one multi-touch tracker instead of each capturing its own
+ * pointer. A single captured pointer only ever gets events for the element it went
+ * down on, so a thumb sliding straight from B to A — the run-then-jump move in Mario,
+ * exactly what's slow otherwise — would never fire A at all; the finger would have to
+ * lift and land again. Hit-testing on every move (per pointer, so two fingers still
+ * work independently) re-presses whichever button is actually underneath it.
+ */
+function useButtonCluster(onPress: Press) {
+  const elements = useRef(new Map<PadButton, HTMLElement>());
+  const pointers = useRef(new Map<number, PadButton | null>());
+  const [pressed, setPressed] = useState<ReadonlySet<PadButton>>(new Set());
+
+  const hitTest = (x: number, y: number): PadButton | null => {
+    for (const [pad, el] of elements.current) {
+      const r = el.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return pad;
+    }
+    return null;
+  };
+  const setPad = (pad: PadButton, down: boolean) => {
+    onPress(pad, down);
+    setPressed((prev) => {
+      const next = new Set(prev);
+      if (down) next.add(pad);
+      else next.delete(pad);
+      return next;
+    });
+  };
+  const endPointer = (e: React.PointerEvent) => {
+    const prev = pointers.current.get(e.pointerId);
+    if (prev) setPad(prev, false);
+    pointers.current.delete(e.pointerId);
+  };
+
+  const containerProps = {
+    onPointerDown: (e: React.PointerEvent) => {
+      e.preventDefault();
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      const pad = hitTest(e.clientX, e.clientY);
+      pointers.current.set(e.pointerId, pad);
+      if (pad) {
+        buzz();
+        setPad(pad, true);
+      }
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      if (!pointers.current.has(e.pointerId)) return;
+      const prev = pointers.current.get(e.pointerId) ?? null;
+      const pad = hitTest(e.clientX, e.clientY);
+      if (pad === prev) return;
+      if (prev) setPad(prev, false);
+      if (pad) {
+        buzz();
+        setPad(pad, true);
+      }
+      pointers.current.set(e.pointerId, pad);
+    },
+    onPointerUp: endPointer,
+    onPointerCancel: endPointer,
+    onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
+    style: { touchAction: "none" as const },
+  };
+  const registerRef = (pad: PadButton) => (el: HTMLElement | null) => {
+    if (el) elements.current.set(pad, el);
+    else elements.current.delete(pad);
+  };
+
+  return { pressed, containerProps, registerRef };
+}
+
 function Face({ c, onPress }: { c: ConsoleDef; onPress: Press }) {
   const bs = c.faceButtons;
+  const { pressed, containerProps, registerRef } = useButtonCluster(onPress);
   // Up to 4 buttons in a diamond; 2–3 in a slanted row like the originals.
   if (bs.length === 4) {
     const pos = ["left-0 top-1/2 -translate-y-1/2", "left-1/2 top-0 -translate-x-1/2", "left-1/2 bottom-0 -translate-x-1/2", "right-0 top-1/2 -translate-y-1/2"];
     return (
-      <div className="relative h-40 w-40">
+      <div className="relative h-40 w-40" {...containerProps}>
         {bs.map((b, i) => (
-          <FaceButton key={b.pad} label={b.label} pad={b.pad} onPress={onPress} className={`absolute ${pos[i]}`} />
+          <FaceButton key={b.pad} refCb={registerRef(b.pad)} label={b.label} pressed={pressed.has(b.pad)} className={`absolute ${pos[i]}`} />
         ))}
       </div>
     );
   }
   return (
-    <div className="flex -rotate-[18deg] items-end gap-3">
+    <div className="flex -rotate-[18deg] items-end gap-3" {...containerProps}>
       {bs.map((b, i) => (
-        <FaceButton key={b.pad} label={b.label} pad={b.pad} onPress={onPress} className={i % 2 ? "-translate-y-5" : ""} />
+        <FaceButton key={b.pad} refCb={registerRef(b.pad)} label={b.label} pressed={pressed.has(b.pad)} className={i % 2 ? "-translate-y-5" : ""} />
       ))}
     </div>
   );
 }
 
-function FaceButton({ label, pad, onPress, className = "" }: { label: string; pad: PadButton; onPress: Press; className?: string }) {
-  const [pressed, hold] = useHold(pad, onPress);
+function FaceButton({ label, pressed, refCb, className = "" }: { label: string; pressed: boolean; refCb: (el: HTMLElement | null) => void; className?: string }) {
   return (
     <button
+      ref={refCb}
       aria-label={label}
-      {...hold}
+      aria-pressed={pressed}
+      tabIndex={-1}
       className={`grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border font-display text-xl font-bold backdrop-blur transition-[transform,background-color,color,box-shadow,border-color] duration-100 ease-out ${
         pressed
           ? "scale-[0.86] border-transparent bg-[color:var(--accent)] text-black shadow-[0_0_0_7px_color-mix(in_oklab,var(--accent)_35%,transparent)]"
