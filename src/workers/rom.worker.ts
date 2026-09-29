@@ -100,7 +100,13 @@ async function thumbnail(blob: Blob, width: number): Promise<Blob> {
   c2d.imageSmoothingEnabled = scale < 1;
   c2d.drawImage(bmp, 0, 0, w, h);
   bmp.close();
-  return canvas.convertToBlob({ type: "image/webp", quality: 0.85 });
+  const raw = await canvas.convertToBlob({ type: "image/webp", quality: 0.85 });
+  // Safari's IndexedDB refuses to store a Blob that came straight out of canvas
+  // encoding ("UnknownError: Error preparing Blob/File data to be stored in object
+  // store") — a long-standing WebKit bug. Round-tripping through an ArrayBuffer and
+  // constructing a plain memory-backed Blob sidesteps it; other browsers are unaffected.
+  const bytes = await raw.arrayBuffer();
+  return new Blob([bytes], { type: raw.type });
 }
 
 ctx.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
