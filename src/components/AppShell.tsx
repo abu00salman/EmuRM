@@ -11,6 +11,8 @@ import { ImportDialog } from "./ImportDialog";
 import { ConsolePicker } from "./ConsolePicker";
 import { useImport } from "./useImport";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -68,7 +70,9 @@ function TopBar() {
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 pt-[var(--safe-t)]">
       <div className="pointer-events-auto mx-auto flex max-w-[1600px] items-center gap-2 px-[max(1rem,var(--safe-l))] py-3 sm:px-8">
-        <Link href="/" data-nav className="me-auto flex items-baseline gap-2 rounded-lg px-1">
+        <Link href="/" data-nav className="me-auto flex items-center gap-2 rounded-lg px-1">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`${BASE}/icons/icon-192.png`} alt="" width={32} height={32} className="h-7 w-7 rounded-[9px] sm:h-8 sm:w-8" />
           <span className="font-display text-xl font-extrabold tracking-tight sm:text-2xl">{t("app.name")}</span>
         </Link>
         <nav className="glass flex items-center gap-0.5 rounded-full p-1 text-[13px] sm:gap-1 sm:text-sm">

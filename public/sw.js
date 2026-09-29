@@ -10,7 +10,7 @@ const CORES = "emurm-cores-v1"; // survives app updates; cores are versioned by 
 const BASE = new URL(self.registration.scope).pathname;
 const at = (p) => BASE + p;
 
-const PRECACHE = [BASE, at("library/"), at("settings/"), at("play/"), at("manifest.webmanifest"), at("icons/icon.svg"), at("icons/icon-192.png")];
+const PRECACHE = [BASE, at("library/"), at("settings/"), at("play/"), at("manifest.webmanifest"), at("icons/icon-192.png")];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
