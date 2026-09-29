@@ -31,6 +31,15 @@ export function ConsoleHall({ cinematic, onAccent }: { cinematic: boolean; onAcc
       <div
         className="scrollbar-none -mx-[max(1rem,var(--safe-l))] flex snap-x snap-mandatory gap-4 overflow-x-auto px-[max(1rem,var(--safe-l))] pb-16 pt-6 sm:-mx-8 sm:gap-6 sm:px-8 [perspective:1400px]"
         onMouseLeave={() => onAccent(null)}
+        // A hidden scrollbar plus a plain mouse wheel (as opposed to a trackpad's native
+        // horizontal swipe) left desktop users with no way to reach consoles past the first
+        // screenful — the row never responds to vertical wheel input on its own. Redirecting
+        // vertical wheel delta into horizontal scroll is the standard fix for this pattern.
+        onWheel={(e) => {
+          if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+          e.currentTarget.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }}
       >
         {CONSOLES.map((c, i) => (
           <motion.div
