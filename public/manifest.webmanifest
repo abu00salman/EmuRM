@@ -23,7 +23,7 @@
     {
       "action": "./",
       "accept": {
-        "application/octet-stream": [".nes", ".sfc", ".smc", ".gb", ".gbc", ".gba", ".md", ".gen", ".sms", ".gg", ".pce", ".n64", ".z64", ".v64", ".chd", ".pbp", ".cue", ".iso", ".rom", ".mx1", ".mx2"],
+        "application/octet-stream": [".a26", ".nes", ".sfc", ".smc", ".gb", ".gbc", ".gba", ".md", ".gen", ".sms", ".gg", ".pce", ".n64", ".z64", ".v64", ".chd", ".pbp", ".cue", ".iso", ".rom", ".mx1", ".mx2"],
         "application/zip": [".zip"]
       }
     }

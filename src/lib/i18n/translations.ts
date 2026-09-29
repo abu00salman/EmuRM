@@ -15,7 +15,7 @@ export const en = {
   "footer.copyright": "© {year} @abu00salman — All rights reserved",
 
   "home.headline": "Choose your console",
-  "home.tagline.empty": "Thirteen systems, from the MSX to the PlayStation. Add games you own, or start with free homebrew.",
+  "home.tagline.empty": "Fourteen systems, from the Atari 2600 to the PlayStation. Add games you own, or start with free homebrew.",
   "home.tagline.withGames": "{count} {games} across {systems} systems, stored on this device.",
   "home.game.one": "game",
   "home.game.other": "games",
@@ -328,7 +328,7 @@ export const ar: Record<TranslationKey, string> = {
   "footer.copyright": "جميع الحقوق محفوظة لـ @abu00salman | {year}",
 
   "home.headline": "اختر جهازك",
-  "home.tagline.empty": "ثلاثة عشر نظامًا، من MSX إلى بلايستيشن. أضف ألعابًا تملكها، أو ابدأ بألعاب هواة مجانية.",
+  "home.tagline.empty": "أربعة عشر نظامًا، من أتاري 2600 إلى بلايستيشن. أضف ألعابًا تملكها، أو ابدأ بألعاب هواة مجانية.",
   "home.tagline.withGames": "{count} {games} على {systems} أنظمة، محفوظة على هذا الجهاز.",
   "home.game.one": "لعبة",
   "home.game.other": "ألعاب",

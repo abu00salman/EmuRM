@@ -1,7 +1,7 @@
 # EmuRM
 
 A local-first, installable console museum that plays classic games in the browser.
-Thirteen systems, from the MSX to the PlayStation and 3DO. Games you add never leave the device.
+Fourteen systems, from the Atari 2600 to the PlayStation and 3DO. Games you add never leave the device.
 
 - **Home — Console Universe.** A hall of display cases; the room's light takes the colour of the console you hover. First launch plays a short "Choose your console" intro.
 - **Library.** Covers (or generated per-console placeholders), last played, play time, favourites, search, recently played, collections, grid / list.
@@ -74,6 +74,7 @@ Honest limits: RetroArch's emscripten build renders with WebGL on the main threa
 
 | System | Core (default first) | Licence |
 |---|---|---|
+| Atari 2600 | Stella, Stella 2014 (low-end) | GPL-2.0 |
 | MSX / Sakhr | blueMSX, fMSX (self-hosted) | GPL-2.0 / non-commercial |
 | NES / Famicom | FCEUmm, Nestopia UE | GPL-2.0 |
 | Master System | Genesis Plus GX, Gearsystem | GPX non-commercial / GPL-3.0 |

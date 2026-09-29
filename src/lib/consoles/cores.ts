@@ -22,4 +22,6 @@ export const CORES = {
   mupen64plus_next: { id: "mupen64plus_next", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/mupen64plus-libretro-nx", hosting: "self", notes: "Needs a WebGL2 build; desktop-class GPU recommended" },
   gearboy: { id: "gearboy", engine: "libretro", license: "GPL-3.0", upstream: "https://github.com/drhelius/Gearboy", hosting: "cdn", notes: "Alternate Game Boy / Color core" },
   opera: { id: "opera", engine: "libretro", license: "See upstream licence (research use; confirm terms before commercial use)", upstream: "https://github.com/libretro/opera-libretro", hosting: "cdn", notes: "3DO — BIOS required" },
+  stella: { id: "stella", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/stella-emu/stella", hosting: "cdn", notes: "Full-accuracy Atari 2600 core" },
+  stella2014: { id: "stella2014", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/stella2014-libretro", hosting: "cdn", notes: "Lighter Atari 2600 core; faster on low-end phones" },
 } as const satisfies Record<string, CoreDef>;

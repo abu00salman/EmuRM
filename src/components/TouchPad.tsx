@@ -202,8 +202,10 @@ function Face({ c, onPress }: { c: ConsoleDef; onPress: Press }) {
       </div>
     );
   }
+  // The staggered tilt reads as intentional for 2–3 buttons; a lone button (e.g. the
+  // Atari 2600's single fire button) would just look crooked, so it stays upright.
   return (
-    <div className="flex -rotate-[18deg] items-end gap-3" {...containerProps}>
+    <div className={`flex items-end gap-3 ${bs.length > 1 ? "-rotate-[18deg]" : ""}`} {...containerProps}>
       {bs.map((b, i) => (
         <FaceButton key={b.pad} refCb={registerRef(b.pad)} label={b.label} pressed={pressed.has(b.pad)} className={i % 2 ? "-translate-y-5" : ""} />
       ))}

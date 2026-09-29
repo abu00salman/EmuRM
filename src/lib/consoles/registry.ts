@@ -12,6 +12,15 @@ const snesFace: ButtonLabel[] = [
  */
 export const CONSOLES: ConsoleDef[] = [
   {
+    id: "a2600", name: "Atari 2600", short: "2600", aliases: ["Atari VCS", "أتاري"],
+    maker: "Atari", year: 1977, family: "atari", form: "home",
+    accent: "#D97B3C", extensions: ["a26", "bin"],
+    cores: [CORES.stella, CORES.stella2014], aspect: 4 / 3,
+    // Real hardware has exactly one joystick button ("FIRE") — a single glyph reads
+    // clearly at the face-button's size, where the full word would be cramped.
+    faceButtons: [{ pad: "a", label: "●" }], shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
+  },
+  {
     id: "msx", name: "MSX", short: "MSX", aliases: ["Sakhr", "صخر", "MSX2", "AX-170"],
     maker: "ASCII · Microsoft · Sakhr", year: 1983, family: "msx", form: "computer",
     accent: "#D8A84E", photo: "msx.jpg", extensions: ["rom", "mx1", "mx2", "dsk", "cas"],

@@ -6,12 +6,12 @@ export type PadButton =
   | "start" | "select";
 
 export type ConsoleId =
-  | "msx" | "nes" | "snes" | "n64"
+  | "a2600" | "msx" | "nes" | "snes" | "n64"
   | "sms" | "md" | "gg"
   | "gb" | "gbc" | "gba"
   | "psx" | "pce" | "tdo";
 
-export type Family = "nintendo" | "gameboy" | "sega" | "sony" | "msx" | "nec" | "3do";
+export type Family = "atari" | "nintendo" | "gameboy" | "sega" | "sony" | "msx" | "nec" | "3do";
 
 /** Physical silhouette used for illustrations and generated covers. */
 export type FormFactor = "home" | "handheld-v" | "handheld-h" | "disc" | "computer";
