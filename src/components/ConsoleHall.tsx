@@ -8,6 +8,8 @@ import { useCountsByConsole } from "@/lib/db/hooks";
 import { useT } from "@/lib/i18n";
 import { DeviceGlyph } from "./DeviceGlyph";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 /**
  * The hall: a row of lit display cases. The room's ambient light takes the colour
  * of whichever console you're looking at — the one orchestrated effect on the page.
@@ -129,16 +131,38 @@ function ConsoleCase({
     >
       {/* Case */}
       <div className="glass absolute inset-0 overflow-hidden rounded-[28px] transition-[border-color] duration-500 group-hover:border-white/20 group-focus-visible:border-white/25">
-        {/* Spotlight from the ceiling of the case */}
-        <div
-          className="absolute inset-x-6 top-0 h-px transition-opacity duration-500"
-          style={{ background: `linear-gradient(90deg, transparent, ${c.accent}, transparent)`, opacity: show ? 1 : 0.55 }}
-        />
+        {/* The photo itself carries the mood (and its own fade to black at the bottom for
+            the placard), so photographed consoles skip the drawn backdrop entirely. */}
+        {c.photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`${BASE}/images/consoles/${c.photo}`}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-out-quint)] group-hover:scale-[1.04]"
+          />
+        ) : (
+          <>
+            {/* Spotlight from the ceiling of the case */}
+            <div
+              className="absolute inset-x-6 top-0 h-px transition-opacity duration-500"
+              style={{ background: `linear-gradient(90deg, transparent, ${c.accent}, transparent)`, opacity: show ? 1 : 0.55 }}
+            />
+            <div
+              className="absolute inset-0 transition-opacity duration-700"
+              style={{
+                background: `radial-gradient(70% 55% at 50% 0%, color-mix(in oklab, ${c.accent} 30%, transparent) 0%, transparent 70%)`,
+                opacity: show ? 1 : 0.45,
+              }}
+            />
+          </>
+        )}
+        {/* Accent glow on hover — kept subtle over a photo, full strength over line art */}
         <div
           className="absolute inset-0 transition-opacity duration-700"
           style={{
-            background: `radial-gradient(70% 55% at 50% 0%, color-mix(in oklab, ${c.accent} 30%, transparent) 0%, transparent 70%)`,
-            opacity: show ? 1 : 0.45,
+            background: `radial-gradient(70% 55% at 50% 0%, color-mix(in oklab, ${c.accent} ${c.photo ? 16 : 0}%, transparent) 0%, transparent 70%)`,
+            opacity: show ? 1 : 0,
+            mixBlendMode: c.photo ? "screen" : "normal",
           }}
         />
         {/* Moving sheen on the glass */}
@@ -154,14 +178,16 @@ function ConsoleCase({
         )}
       </div>
 
-      {/* Exhibit */}
-      <motion.div className="absolute inset-x-0 top-[18%] flex justify-center" style={{ x: glyphX, y: glyphY, translateZ: 40 }}>
-        <DeviceGlyph
-          form={c.form}
-          className="w-[72%] text-[color:var(--accent)] drop-shadow-[0_0_18px_color-mix(in_oklab,var(--accent)_55%,transparent)] transition-transform duration-700 ease-[var(--ease-out-quint)] group-hover:-translate-y-2"
-          strokeWidth={1.6}
-        />
-      </motion.div>
+      {/* Exhibit — only the systems without a photo get the drawn glyph */}
+      {!c.photo && (
+        <motion.div className="absolute inset-x-0 top-[18%] flex justify-center" style={{ x: glyphX, y: glyphY, translateZ: 40 }}>
+          <DeviceGlyph
+            form={c.form}
+            className="w-[72%] text-[color:var(--accent)] drop-shadow-[0_0_18px_color-mix(in_oklab,var(--accent)_55%,transparent)] transition-transform duration-700 ease-[var(--ease-out-quint)] group-hover:-translate-y-2"
+            strokeWidth={1.6}
+          />
+        </motion.div>
+      )}
 
       {/* Placard */}
       <div className="absolute inset-x-0 bottom-0 p-5" style={{ transform: "translateZ(30px)" }}>

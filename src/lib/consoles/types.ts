@@ -55,6 +55,8 @@ export interface ConsoleDef {
   form: FormFactor;
   /** Accent used for lighting, focus rings and generated covers */
   accent: string;
+  /** Filename under public/images/consoles/, when a real photo replaces the line-art glyph */
+  photo?: string;
   extensions: string[];
   cores: readonly [CoreDef, ...CoreDef[]];
   /** Display aspect of the original hardware */

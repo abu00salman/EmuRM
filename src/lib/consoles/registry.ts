@@ -14,7 +14,7 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "msx", name: "MSX", short: "MSX", aliases: ["Sakhr", "صخر", "MSX2", "AX-170"],
     maker: "ASCII · Microsoft · Sakhr", year: 1983, family: "msx", form: "computer",
-    accent: "#D8A84E", extensions: ["rom", "mx1", "mx2", "dsk", "cas"],
+    accent: "#D8A84E", photo: "msx.jpg", extensions: ["rom", "mx1", "mx2", "dsk", "cas"],
     cores: [CORES.fmsx, CORES.bluemsx], aspect: 4 / 3,
     faceButtons: [{ pad: "a", label: "1" }, { pad: "b", label: "2" }], shoulderButtons: [], hasSelect: true,
     bios: [
@@ -28,28 +28,28 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "nes", name: "Nintendo Entertainment System", short: "NES", aliases: ["Famicom", "Family Computer", "فاميلي"],
     maker: "Nintendo", year: 1983, family: "nintendo", form: "home",
-    accent: "#E5484D", extensions: ["nes", "fds", "unf", "unif"],
+    accent: "#E5484D", photo: "nes.jpg", extensions: ["nes", "fds", "unf", "unif"],
     cores: [CORES.fceumm, CORES.nestopia], aspect: 4 / 3,
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
     id: "sms", name: "Master System", short: "SMS", aliases: ["Sega Mark III"],
     maker: "Sega", year: 1985, family: "sega", form: "home",
-    accent: "#4C7DFF", extensions: ["sms", "sg"],
+    accent: "#4C7DFF", photo: "sms.jpg", extensions: ["sms", "sg"],
     cores: [CORES.genesis_plus_gx, CORES.gearsystem], aspect: 4 / 3,
     faceButtons: [{ pad: "b", label: "1" }, { pad: "a", label: "2" }], shoulderButtons: [], hasSelect: false, bios: [], status: "ready",
   },
   {
     id: "pce", name: "PC Engine", short: "PCE", aliases: ["TurboGrafx-16"],
     maker: "NEC · Hudson Soft", year: 1987, family: "nec", form: "home",
-    accent: "#F08A3C", extensions: ["pce"],
+    accent: "#F08A3C", photo: "pce.jpg", extensions: ["pce"],
     cores: [CORES.mednafen_pce_fast], aspect: 4 / 3,
     faceButtons: [{ pad: "b", label: "II" }, { pad: "a", label: "I" }], shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
     id: "md", name: "Mega Drive", short: "MD", aliases: ["Genesis", "Sega Genesis"],
     maker: "Sega", year: 1988, family: "sega", form: "home",
-    accent: "#3068FF", extensions: ["md", "gen", "smd", "bin"],
+    accent: "#3068FF", photo: "md.jpg", extensions: ["md", "gen", "smd", "bin"],
     cores: [CORES.genesis_plus_gx, CORES.picodrive], aspect: 4 / 3,
     faceButtons: [{ pad: "y", label: "A" }, { pad: "b", label: "B" }, { pad: "a", label: "C" }],
     shoulderButtons: [], hasSelect: false, bios: [], status: "ready",
@@ -71,7 +71,7 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "snes", name: "Super Nintendo", short: "SNES", aliases: ["Super Famicom", "SFC"],
     maker: "Nintendo", year: 1990, family: "nintendo", form: "home",
-    accent: "#C9506E", extensions: ["sfc", "smc", "fig", "swc"],
+    accent: "#C9506E", photo: "snes.jpg", extensions: ["sfc", "smc", "fig", "swc"],
     cores: [CORES.snes9x, CORES.snes9x2010], aspect: 4 / 3,
     faceButtons: snesFace, shoulderButtons: [{ pad: "l", label: "L" }, { pad: "r", label: "R" }], hasSelect: true, bios: [], status: "ready",
   },
@@ -89,7 +89,7 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "psx", name: "PlayStation", short: "PS1", aliases: ["PSX", "PSone"],
     maker: "Sony", year: 1994, family: "sony", form: "disc",
-    accent: "#6F6BF5", extensions: ["cue", "chd", "pbp", "iso", "img", "m3u", "bin"],
+    accent: "#6F6BF5", photo: "psx.jpg", extensions: ["cue", "chd", "pbp", "iso", "img", "m3u", "bin"],
     cores: [CORES.pcsx_rearmed], aspect: 4 / 3,
     faceButtons: [
       { pad: "y", label: "□" }, { pad: "x", label: "△" }, { pad: "b", label: "✕" }, { pad: "a", label: "○" },
@@ -102,7 +102,7 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "n64", name: "Nintendo 64", short: "N64", aliases: ["Ultra 64"],
     maker: "Nintendo", year: 1996, family: "nintendo", form: "home",
-    accent: "#E0643C", extensions: ["n64", "z64", "v64"],
+    accent: "#E0643C", photo: "n64.jpg", extensions: ["n64", "z64", "v64"],
     cores: [CORES.mupen64plus_next], aspect: 4 / 3,
     faceButtons: [{ pad: "y", label: "B" }, { pad: "b", label: "A" }],
     shoulderButtons: [{ pad: "l", label: "L" }, { pad: "r", label: "R" }, { pad: "l2", label: "Z" }],
