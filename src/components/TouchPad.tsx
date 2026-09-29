@@ -31,7 +31,7 @@ export function TouchPad({ console: c, onPress, mode, style = "fixed" }: { conso
   const overlay = mode === "overlay";
   const floating = style === "floating";
   const t = useT();
-  const startLabel = t(c.id === "ngp" ? "pad.option" : c.id === "pce" ? "pad.run" : "pad.start");
+  const startLabel = t(c.id === "pce" ? "pad.run" : "pad.start");
   return (
     <div
       className={

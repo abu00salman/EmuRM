@@ -21,7 +21,7 @@ function relevant(t: TFn, c?: ConsoleDef): { pad: PadButton; label: string }[] {
   if (!c) return PAD_ORDER.map((p) => ({ pad: p, label: names[p] }));
   const out: { pad: PadButton; label: string }[] = (["up", "down", "left", "right"] as PadButton[]).map((p) => ({ pad: p, label: names[p] }));
   for (const b of [...c.faceButtons, ...c.shoulderButtons]) out.push({ pad: b.pad, label: b.label });
-  out.push({ pad: "start", label: c.id === "ngp" ? t("pad.option") : c.id === "pce" ? t("pad.run") : t("pad.start") });
+  out.push({ pad: "start", label: c.id === "pce" ? t("pad.run") : t("pad.start") });
   if (c.hasSelect) out.push({ pad: "select", label: t("pad.select") });
   return out;
 }

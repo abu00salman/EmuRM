@@ -9,10 +9,9 @@ export type ConsoleId =
   | "msx" | "nes" | "snes" | "n64"
   | "sms" | "md" | "gg"
   | "gb" | "gbc" | "gba"
-  | "psx" | "pce" | "ngp" | "ws"
-  | "lynx" | "c64" | "tdo" | "vb";
+  | "psx" | "pce" | "tdo";
 
-export type Family = "nintendo" | "gameboy" | "sega" | "sony" | "msx" | "nec" | "snk" | "bandai" | "atari" | "commodore" | "3do";
+export type Family = "nintendo" | "gameboy" | "sega" | "sony" | "msx" | "nec" | "3do";
 
 /** Physical silhouette used for illustrations and generated covers. */
 export type FormFactor = "home" | "handheld-v" | "handheld-h" | "disc" | "computer";

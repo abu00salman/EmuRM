@@ -1,7 +1,7 @@
 # EmuRM
 
 A local-first, installable console museum that plays classic games in the browser.
-Eighteen systems, from the Commodore 64 to the PlayStation and 3DO. Games you add never leave the device.
+Thirteen systems, from the MSX to the PlayStation and 3DO. Games you add never leave the device.
 
 - **Home — Console Universe.** A hall of display cases; the room's light takes the colour of the console you hover. First launch plays a short "Choose your console" intro.
 - **Library.** Covers (or generated per-console placeholders), last played, play time, favourites, search, recently played, collections, grid / list.
@@ -74,23 +74,18 @@ Honest limits: RetroArch's emscripten build renders with WebGL on the main threa
 
 | System | Core (default first) | Licence |
 |---|---|---|
-| Commodore 64 | VICE (x64) | GPL-2.0 |
 | MSX / Sakhr | blueMSX, fMSX (self-hosted) | GPL-2.0 / non-commercial |
 | NES / Famicom | FCEUmm, Nestopia UE | GPL-2.0 |
 | Master System | Genesis Plus GX, Gearsystem | GPX non-commercial / GPL-3.0 |
 | PC Engine | Beetle PCE Fast | GPL-2.0 |
 | Mega Drive / Genesis | Genesis Plus GX, PicoDrive | non-commercial |
 | Game Boy | Gambatte, mGBA, Gearboy | GPL-2.0 / MPL-2.0 / GPL-3.0 |
-| Atari Lynx | Beetle Lynx (Handy) | GPL-2.0 |
 | Game Gear | Genesis Plus GX, Gearsystem | GPX non-commercial / GPL-3.0 |
 | SNES | Snes9x, Snes9x 2010 (low-end) | Snes9x — non-commercial |
 | 3DO | Opera (BIOS required) | see upstream |
 | PlayStation | PCSX ReARMed (HLE BIOS built in) | GPL-2.0 |
-| Virtual Boy | Beetle VB | GPL-2.0 |
 | Nintendo 64 | Mupen64Plus-Next (self-hosted, WebGL2) | GPL-2.0 |
 | Game Boy Color | Gambatte, mGBA, Gearboy | GPL-2.0 / MPL-2.0 / GPL-3.0 |
-| Neo Geo Pocket Color | Beetle NGP | GPL-2.0 |
-| WonderSwan Color | Beetle WonderSwan | GPL-2.0 |
 | Game Boy Advance | mGBA | MPL-2.0 |
 
 Several cores forbid commercial use. If EmuRM is ever monetised (ads, subscriptions), replace them (e.g. Gearsystem for Sega 8-bit) or confirm terms with the authors. Settings → About lists every core with its licence and source.

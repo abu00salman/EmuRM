@@ -12,14 +12,6 @@ const snesFace: ButtonLabel[] = [
  */
 export const CONSOLES: ConsoleDef[] = [
   {
-    id: "c64", name: "Commodore 64", short: "C64", aliases: ["C-64", "CBM 64"],
-    maker: "Commodore", year: 1982, family: "commodore", form: "computer",
-    accent: "#8B6FC9", extensions: ["d64", "t64", "prg", "crt", "g64"],
-    cores: [CORES.vice_x64], aspect: 4 / 3,
-    faceButtons: [{ pad: "b", label: "Fire" }], shoulderButtons: [], hasSelect: false, bios: [],
-    status: "experimental",
-  },
-  {
     id: "msx", name: "MSX", short: "MSX", aliases: ["Sakhr", "صخر", "MSX2", "AX-170"],
     maker: "ASCII · Microsoft · Sakhr", year: 1983, family: "msx", form: "computer",
     accent: "#D8A84E", extensions: ["rom", "mx1", "mx2", "dsk", "cas"],
@@ -70,15 +62,6 @@ export const CONSOLES: ConsoleDef[] = [
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
-    id: "lynx", name: "Atari Lynx", short: "Lynx", aliases: [],
-    maker: "Atari", year: 1989, family: "atari", form: "handheld-h",
-    accent: "#C7444A", extensions: ["lnx"],
-    cores: [CORES.mednafen_lynx], aspect: 8 / 5,
-    faceButtons: [{ pad: "b", label: "B" }, { pad: "a", label: "A" }],
-    shoulderButtons: [{ pad: "l", label: "Opt2" }, { pad: "r", label: "Opt1" }],
-    hasSelect: false, bios: [], status: "ready",
-  },
-  {
     id: "gg", name: "Game Gear", short: "GG", aliases: [],
     maker: "Sega", year: 1990, family: "sega", form: "handheld-h",
     accent: "#5AA2FF", extensions: ["gg"],
@@ -117,15 +100,6 @@ export const CONSOLES: ConsoleDef[] = [
     status: "ready",
   },
   {
-    id: "vb", name: "Virtual Boy", short: "VB", aliases: [],
-    maker: "Nintendo", year: 1995, family: "nintendo", form: "handheld-h",
-    accent: "#C1272D", extensions: ["vb"],
-    cores: [CORES.mednafen_vb], aspect: 3 / 2,
-    faceButtons: nintendoFace,
-    shoulderButtons: [{ pad: "l", label: "L" }, { pad: "r", label: "R" }],
-    hasSelect: true, bios: [], status: "experimental",
-  },
-  {
     id: "n64", name: "Nintendo 64", short: "N64", aliases: ["Ultra 64"],
     maker: "Nintendo", year: 1996, family: "nintendo", form: "home",
     accent: "#E0643C", extensions: ["n64", "z64", "v64"],
@@ -140,20 +114,6 @@ export const CONSOLES: ConsoleDef[] = [
     accent: "#4FB79C", extensions: ["gbc"],
     cores: [CORES.gambatte, CORES.mgba, CORES.gearboy], aspect: 10 / 9,
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
-  },
-  {
-    id: "ngp", name: "Neo Geo Pocket Color", short: "NGPC", aliases: ["NGP"],
-    maker: "SNK", year: 1999, family: "snk", form: "handheld-h",
-    accent: "#7CCFDF", extensions: ["ngp", "ngc"],
-    cores: [CORES.mednafen_ngp], aspect: 20 / 19,
-    faceButtons: [{ pad: "b", label: "A" }, { pad: "a", label: "B" }], shoulderButtons: [], hasSelect: false, bios: [], status: "ready",
-  },
-  {
-    id: "ws", name: "WonderSwan Color", short: "WSC", aliases: ["WonderSwan"],
-    maker: "Bandai", year: 2000, family: "bandai", form: "handheld-h",
-    accent: "#DE7BB0", extensions: ["ws", "wsc"],
-    cores: [CORES.mednafen_wswan], aspect: 14 / 9,
-    faceButtons: [{ pad: "b", label: "B" }, { pad: "a", label: "A" }], shoulderButtons: [], hasSelect: false, bios: [], status: "ready",
   },
   {
     id: "gba", name: "Game Boy Advance", short: "GBA", aliases: ["AGB"],

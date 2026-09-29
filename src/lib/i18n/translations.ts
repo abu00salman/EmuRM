@@ -13,7 +13,7 @@ export const en = {
   "nav.addGames": "Add games",
 
   "home.headline": "Choose your console",
-  "home.tagline.empty": "Eighteen systems, from the Commodore 64 to the PlayStation. Add games you own, or start with free homebrew.",
+  "home.tagline.empty": "Thirteen systems, from the MSX to the PlayStation. Add games you own, or start with free homebrew.",
   "home.tagline.withGames": "{count} {games} across {systems} systems, stored on this device.",
   "home.game.one": "game",
   "home.game.other": "games",
@@ -324,7 +324,7 @@ export const ar: Record<TranslationKey, string> = {
   "nav.addGames": "أضف ألعابًا",
 
   "home.headline": "اختر جهازك",
-  "home.tagline.empty": "ثمانية عشر نظامًا، من Commodore 64 إلى بلايستيشن. أضف ألعابًا تملكها، أو ابدأ بألعاب هواة مجانية.",
+  "home.tagline.empty": "ثلاثة عشر نظامًا، من MSX إلى بلايستيشن. أضف ألعابًا تملكها، أو ابدأ بألعاب هواة مجانية.",
   "home.tagline.withGames": "{count} {games} على {systems} أنظمة، محفوظة على هذا الجهاز.",
   "home.game.one": "لعبة",
   "home.game.other": "ألعاب",
