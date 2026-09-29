@@ -48,6 +48,7 @@ export function Player() {
 
   const stage = useRef<HTMLDivElement>(null);
   const host = useRef<HTMLDivElement>(null);
+  const fsBusy = useRef(false);
   const p = usePlayerSession({ game, resume, settings, bindings, host });
   const states = useStates(gameId);
 
@@ -136,6 +137,12 @@ export function Player() {
   }, [p.session, game, toast, t]);
 
   const toggleFullscreen = useCallback(async () => {
+    // Guards a double-fire (e.g. the F11 keydown handler and a near-simultaneous
+    // double-click) from requesting/exiting fullscreen twice in a row, which is
+    // what made it look like it was flickering on and off.
+    if (fsBusy.current) return;
+    fsBusy.current = true;
+    setTimeout(() => (fsBusy.current = false), 400);
     const el = stage.current as (HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> }) | null;
     const doc = document as Document & { webkitFullscreenElement?: Element; webkitExitFullscreen?: () => Promise<void> };
     const active = document.fullscreenElement ?? doc.webkitFullscreenElement;
@@ -167,7 +174,7 @@ export function Player() {
   /* ---------- Hotkeys ---------- */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (p.phase !== "running") return;
+      if (p.phase !== "running" || e.repeat) return;
       const map: Record<string, () => void> = {
         Escape: () => (menu ? closeMenu() : openMenu()),
         F2: () => void quickSave(),
@@ -281,7 +288,20 @@ export function Player() {
       <div className="relative min-h-0 flex-1 pt-[var(--safe-t)]">
         <div ref={host} className={`absolute inset-0 filter-${settings.filter}`} onDoubleClick={() => void toggleFullscreen()} />
 
-        {showTouch && c && !portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" />}
+        {showTouch && c && !portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" style={settings.touchStyle} />}
+
+        {/* Always-reachable menu button: unlike the top chrome, this never auto-hides,
+            so save/load, display, controls and exit stay one tap away at all times. */}
+        {p.phase === "running" && !menu && !immersive && (
+          <button
+            onClick={() => openMenu()}
+            aria-label={t("player.menuButton")}
+            className="glass-strong absolute left-1/2 top-[max(0.75rem,var(--safe-t))] z-40 flex -translate-x-1/2 items-center gap-1.5 rounded-full py-2 pe-4 ps-3 text-sm font-medium text-white/90 shadow-lg transition-transform active:scale-95"
+          >
+            <Icon name="menu" />
+            {t("player.menuButton")}
+          </button>
+        )}
 
         {/* Top chrome */}
         <AnimatePresence>
@@ -376,7 +396,7 @@ export function Player() {
         />
       </div>
 
-      {showTouch && c && portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="below" />}
+      {showTouch && c && portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="below" style={settings.touchStyle} />}
     </div>
   );
 }

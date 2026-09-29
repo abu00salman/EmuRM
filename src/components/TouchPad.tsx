@@ -1,6 +1,7 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { ConsoleDef, PadButton } from "@/lib/consoles/types";
+import type { TouchStyle } from "@/stores/player-settings";
 import { useT } from "@/lib/i18n";
 
 type Press = (b: PadButton, down: boolean) => void;
@@ -13,10 +14,22 @@ const buzz = () => {
   }
 };
 
+/** 8-way sector, shared by both the fixed and floating pads so they feel identical. */
+const SECTOR_MAP: Record<string, PadButton[]> = {
+  "0": ["right"], "1": ["right", "down"], "2": ["down"], "3": ["left", "down"],
+  "4": ["left"], "-4": ["left"], "-3": ["left", "up"], "-2": ["up"], "-1": ["right", "up"],
+};
+function sectorButtons(dx: number, dy: number): PadButton[] {
+  const angle = Math.atan2(dy, dx); // 45° sectors
+  const sector = Math.round(angle / (Math.PI / 4));
+  return SECTOR_MAP[String(sector)] ?? [];
+}
+
 /** A multi-touch pad: slide across the D-pad for diagonals, face buttons press on contact. */
-export function TouchPad({ console: c, onPress, mode }: { console: ConsoleDef; onPress: Press; mode: "below" | "overlay" }) {
+export function TouchPad({ console: c, onPress, mode, style = "fixed" }: { console: ConsoleDef; onPress: Press; mode: "below" | "overlay"; style?: TouchStyle }) {
   const shoulders = c.shoulderButtons;
   const overlay = mode === "overlay";
+  const floating = style === "floating";
   const t = useT();
   const startLabel = t(c.id === "ngp" ? "pad.option" : c.id === "pce" ? "pad.run" : "pad.start");
   return (
@@ -29,6 +42,14 @@ export function TouchPad({ console: c, onPress, mode }: { console: ConsoleDef; o
       dir="ltr"
       style={{ ["--accent" as string]: c.accent, touchAction: "none" }}
     >
+      {/* Floating mode (overlay/landscape only): a big invisible zone behind everything else,
+          so the thumb can come down anywhere on the left side, like PUBG/COD Mobile's stick,
+          instead of having to find a fixed 10rem box. Rendered first so the shoulder buttons,
+          pills and face buttons (painted after) stay clickable on top of it. */}
+      {overlay && floating && (
+        <FloatingDPad onPress={onPress} zoneClassName="pointer-events-auto absolute inset-y-0 start-0 w-[52%] max-w-[26rem]" />
+      )}
+
       {!overlay && shoulders.length > 0 && (
         <div className="flex justify-between">
           <div className="flex gap-2">{shoulders.filter((s) => s.pad === "l" || s.pad === "l2").map((s) => <Shoulder key={s.pad} b={s} onPress={onPress} />)}</div>
@@ -37,7 +58,15 @@ export function TouchPad({ console: c, onPress, mode }: { console: ConsoleDef; o
       )}
       <div className={overlay ? "pointer-events-auto flex flex-col items-start gap-3" : "flex items-center justify-between"}>
         {overlay && <div className="flex gap-2">{shoulders.filter((s) => s.pad === "l" || s.pad === "l2").map((s) => <Shoulder key={s.pad} b={s} onPress={onPress} />)}</div>}
-        <DPad onPress={onPress} translucent={overlay} />
+        {overlay && floating ? (
+          // The big zone above already handles input; this just keeps the shoulder/face
+          // buttons at their usual spacing so the rest of the layout doesn't shift.
+          <div aria-hidden className="h-40 w-40" />
+        ) : floating ? (
+          <FloatingDPad onPress={onPress} zoneClassName="relative h-44 w-44" />
+        ) : (
+          <DPad onPress={onPress} translucent={overlay} />
+        )}
         {!overlay && <Face c={c} onPress={onPress} />}
       </div>
       <div className={overlay ? "pointer-events-auto mb-2 flex gap-3" : "flex justify-center gap-4"}>
@@ -118,6 +147,7 @@ function Shoulder({ b, onPress }: { b: { pad: PadButton; label: string }; onPres
   );
 }
 
+/** Fixed D-pad: thumb has to find this exact spot every time. */
 function DPad({ onPress, translucent }: { onPress: Press; translucent: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const held = useRef(new Set<PadButton>());
@@ -128,17 +158,7 @@ function DPad({ onPress, translucent }: { onPress: Press; translucent: boolean }
     if (!r) return;
     const dx = (x - (r.left + r.width / 2)) / (r.width / 2);
     const dy = (y - (r.top + r.height / 2)) / (r.height / 2);
-    const next = new Set<PadButton>();
-    const dead = 0.28;
-    if (Math.hypot(dx, dy) > dead) {
-      const angle = Math.atan2(dy, dx); // 8-way with 45° sectors
-      const sector = Math.round(angle / (Math.PI / 4));
-      const map: Record<string, PadButton[]> = {
-        "0": ["right"], "1": ["right", "down"], "2": ["down"], "3": ["left", "down"],
-        "4": ["left"], "-4": ["left"], "-3": ["left", "up"], "-2": ["up"], "-1": ["right", "up"],
-      };
-      for (const b of map[String(sector)] ?? []) next.add(b);
-    }
+    const next = new Set<PadButton>(Math.hypot(dx, dy) > 0.28 ? sectorButtons(dx, dy) : []);
     for (const b of held.current) if (!next.has(b)) onPress(b, false);
     for (const b of next) if (!held.current.has(b)) {
       buzz();
@@ -170,6 +190,84 @@ function DPad({ onPress, translucent }: { onPress: Press; translucent: boolean }
       <div className="absolute left-1/2 top-1/2 h-[3.4rem] w-[9.4rem] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-white/12 bg-white/[0.08] backdrop-blur" />
       <div className="absolute left-1/2 top-1/2 h-[9.4rem] w-[3.4rem] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-white/12 bg-white/[0.08] backdrop-blur" />
       <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/40" />
+    </div>
+  );
+}
+
+/**
+ * Floating stick: appears wherever the thumb first lands inside `zoneClassName`, like the
+ * virtual sticks in most modern mobile games. The zone can be much bigger than the visible
+ * base — only the knob is clamped to `RADIUS` so it never travels off the base graphic.
+ */
+function FloatingDPad({ onPress, zoneClassName }: { onPress: Press; zoneClassName: string }) {
+  const zoneRef = useRef<HTMLDivElement>(null);
+  const held = useRef(new Set<PadButton>());
+  const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
+  const [knob, setKnob] = useState({ x: 0, y: 0 });
+  const t = useT();
+
+  const RADIUS = 46;
+  const DEAD = 14;
+
+  const move = (x: number, y: number, o: { x: number; y: number }) => {
+    const r = zoneRef.current?.getBoundingClientRect();
+    if (!r) return;
+    const dx = x - r.left - o.x;
+    const dy = y - r.top - o.y;
+    const dist = Math.hypot(dx, dy);
+    const clamped = Math.min(dist, RADIUS);
+    const angle = Math.atan2(dy, dx);
+    setKnob(dist > 0.001 ? { x: Math.cos(angle) * clamped, y: Math.sin(angle) * clamped } : { x: 0, y: 0 });
+    const next = new Set<PadButton>(dist > DEAD ? sectorButtons(dx, dy) : []);
+    for (const b of held.current) if (!next.has(b)) onPress(b, false);
+    for (const b of next) if (!held.current.has(b)) {
+      buzz();
+      onPress(b, true);
+    }
+    held.current = next;
+  };
+  const release = () => {
+    for (const b of held.current) onPress(b, false);
+    held.current = new Set();
+    setOrigin(null);
+    setKnob({ x: 0, y: 0 });
+  };
+
+  return (
+    <div
+      ref={zoneRef}
+      role="group"
+      aria-label={t("touch.dpadAria")}
+      onPointerDown={(e) => {
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        const r = zoneRef.current?.getBoundingClientRect();
+        if (!r) return;
+        buzz();
+        setOrigin({ x: e.clientX - r.left, y: e.clientY - r.top });
+        setKnob({ x: 0, y: 0 });
+      }}
+      onPointerMove={(e) => {
+        if (!e.buttons || !origin) return;
+        move(e.clientX, e.clientY, origin);
+      }}
+      onPointerUp={release}
+      onPointerCancel={release}
+      onContextMenu={(e) => e.preventDefault()}
+      className={zoneClassName}
+    >
+      {origin && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-white/[0.06] backdrop-blur"
+          style={{ left: origin.x, top: origin.y }}
+        >
+          <div
+            className="absolute left-1/2 top-1/2 h-11 w-11 rounded-full border border-white/25 bg-white/25"
+            style={{ transform: `translate(calc(-50% + ${knob.x}px), calc(-50% + ${knob.y}px))` }}
+          />
+        </div>
+      )}
     </div>
   );
 }

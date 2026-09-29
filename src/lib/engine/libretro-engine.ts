@@ -187,6 +187,19 @@ export const libretroEngine: EmulatorEngine = {
         input_autodetect_enable: true,
         rewind_enable: false,
         video_font_enable: false,
+        // `respondToGlobalEvents: true` (below) makes RetroArch's own keyboard glue listen
+        // on `document`, so without this it also reacts to its *own* default hotkeys for
+        // the exact keys the player UI already owns (F11 fullscreen, F2/F4 save/load, Esc
+        // menu, F9 screenshot) — two independent handlers racing on the same keypress is
+        // what caused fullscreen to flicker on/off. The UI is the single source of truth
+        // for all of these, so RetroArch's copies are unbound ("nul").
+        input_toggle_fullscreen: "nul",
+        input_save_state: "nul",
+        input_load_state: "nul",
+        input_screenshot: "nul",
+        input_menu_toggle: "nul",
+        input_exit_emulator: "nul",
+        input_pause_toggle: "nul",
       } as never,
       beforeLaunch: () => spec.onPhase?.("boot"),
     });

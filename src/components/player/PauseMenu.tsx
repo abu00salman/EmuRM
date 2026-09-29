@@ -250,6 +250,17 @@ function Display({ settings: s, onSettings }: Props) {
           onChange={(v) => void onSettings({ touchControls: v })}
         />
       </section>
+      {s.touchControls !== "never" && (
+        <section>
+          <h3 className="mb-2 text-sm text-muted">{t("display.touchStyle")}</h3>
+          <Segmented
+            label={t("display.touchStyle")}
+            value={s.touchStyle}
+            options={[{ v: "floating", label: t("display.touchStyleFloating") }, { v: "fixed", label: t("display.touchStyleFixed") }]}
+            onChange={(v) => void onSettings({ touchStyle: v })}
+          />
+        </section>
+      )}
     </div>
   );
 }

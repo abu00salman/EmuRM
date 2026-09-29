@@ -198,6 +198,7 @@ export const en = {
   "player.exitFullscreen": "Exit full screen",
   "player.enterFullscreen": "Full screen (F11)",
   "player.menuKey": "Menu (Esc)",
+  "player.menuButton": "Menu",
   "player.savedGeneric": "Saved",
   "player.savedSlot": "Saved to slot {slot}",
 
@@ -258,6 +259,9 @@ export const en = {
   "display.touchOnScreens": "On touch screens",
   "display.touchAlways": "Always",
   "display.touchNever": "Never",
+  "display.touchStyle": "Touch control style",
+  "display.touchStyleFixed": "Fixed pad",
+  "display.touchStyleFloating": "Floating stick",
 
   "touch.dpadAria": "Directional pad",
 
@@ -505,6 +509,7 @@ export const ar: Record<TranslationKey, string> = {
   "player.exitFullscreen": "الخروج من ملء الشاشة",
   "player.enterFullscreen": "ملء الشاشة (F11)",
   "player.menuKey": "القائمة (Esc)",
+  "player.menuButton": "القائمة",
   "player.savedGeneric": "تم الحفظ",
   "player.savedSlot": "تم الحفظ في الخانة {slot}",
 
@@ -565,6 +570,9 @@ export const ar: Record<TranslationKey, string> = {
   "display.touchOnScreens": "على شاشات اللمس",
   "display.touchAlways": "دائمًا",
   "display.touchNever": "أبدًا",
+  "display.touchStyle": "طريقة أزرار اللمس",
+  "display.touchStyleFixed": "لوحة ثابتة",
+  "display.touchStyleFloating": "عصا عائمة",
 
   "touch.dpadAria": "عصا الاتجاهات",
 

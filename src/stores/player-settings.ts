@@ -1,6 +1,9 @@
 import type { AspectMode } from "@/lib/engine/types";
 
 export type ScreenFilter = "off" | "scanlines" | "crt" | "lcd";
+/** "fixed": the D-pad sits at a set spot. "floating": it recenters on the first touch,
+ *  like the virtual sticks in most modern mobile games (PUBG Mobile, COD Mobile, …). */
+export type TouchStyle = "fixed" | "floating";
 
 export interface PlayerSettings {
   aspect: AspectMode;
@@ -12,6 +15,7 @@ export interface PlayerSettings {
   /** Seconds between automatic saves while playing */
   autosaveEvery: number;
   touchControls: "auto" | "always" | "never";
+  touchStyle: TouchStyle;
 }
 
 export const DEFAULT_PLAYER: PlayerSettings = {
@@ -23,4 +27,5 @@ export const DEFAULT_PLAYER: PlayerSettings = {
   autosave: true,
   autosaveEvery: 60,
   touchControls: "auto",
+  touchStyle: "floating",
 };
