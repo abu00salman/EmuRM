@@ -83,18 +83,32 @@ export function TouchPad({ console: c, onPress, mode, style = "fixed" }: { conso
   );
 }
 
+/**
+ * Drives the button's pressed visual from the same pointer handlers that send the actual
+ * input, instead of the browser's own `:active` state — which on touch can lag a frame or
+ * two behind the real press, or not show at all for a quick tap. That mismatch between
+ * "what my thumb feels" and "what lit up" is what reads as an unresponsive button.
+ */
 function useHold(pad: PadButton, onPress: Press) {
-  return {
+  const [pressed, setPressed] = useState(false);
+  const release = () => {
+    setPressed(false);
+    onPress(pad, false);
+  };
+  const handlers = {
     onPointerDown: (e: React.PointerEvent) => {
       e.preventDefault();
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      setPressed(true);
       buzz();
       onPress(pad, true);
     },
-    onPointerUp: () => onPress(pad, false),
-    onPointerCancel: () => onPress(pad, false),
+    onPointerUp: release,
+    onPointerCancel: release,
     onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
+    style: { touchAction: "none" as const },
   };
+  return [pressed, handlers] as const;
 }
 
 function Face({ c, onPress }: { c: ConsoleDef; onPress: Press }) {
@@ -120,11 +134,16 @@ function Face({ c, onPress }: { c: ConsoleDef; onPress: Press }) {
 }
 
 function FaceButton({ label, pad, onPress, className = "" }: { label: string; pad: PadButton; onPress: Press; className?: string }) {
+  const [pressed, hold] = useHold(pad, onPress);
   return (
     <button
       aria-label={label}
-      {...useHold(pad, onPress)}
-      className={`grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border border-white/15 bg-white/[0.08] font-display text-xl font-bold text-white/90 backdrop-blur active:scale-95 active:bg-[color:var(--accent)] active:text-black ${className}`}
+      {...hold}
+      className={`grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border font-display text-xl font-bold backdrop-blur transition-[transform,background-color,color,box-shadow,border-color] duration-100 ease-out ${
+        pressed
+          ? "scale-[0.86] border-transparent bg-[color:var(--accent)] text-black shadow-[0_0_0_7px_color-mix(in_oklab,var(--accent)_35%,transparent)]"
+          : "scale-100 border-white/15 bg-white/[0.08] text-white/90"
+      } ${className}`}
     >
       {label}
     </button>
@@ -132,16 +151,28 @@ function FaceButton({ label, pad, onPress, className = "" }: { label: string; pa
 }
 
 function Pill({ label, pad, onPress }: { label: string; pad: PadButton; onPress: Press }) {
+  const [pressed, hold] = useHold(pad, onPress);
   return (
-    <button {...useHold(pad, onPress)} className="rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-xs text-white/80 active:bg-white active:text-black">
+    <button
+      {...hold}
+      className={`rounded-full border px-4 py-1.5 text-xs transition-[transform,background-color,color] duration-100 ease-out ${
+        pressed ? "scale-[0.92] border-transparent bg-white text-black" : "scale-100 border-white/15 bg-white/[0.06] text-white/80"
+      }`}
+    >
       {label}
     </button>
   );
 }
 
 function Shoulder({ b, onPress }: { b: { pad: PadButton; label: string }; onPress: Press }) {
+  const [pressed, hold] = useHold(b.pad, onPress);
   return (
-    <button {...useHold(b.pad, onPress)} className="min-w-16 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2 text-sm font-semibold text-white/85 active:bg-white active:text-black">
+    <button
+      {...hold}
+      className={`min-w-16 rounded-xl border px-4 py-2 text-sm font-semibold transition-[transform,background-color,color] duration-100 ease-out ${
+        pressed ? "scale-[0.94] border-transparent bg-white text-black" : "scale-100 border-white/15 bg-white/[0.06] text-white/85"
+      }`}
+    >
       {b.label}
     </button>
   );
