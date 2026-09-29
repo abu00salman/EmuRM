@@ -73,6 +73,12 @@ export function Player() {
     [settings, p.session],
   );
 
+  const toggleTouchStyle = useCallback(async () => {
+    const next = settings.touchStyle === "floating" ? "fixed" : "floating";
+    await updateSettings({ touchStyle: next });
+    toast({ message: t(next === "floating" ? "display.touchStyleFloating" : "display.touchStyleFixed") });
+  }, [settings.touchStyle, updateSettings, toast, t]);
+
   // Apply relaunch-only changes once the new settings have landed
   useEffect(() => {
     if (!pendingRelaunch) return;
@@ -290,17 +296,33 @@ export function Player() {
 
         {showTouch && c && !portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" style={settings.touchStyle} />}
 
-        {/* Always-reachable menu button: unlike the top chrome, this never auto-hides,
-            so save/load, display, controls and exit stay one tap away at all times. */}
-        {p.phase === "running" && !menu && !immersive && (
-          <button
-            onClick={() => openMenu()}
-            aria-label={t("player.menuButton")}
-            className="glass-strong absolute left-1/2 top-[max(0.75rem,var(--safe-t))] z-40 flex -translate-x-1/2 items-center gap-1.5 rounded-full py-2 pe-4 ps-3 text-sm font-medium text-white/90 shadow-lg transition-transform active:scale-95"
-          >
-            <Icon name="menu" />
-            {t("player.menuButton")}
-          </button>
+        {/* Always-reachable menu button: unlike the top chrome, this never auto-hides —
+            not even in "immersive" mode (the iPhone Safari fallback for real fullscreen),
+            since that hides every OTHER way back to the menu. This has to stay visible
+            precisely then, or there's no way out of fullscreen at all. The touch-style
+            button next to it flips fixed/floating in one tap, right where it's needed,
+            instead of only being reachable a few taps deep in Display settings. */}
+        {p.phase === "running" && !menu && (
+          <div className="absolute left-1/2 top-[max(0.75rem,var(--safe-t))] z-40 flex -translate-x-1/2 items-center gap-2">
+            <button
+              onClick={() => openMenu()}
+              aria-label={t("player.menuButton")}
+              className="glass-strong flex items-center gap-1.5 rounded-full py-2 pe-4 ps-3 text-sm font-medium text-white/90 shadow-lg transition-transform active:scale-95"
+            >
+              <Icon name="menu" />
+              {t("player.menuButton")}
+            </button>
+            {showTouch && (
+              <button
+                onClick={() => void toggleTouchStyle()}
+                aria-label={t("display.touchStyle")}
+                title={t(settings.touchStyle === "floating" ? "display.touchStyleFixed" : "display.touchStyleFloating")}
+                className="glass-strong grid h-10 w-10 place-items-center rounded-full text-white/90 shadow-lg transition-transform active:scale-95"
+              >
+                <Icon name="stick" />
+              </button>
+            )}
+          </div>
         )}
 
         {/* Top chrome */}

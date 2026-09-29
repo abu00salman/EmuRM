@@ -10,6 +10,7 @@ const paths = {
   play: "M7 4v16l13-8z",
   restart: "M4 12a8 8 0 108-8H8M8 1L4 4l4 3",
   close: "M6 6l12 12M18 6L6 18",
+  stick: "M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8z",
 } as const;
 
 export function Icon({ name, className = "h-5 w-5" }: { name: keyof typeof paths; className?: string }) {
