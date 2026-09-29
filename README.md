@@ -1,5 +1,20 @@
 # EmuRM
 
+محاكي EmuRM 
+
+1. 🎮 كل المحاكيات في مكان واحد
+    من Atari أتاري وMSX صخر وNES العائلة وGame Boy وصولًا إلى PS1 بلاي ستيشن وغيرها.
+2. ⚡ العب مباشرة من المتصفح
+    بدون تثبيت برامج معقدة؛ أضف لعبتك وابدأ اللعب.
+3. 📱 يعمل على مختلف الأجهزة
+    تجربة مصممة للجوال والكمبيوتر والأجهزة اللوحية والتلفاز.
+4. 💾 ألعابك أنت، بطريقتك
+    استخدم ملفات الألعاب التي تملكها واستمتع بها عبر واجهة واحدة سهلة.
+5. 🕹️ رحلة عبر أجيال الألعاب
+    واجهة حديثة تجمع إحساس الألعاب الكلاسيكية مع تجربة استخدام عصرية وسريعة
+
+[ من تطويرنا ® abu00salman © | 2026 ]
+
 A local-first, installable console museum that plays classic games in the browser.
 Fourteen systems, from the Atari 2600 to the PlayStation and 3DO. Games you add never leave the device.
 
