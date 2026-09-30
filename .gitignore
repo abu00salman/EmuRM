@@ -6,5 +6,7 @@ next-env.d.ts
 .env*.local
 public/cores/*
 !public/cores/README.md
+!public/cores/mupen64plus_next_libretro.js
+!public/cores/mupen64plus_next_libretro.wasm
 AGENTS.md
 CLAUDE.md

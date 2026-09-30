@@ -28,6 +28,13 @@ export interface CoreDef {
    * "self": no public web build — compile it and serve it via NEXT_PUBLIC_CORE_BASE.
    */
   hosting: "cdn" | "self";
+  /**
+   * A "self"-hosted core whose build we ship ourselves under public/cores/, so it works
+   * on every deployment without a deployer having to set NEXT_PUBLIC_CORE_BASE. Distinct
+   * from that env var (which, per its own doc, applies to every "self" core at once) so
+   * one bundled core doesn't silently mask another still-missing one.
+   */
+  bundled?: boolean;
   notes?: string;
 }
 

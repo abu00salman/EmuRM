@@ -100,7 +100,7 @@ Honest limits: RetroArch's emscripten build renders with WebGL on the main threa
 | SNES | Snes9x, Snes9x 2010 (low-end) | Snes9x — non-commercial |
 | 3DO | Opera (BIOS required) | see upstream |
 | PlayStation | PCSX ReARMed (HLE BIOS built in) | GPL-2.0 |
-| Nintendo 64 | Mupen64Plus-Next (self-hosted, WebGL2) | GPL-2.0 |
+| Nintendo 64 | Mupen64Plus-Next (bundled under public/cores/, WebGL2) | GPL-2.0 |
 | Game Boy Color | Gambatte, mGBA, Gearboy | GPL-2.0 / MPL-2.0 / GPL-3.0 |
 | Game Boy Advance | mGBA | MPL-2.0 |
 

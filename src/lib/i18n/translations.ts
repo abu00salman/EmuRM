@@ -134,6 +134,7 @@ export const en = {
   "howToPlay.playLabel": "▶ Play the game",
   "howToPlay.summary": "Choose your device → Import your game → Play instantly 🎮",
   "howToPlay.zipNote": "ZIP files work for every system below — EmuRM automatically finds the game file inside.",
+  "howToPlay.needsSetup": "⚠ needs setup",
   "howToPlay.cta": "Choose a device and start playing",
 
   "picker.question": "Which system is this for?",
@@ -467,6 +468,7 @@ export const ar: Record<TranslationKey, string> = {
   "howToPlay.playLabel": "▶ تشغيل اللعبة",
   "howToPlay.summary": "اختر جهازك ← استورد لعبتك ← العب مباشرة 🎮",
   "howToPlay.zipNote": "ملفات ZIP تعمل مع كل الأجهزة بالأسفل — EmuRM يجد ملف اللعبة بداخلها تلقائيًا.",
+  "howToPlay.needsSetup": "⚠ يحتاج إعدادًا إضافيًا",
   "howToPlay.cta": "اختر جهازًا وابدأ اللعب",
 
   "picker.question": "لأي نظام هذا الملف؟",

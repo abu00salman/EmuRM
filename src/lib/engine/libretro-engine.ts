@@ -10,6 +10,10 @@ import {
 } from "./types";
 
 const CORE_BASE = (process.env.NEXT_PUBLIC_CORE_BASE ?? "").replace(/\/$/, "");
+// Cores we ship ourselves under public/cores/ work on every deployment without a deployer
+// having to set NEXT_PUBLIC_CORE_BASE — same static export, same basePath handling as
+// every other same-origin asset in the app (see next.config.ts).
+const BUNDLED_CORE_BASE = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/cores`;
 
 const PAD: PadButton[] = ["up", "down", "left", "right", "a", "b", "x", "y", "l", "r", "l2", "r2", "start", "select"];
 
@@ -144,7 +148,8 @@ export const libretroEngine: EmulatorEngine = {
   id: "libretro",
   async launch(spec: LaunchSpec) {
     const { core } = spec;
-    if (core.hosting === "self" && !CORE_BASE) {
+    const base = core.bundled ? BUNDLED_CORE_BASE : CORE_BASE;
+    if (core.hosting === "self" && !base) {
       throw new CoreUnavailableError(
         core.id,
         `${spec.console.name} needs the ${core.id} core, which has no public web build. ` +
@@ -153,8 +158,8 @@ export const libretroEngine: EmulatorEngine = {
     }
     spec.onPhase?.("core");
 
-    const coreInput = CORE_BASE
-      ? { name: core.id, js: `${CORE_BASE}/${core.id}_libretro.js`, wasm: `${CORE_BASE}/${core.id}_libretro.wasm` }
+    const coreInput = base
+      ? { name: core.id, js: `${base}/${core.id}_libretro.js`, wasm: `${base}/${core.id}_libretro.wasm` }
       : core.id;
 
     // Cue sheets must come first so the core opens the right file.

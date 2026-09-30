@@ -19,7 +19,7 @@ export function ConsoleHeader({ id }: { id: ConsoleId }) {
   const t = useT();
   const biosHave = useLiveQuery(async () => new Set((await db().bios.where("consoleId").equals(id).toArray()).map((b) => b.fileName)), [id]);
   const missingBios = c.bios.filter((b) => b.required && biosHave && !biosHave.has(b.fileName));
-  const needsCore = c.cores[0].hosting === "self" && !CORE_BASE;
+  const needsCore = c.cores[0].hosting === "self" && !c.cores[0].bundled && !CORE_BASE;
   const n = counts?.[id] ?? 0;
 
   return (

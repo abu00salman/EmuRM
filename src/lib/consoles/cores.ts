@@ -19,7 +19,11 @@ export const CORES = {
   mednafen_pce_fast: { id: "mednafen_pce_fast", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/beetle-pce-fast-libretro", hosting: "cdn" },
   fmsx: { id: "fmsx", engine: "libretro", license: "fMSX licence (non-commercial)", upstream: "https://github.com/libretro/fmsx-libretro", hosting: "self", notes: "No public web build — compile with Emscripten, or use blueMSX" },
   bluemsx: { id: "bluemsx", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/blueMSX-libretro", hosting: "self", notes: "Most complete MSX/MSX2 core; needs its Machines folder" },
-  mupen64plus_next: { id: "mupen64plus_next", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/mupen64plus-libretro-nx", hosting: "self", notes: "Needs a WebGL2 build; desktop-class GPU recommended" },
+  mupen64plus_next: {
+    id: "mupen64plus_next", engine: "libretro", license: "GPL-2.0",
+    upstream: "https://github.com/libretro/mupen64plus-libretro-nx", hosting: "self", bundled: true,
+    notes: "WebGL2 build bundled under public/cores/, from the BinBashBanana/webretro project (MIT) — desktop-class GPU recommended",
+  },
   gearboy: { id: "gearboy", engine: "libretro", license: "GPL-3.0", upstream: "https://github.com/drhelius/Gearboy", hosting: "cdn", notes: "Alternate Game Boy / Color core" },
   opera: { id: "opera", engine: "libretro", license: "See upstream licence (research use; confirm terms before commercial use)", upstream: "https://github.com/libretro/opera-libretro", hosting: "cdn", notes: "3DO — BIOS required" },
   stella: { id: "stella", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/stella-emu/stella", hosting: "cdn", notes: "Full-accuracy Atari 2600 core" },

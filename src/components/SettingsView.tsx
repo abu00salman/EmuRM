@@ -43,7 +43,7 @@ export function SettingsView() {
             <tbody className="divide-y divide-line">
               {CONSOLES.map((c) => {
                 const core = c.cores[0];
-                const available = core.hosting === "cdn" || !!CORE_BASE;
+                const available = core.hosting === "cdn" || !!core.bundled || !!CORE_BASE;
                 return (
                   <tr key={c.id}>
                     <td className="px-4 py-3"><span className="me-2 inline-block h-2 w-2 rounded-full" style={{ background: c.accent }} />{c.name}</td>

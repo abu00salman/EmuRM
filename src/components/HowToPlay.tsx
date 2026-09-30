@@ -28,6 +28,8 @@ function Badge({ children }: { children: React.ReactNode }) {
   );
 }
 
+const CORE_BASE = process.env.NEXT_PUBLIC_CORE_BASE ?? "";
+
 export function HowToPlay({ open, onClose, onChooseDevice }: { open: boolean; onClose: () => void; onChooseDevice: () => void }) {
   const t = useT();
 
@@ -51,19 +53,26 @@ export function HowToPlay({ open, onClose, onChooseDevice }: { open: boolean; on
 
         <Step icon="🗂️" title={t("howToPlay.step4Title")} body={t("howToPlay.step4Body")}>
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {CONSOLES.map((c) => (
-              <div key={c.id} className="flex items-center gap-2 rounded-xl border border-line bg-black/20 p-2.5" style={{ ["--accent" as string]: c.accent }}>
-                <DeviceGlyph form={c.form} className="h-6 w-8 shrink-0 text-[color:var(--accent)]" strokeWidth={1.6} />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-semibold">{c.short}</p>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {Array.from(new Set([...c.extensions, "zip"])).map((ext) => (
-                      <Badge key={ext}>.{ext}</Badge>
-                    ))}
+            {CONSOLES.map((c) => {
+              const core = c.cores[0];
+              const needsCore = core.hosting === "self" && !core.bundled && !CORE_BASE;
+              return (
+                <div key={c.id} className="flex items-center gap-2 rounded-xl border border-line bg-black/20 p-2.5" style={{ ["--accent" as string]: c.accent }}>
+                  <DeviceGlyph form={c.form} className="h-6 w-8 shrink-0 text-[color:var(--accent)]" strokeWidth={1.6} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-semibold">
+                      {c.short}
+                      {needsCore && <span className="ms-1.5 font-normal text-amber-300/90">{t("howToPlay.needsSetup")}</span>}
+                    </p>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {Array.from(new Set([...c.extensions, "zip"])).map((ext) => (
+                        <Badge key={ext}>.{ext}</Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <p className="mt-3 text-xs text-faint">{t("howToPlay.zipNote")}</p>
         </Step>
