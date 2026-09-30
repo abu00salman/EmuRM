@@ -329,10 +329,13 @@ export function Player() {
         {/* Mounted for the whole session (not just while chrome is visible) — an active
             AirPlay cast must survive the chrome auto-hiding after a few seconds idle,
             which would otherwise unmount this and cut the mirroring off mid-game.
-            z-40, same as the always-reachable menu button below, so the auto-hiding
-            chrome's own z-30 overlay (painted after it in the DOM) can't steal its clicks. */}
+            Parked at the bottom-end corner, well clear of the crowded top chrome row
+            (menu/ff/save/load/camera/fullscreen buttons all fight for space there) and
+            of the top-start/top-end fps and fast-forward badges.
+            z-40, same as the always-reachable menu button, so the auto-hiding chrome's
+            own z-30 overlay (painted after it in the DOM) can't steal its clicks. */}
         {p.phase === "running" && (
-          <div className="absolute end-[max(0.75rem,var(--safe-r))] top-[max(0.75rem,var(--safe-t))] z-40">
+          <div className="absolute end-[max(0.75rem,var(--safe-r))] bottom-[max(0.75rem,var(--safe-b))] z-40">
             <AirPlayButton host={host} session={p.session} scaling={settings.airplayScaling} visible={!hideChrome && !menu} />
           </div>
         )}

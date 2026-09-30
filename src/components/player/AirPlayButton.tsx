@@ -103,6 +103,13 @@ export function AirPlayButton({
     const ctx = off.getContext("2d");
     if (!ctx) return;
 
+    // Draw the first frame synchronously — before capturing the stream — so the
+    // captured video track starts with real pixels instead of a blank canvas.
+    // Safari only seems to offer AirPlay video once the <video> element has actually
+    // decoded a frame with non-zero dimensions; calling the picker immediately after
+    // play() races ahead of that and silently falls back to audio-only, which is
+    // exactly the "works, but sound only" bug this fixes.
+    composeFrame(ctx, source, outW, outH, scaling);
     const loop = () => {
       composeFrame(ctx, source, outW, outH, scaling);
       raf.current = requestAnimationFrame(loop);
@@ -110,14 +117,38 @@ export function AirPlayButton({
     loop();
 
     const videoTrack = off.captureStream(30).getVideoTracks()[0];
+    if (videoTrack) videoTrack.contentHint = "motion";
     const audioTracks = session.current?.captureAudioStream?.()?.getAudioTracks() ?? [];
     const combined = new MediaStream(videoTrack ? [videoTrack, ...audioTracks] : audioTracks);
     stream.current = combined;
     v.srcObject = combined;
     v.muted = false;
+
+    let shown = false;
+    const showPicker = () => {
+      if (shown) return;
+      shown = true;
+      v.webkitShowPlaybackTargetPicker?.();
+    };
     v.play().catch(() => undefined);
     setActive(true);
-    v.webkitShowPlaybackTargetPicker?.();
+    if (v.readyState >= v.HAVE_CURRENT_DATA && v.videoWidth > 0) {
+      showPicker();
+    } else {
+      const onReady = () => {
+        if (v.videoWidth > 0) {
+          v.removeEventListener("loadeddata", onReady);
+          showPicker();
+        }
+      };
+      v.addEventListener("loadeddata", onReady);
+      // Belt-and-braces fallback in case the event never fires for some reason —
+      // still better than never showing the picker at all.
+      setTimeout(() => {
+        v.removeEventListener("loadeddata", onReady);
+        showPicker();
+      }, 800);
+    }
   }, [host, session, scaling]);
 
   return (

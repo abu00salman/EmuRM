@@ -11,7 +11,7 @@ const paths = {
   restart: "M4 12a8 8 0 108-8H8M8 1L4 4l4 3",
   close: "M6 6l12 12M18 6L6 18",
   stick: "M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8z",
-  airplay: "M3 4h18v12H3zM8 17l4 4 4-4",
+  airplay: "M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zM12 14l5 6H7z",
 } as const;
 
 export function Icon({ name, className = "h-5 w-5" }: { name: keyof typeof paths; className?: string }) {
