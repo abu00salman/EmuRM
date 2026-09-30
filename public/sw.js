@@ -1,6 +1,6 @@
 /* EmuRM service worker — offline shell + permanent cache for emulator cores.
  * ROMs and saves never pass through here: they live in IndexedDB. */
-const VERSION = "emurm-v4"; // bumped: manifest.webmanifest gained lang/dir
+const VERSION = "emurm-v5"; // bumped: cacheFirst() no longer touches the cache for ranged requests
 const SHELL = `${VERSION}-shell`;
 const STATIC = `${VERSION}-static`;
 const CORES = "emurm-cores-v1"; // survives app updates; cores are versioned by URL
@@ -33,6 +33,13 @@ const isCore = (url) =>
   (url.origin === self.location.origin && url.pathname.startsWith(at("cores/")));
 
 async function cacheFirst(req, cacheName) {
+  // Some core loaders (e.g. Emscripten's lazy-file XHR) issue ranged sub-requests
+  // ("Range: bytes=X-Y") against the same URL to pull a large file in chunks. The
+  // Cache API spec forbids storing a 206 response (cache.put() rejects it), so this
+  // was never actually corrupting anything — but every ranged request still paid for
+  // a doomed cache.put() attempt and left an unhandled promise rejection behind.
+  // Skip the cache entirely for these; they were never going to be cached anyway.
+  if (req.headers.has("range")) return fetch(req);
   const cache = await caches.open(cacheName);
   const hit = await cache.match(req);
   if (hit) return hit;
