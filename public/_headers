@@ -1,0 +1,12 @@
+# Some core loaders (Emscripten's lazy-file XHR path) probe Accept-Ranges and, if it
+# says "bytes", fetch large files in byte-range chunks instead of one plain GET.
+# Cloudflare's edge is documented to sometimes answer the *first* ranged request for
+# a not-yet-cached resource with the full file (200) instead of the requested slice
+# (206) — which this lazy-loader has no way to detect, so it treats those full-file
+# bytes as if they were just the small chunk it asked for, corrupting the core's
+# virtual filesystem reads with no visible error (the core still starts and runs;
+# it just reads garbage). Declaring no range support here (a valid HTTP value, not a
+# removal) makes Emscripten's own feature probe skip byte-range requests entirely for
+# these files and fall back to a single plain GET, which has no such failure mode.
+/cores/*
+  Accept-Ranges: none
