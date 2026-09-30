@@ -43,7 +43,7 @@ By default, cores load lazily from jsDelivr (`arianrhodsandlot/retroarch-emscrip
 NEXT_PUBLIC_CORE_BASE=/cores
 ```
 
-MSX (`bluemsx`) and Nintendo 64 (`mupen64plus_next`) are bundled under `public/cores/` and need no environment variable. MSX cartridge files (`.rom`, `.mx1`, `.mx2`) use bundled C-BIOS. Disk/tape games need user-provided system ROMs from Settings → System files; a `blueMSX.zip` containing `Machines/` and `Databases/` is also accepted. See `public/cores/README.md`.
+MSX (`bluemsx`), Nintendo 64 (`mupen64plus_next`) and Atari 2600 (`stella2014`) are bundled under `public/cores/` and need no environment variable. MSX cartridge files (`.rom`, `.mx1`, `.mx2`) use bundled C-BIOS. Disk/tape games need user-provided system ROMs from Settings → System files; a `blueMSX.zip` containing `Machines/` and `Databases/` is also accepted. See `public/cores/README.md`.
 
 3DO (`opera`) additionally needs a BIOS file (`panafz1.bin`) added in Settings → System files before it will boot any disc.
 
@@ -89,7 +89,7 @@ Honest limits: RetroArch's emscripten build renders with WebGL on the main threa
 
 | System | Core (default first) | Licence |
 |---|---|---|
-| Atari 2600 | Stella, Stella 2014 (low-end) | GPL-2.0 |
+| Atari 2600 | Stella 2014 (bundled under public/cores/) | GPL-2.0 |
 | MSX / Sakhr | blueMSX (bundled ASYNCIFY + C-BIOS) | GPL-2.0 / BSD-like C-BIOS |
 | NES / Famicom | FCEUmm, Nestopia UE | GPL-2.0 |
 | Master System | Genesis Plus GX, Gearsystem | GPX non-commercial / GPL-3.0 |

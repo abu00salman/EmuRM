@@ -15,7 +15,7 @@ export const CONSOLES: ConsoleDef[] = [
     id: "a2600", name: "Atari 2600", short: "2600", aliases: ["Atari VCS", "أتاري"],
     maker: "Atari", year: 1977, family: "atari", form: "home",
     accent: "#D97B3C", photo: "a2600.jpg", extensions: ["a26", "bin"],
-    cores: [CORES.stella, CORES.stella2014], aspect: 4 / 3,
+    cores: [CORES.stella2014, CORES.stella], aspect: 4 / 3,
     // Real hardware has exactly one joystick button ("FIRE") — a single glyph reads
     // clearly at the face-button's size, where the full word would be cramped.
     faceButtons: [{ pad: "a", label: "●" }], shoulderButtons: [], hasSelect: true, bios: [], status: "ready",

@@ -26,6 +26,10 @@ export const CORES = {
   },
   gearboy: { id: "gearboy", engine: "libretro", license: "GPL-3.0", upstream: "https://github.com/drhelius/Gearboy", hosting: "cdn", notes: "Alternate Game Boy / Color core" },
   opera: { id: "opera", engine: "libretro", license: "See upstream licence (research use; confirm terms before commercial use)", upstream: "https://github.com/libretro/opera-libretro", hosting: "cdn", notes: "3DO — BIOS required" },
-  stella: { id: "stella", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/stella-emu/stella", hosting: "cdn", notes: "Full-accuracy Atari 2600 core" },
-  stella2014: { id: "stella2014", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/stella2014-libretro", hosting: "cdn", notes: "Lighter Atari 2600 core; faster on low-end phones" },
+  stella: { id: "stella", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/stella-emu/stella", hosting: "self", notes: "No public web build — compile with Emscripten, or use stella2014" },
+  stella2014: {
+    id: "stella2014", engine: "libretro", license: "GPL-2.0",
+    upstream: "https://github.com/libretro/stella2014-libretro", hosting: "self", bundled: true,
+    notes: "Bundled under public/cores/, from the BinBashBanana/webretro project (MIT) — the default jsDelivr CDN has no Atari 2600 build of either core",
+  },
 } as const satisfies Record<string, CoreDef>;

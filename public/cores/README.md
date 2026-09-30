@@ -12,6 +12,17 @@ repo — no env var needed, it's always used. Built by the
 `src/lib/consoles/cores.ts` marks a core as one of these — see `libretro-engine.ts`,
 which points bundled cores at this folder regardless of `NEXT_PUBLIC_CORE_BASE`.
 
+## Atari 2600 (bundled)
+
+`stella2014_libretro.{js,wasm}` ships in this folder — no env var needed. The default
+jsDelivr CDN (`arianrhodsandlot/retroarch-emscripten-build`) has no Atari 2600 build of
+either `stella` or `stella2014`; confirmed 404 on both directly. Built by the same
+[BinBashBanana/webretro](https://github.com/BinBashBanana/webretro) project (MIT) used
+for the N64 core, from [libretro/stella2014-libretro](https://github.com/libretro/stella2014-libretro)
+(GPL-2.0); redistributed unmodified. `stella2014` is now the first (default) core in
+`registry.ts` for `a2600` — it was previously listed second behind `stella`, which has
+no public web build anywhere and is kept registered only for documentation/licensing.
+
 ## MSX / Sakhr (bundled)
 
 `bluemsx_libretro.{js,wasm}` is built from blueMSX and RetroArch with Emscripten

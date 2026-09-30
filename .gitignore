@@ -15,5 +15,7 @@ public/cores/*
 !public/cores/RETROARCH-LICENSE.txt
 !public/cores/C-BIOS-LICENSE.txt
 !public/cores/bluemsx-build.json
+!public/cores/stella2014_libretro.js
+!public/cores/stella2014_libretro.wasm
 AGENTS.md
 CLAUDE.md
