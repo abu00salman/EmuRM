@@ -109,6 +109,7 @@ function BiosRow({ c }: { c: ConsoleDef }) {
           }}
         />
       </div>
+      {c.id === "msx" && <p className="mt-3 text-xs leading-relaxed text-muted">{t("settings.msxHint")}</p>}
       <ul className="mt-3 flex flex-col gap-1.5 text-sm">
         {c.bios.map((b) => {
           const rec = names.get(b.fileName.toLowerCase());
