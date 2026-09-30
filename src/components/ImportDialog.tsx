@@ -68,6 +68,11 @@ function DeviceTab() {
   const close = useUI((s) => s.closeImport);
   const { busy, fromFiles } = useImport();
   const t = useT();
+  // Scoped to the console's own extensions when opened from its page — the OS file
+  // picker then only shows compatible files. Native `accept` is advisory (drag-and-drop
+  // still lands in the same handler either way), so this only ever helps, never blocks.
+  const target = consoleId ? getConsole(consoleId) : undefined;
+  const accept = target ? Array.from(new Set([...target.extensions, "zip"])).map((e) => `.${e}`).join(",") : ACCEPT;
 
   const handle = async (files: File[]) => {
     const r = await fromFiles(files, consoleId);
@@ -103,7 +108,7 @@ function DeviceTab() {
         ref={input}
         type="file"
         multiple
-        accept={ACCEPT}
+        accept={accept}
         className="sr-only"
         onChange={(e) => {
           void handle(Array.from(e.target.files ?? []));

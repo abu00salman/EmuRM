@@ -5,6 +5,7 @@ import type { ConsoleId } from "@/lib/consoles/types";
 import type { ParsedRom } from "@/workers/rom.protocol";
 import { makeThumbnail, parseFiles } from "./worker-client";
 import { fetchBoxArt } from "./boxart";
+import { getT } from "@/lib/i18n";
 
 export interface ImportOptions {
   /** Called when the bytes fit more than one system (e.g. a bare .bin). */
@@ -72,6 +73,14 @@ async function importBuffers(payload: { name: string; buffer: ArrayBuffer }[], o
     const existing = await db().games.get(rom.id);
     if (existing) {
       result.existing.push(existing);
+      continue;
+    }
+
+    // A console page's "Import game" pins forceConsole to that system. If the file's own
+    // detected candidates definitively exclude it (e.g. a .gba dropped on the NES page),
+    // don't silently hand it to the wrong core — reject with a clear reason instead.
+    if (opts.forceConsole && rom.candidates.length > 0 && !rom.candidates.includes(opts.forceConsole)) {
+      result.skipped.push({ name: rom.fileName, reason: getT()("import.formatMismatchReason") });
       continue;
     }
 

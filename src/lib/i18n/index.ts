@@ -73,6 +73,12 @@ export function useT(): TFn {
   return (key, vars) => interpolate(DICTS[locale][key] ?? DICTS.en[key], vars);
 }
 
+/** Same lookup as useT(), for plain modules (e.g. the importer) that aren't components. */
+export function getT(): TFn {
+  const locale = useLocaleStore.getState().locale;
+  return (key, vars) => interpolate(DICTS[locale][key] ?? DICTS.en[key], vars);
+}
+
 /** Plural-ish helper for the two English/Arabic forms this app needs ("game"/"games"). */
 export function usePlural() {
   const t = useT();

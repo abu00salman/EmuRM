@@ -7,6 +7,7 @@ import { CONSOLES } from "@/lib/consoles/registry";
 import { useUI } from "@/stores/ui";
 import { useT, useLocale } from "@/lib/i18n";
 import { ConsoleHall } from "./ConsoleHall";
+import { HowToPlay } from "./HowToPlay";
 import { QuickResume } from "./QuickResume";
 
 const INTRO_KEY = "rv:intro-seen";
@@ -17,6 +18,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export function Home() {
   const [accent, setAccent] = useState<string | null>(null);
   const [cinematic, setCinematic] = useState<boolean | null>(null);
+  const [howToPlay, setHowToPlay] = useState(false);
   const reduce = useReducedMotion();
   const openImport = useUI((s) => s.openImport);
   const total = useLiveQuery(() => db().games.count());
@@ -100,11 +102,22 @@ export function Home() {
               {t("home.tryHomebrew")}
             </button>
           )}
+          <button data-nav onClick={() => setHowToPlay(true)} className="rounded-full border border-white/20 px-4 py-2 text-sm transition-colors hover:bg-white hover:text-black">
+            🎮 {t("howToPlay.button")}
+          </button>
         </motion.div>
 
-        <ConsoleHall cinematic={cinematic} onAccent={setAccent} />
+        <div id="console-hall">
+          <ConsoleHall cinematic={cinematic} onAccent={setAccent} />
+        </div>
         <QuickResume />
       </div>
+
+      <HowToPlay
+        open={howToPlay}
+        onClose={() => setHowToPlay(false)}
+        onChooseDevice={() => document.getElementById("console-hall")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+      />
     </div>
   );
 }
