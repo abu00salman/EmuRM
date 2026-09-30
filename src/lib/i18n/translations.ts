@@ -333,6 +333,14 @@ export const en = {
   "meta.playing": "Playing",
   "meta.consoleLibrary": "{system} library",
   "meta.console": "Console",
+
+  "pwa.install": "Install EmuRM",
+  "pwa.iosStep1": "Add EmuRM to your Home Screen for the full app experience:",
+  "pwa.iosStep2": "Tap Share in Safari's toolbar",
+  "pwa.iosStep3": "Tap Add to Home Screen",
+  "pwa.gotIt": "Got it",
+  "pwa.updateReady": "A new version of EmuRM is ready.",
+  "pwa.reload": "Reload",
 } as const;
 
 export type TranslationKey = keyof typeof en;
@@ -668,4 +676,12 @@ export const ar: Record<TranslationKey, string> = {
   "meta.playing": "قيد اللعب",
   "meta.consoleLibrary": "مكتبة {system}",
   "meta.console": "جهاز",
+
+  "pwa.install": "تثبيت EmuRM",
+  "pwa.iosStep1": "أضف EmuRM إلى شاشتك الرئيسية لتجربة تطبيق كاملة:",
+  "pwa.iosStep2": "اضغط على مشاركة في شريط أدوات Safari",
+  "pwa.iosStep3": "اضغط على إضافة إلى الشاشة الرئيسية",
+  "pwa.gotIt": "حسنًا",
+  "pwa.updateReady": "يتوفر إصدار جديد من EmuRM.",
+  "pwa.reload": "تحديث",
 };

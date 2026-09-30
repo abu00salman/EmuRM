@@ -4,11 +4,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { registerServiceWorker } from "@/lib/pwa/register";
+import { initPwaInstall } from "@/lib/pwa/install";
 import { arrowKeyNav, startGamepadNav } from "@/lib/input/gamepad-nav";
 import { useUI } from "@/stores/ui";
 import { useLocaleStore, useT } from "@/lib/i18n";
 import { ImportDialog } from "./ImportDialog";
 import { ConsolePicker } from "./ConsolePicker";
+import { InstallButton } from "./InstallButton";
 import { useImport } from "./useImport";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -29,6 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     useLocaleStore.getState().hydrateFromStorage();
     registerServiceWorker();
+    initPwaInstall();
     const onKey = (e: KeyboardEvent) => arrowKeyNav(e);
     window.addEventListener("keydown", onKey);
     const stop = startGamepadNav(() => {
@@ -132,6 +135,7 @@ function TopBar() {
         >
           {locale === "en" ? "AR" : "EN"}
         </button>
+        <InstallButton />
         <button
           data-nav
           onClick={() => openImport("device")}
