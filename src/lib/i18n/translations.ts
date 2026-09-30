@@ -222,6 +222,8 @@ export const en = {
   "player.exitFullscreen": "Exit full screen",
   "player.enterFullscreen": "Full screen (F11)",
   "player.menuKey": "Menu (Esc)",
+  "player.airplay": "AirPlay",
+  "player.airplayActive": "AirPlay: on",
   "player.menuButton": "Menu",
   "player.savedGeneric": "Saved",
   "player.savedSlot": "Saved to slot {slot}",
@@ -286,6 +288,8 @@ export const en = {
   "display.touchStyle": "Touch control style",
   "display.touchStyleFixed": "Fixed pad",
   "display.touchStyleFloating": "Floating stick",
+  "display.airplayScaling": "AirPlay scaling",
+  "display.airplayScalingHint": "How the mirrored picture fits your TV — separate from this screen's own shape.",
 
   "touch.dpadAria": "Directional pad",
 
@@ -565,6 +569,8 @@ export const ar: Record<TranslationKey, string> = {
   "player.exitFullscreen": "الخروج من ملء الشاشة",
   "player.enterFullscreen": "ملء الشاشة (F11)",
   "player.menuKey": "القائمة (Esc)",
+  "player.airplay": "AirPlay",
+  "player.airplayActive": "AirPlay مفعّل",
   "player.menuButton": "القائمة",
   "player.savedGeneric": "تم الحفظ",
   "player.savedSlot": "تم الحفظ في الخانة {slot}",
@@ -629,6 +635,8 @@ export const ar: Record<TranslationKey, string> = {
   "display.touchStyle": "طريقة أزرار اللمس",
   "display.touchStyleFixed": "لوحة ثابتة",
   "display.touchStyleFloating": "عصا عائمة",
+  "display.airplayScaling": "مقياس عرض AirPlay",
+  "display.airplayScalingHint": "طريقة ملاءمة الصورة المُعادة بثّها لشاشة التلفاز — منفصلة عن شكل شاشة هذا الجهاز.",
 
   "touch.dpadAria": "عصا الاتجاهات",
 

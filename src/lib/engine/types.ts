@@ -42,6 +42,8 @@ export interface EngineCapabilities {
   runtimeVolume: boolean;
   screenshot: boolean;
   sram: boolean;
+  /** Can hand out a live MediaStream of its audio output (for AirPlay, recording, etc.) */
+  audioStream: boolean;
 }
 
 export interface EmulatorSession {
@@ -62,6 +64,10 @@ export interface EmulatorSession {
   resize(width: number, height: number): void;
   /** Emulated frames since boot, or null if the engine can't report it */
   frameCount(): number | null;
+  /** A live MediaStream of the engine's own audio output, for piping alongside a
+   *  captured video track (AirPlay mirroring, recording…) without touching the
+   *  normal speaker output. Null if the engine has no audio graph to tap right now. */
+  captureAudioStream?(): MediaStream | null;
   destroy(): Promise<void>;
 }
 

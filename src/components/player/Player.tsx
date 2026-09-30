@@ -18,6 +18,7 @@ import { TouchPad } from "../TouchPad";
 import { usePlayerSession } from "./usePlayerSession";
 import { PauseMenu, type Panel } from "./PauseMenu";
 import { Icon } from "./Icon";
+import { AirPlayButton } from "./AirPlayButton";
 
 function useMedia(q: string) {
   const [m, setM] = useState(false);
@@ -325,6 +326,17 @@ export function Player() {
           </div>
         )}
 
+        {/* Mounted for the whole session (not just while chrome is visible) — an active
+            AirPlay cast must survive the chrome auto-hiding after a few seconds idle,
+            which would otherwise unmount this and cut the mirroring off mid-game.
+            z-40, same as the always-reachable menu button below, so the auto-hiding
+            chrome's own z-30 overlay (painted after it in the DOM) can't steal its clicks. */}
+        {p.phase === "running" && (
+          <div className="absolute end-[max(0.75rem,var(--safe-r))] top-[max(0.75rem,var(--safe-t))] z-40">
+            <AirPlayButton host={host} session={p.session} scaling={settings.airplayScaling} visible={!hideChrome && !menu} />
+          </div>
+        )}
+
         {/* Top chrome */}
         <AnimatePresence>
           {!hideChrome && p.phase === "running" && (
@@ -423,7 +435,7 @@ export function Player() {
   );
 }
 
-function ChromeButton({ label, icon, onClick, active, className = "" }: { label: string; icon: Parameters<typeof Icon>[0]["name"]; onClick: () => void; active?: boolean; className?: string }) {
+export function ChromeButton({ label, icon, onClick, active, className = "" }: { label: string; icon: Parameters<typeof Icon>[0]["name"]; onClick: () => void; active?: boolean; className?: string }) {
   return (
     <button
       onClick={onClick}

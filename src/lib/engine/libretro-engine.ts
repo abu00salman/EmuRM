@@ -63,9 +63,10 @@ function audioContexts(n: Nostalgist): ALContext[] {
 }
 
 class LibretroSession implements EmulatorSession {
-  readonly capabilities = { saveStates: true, fastForward: true, runtimeVolume: true, screenshot: true, sram: true };
+  readonly capabilities = { saveStates: true, fastForward: true, runtimeVolume: true, screenshot: true, sram: true, audioStream: true };
   private paused = false;
   private ff = false;
+  private audioDest: MediaStreamAudioDestinationNode | null = null;
 
   constructor(private readonly n: Nostalgist) {}
 
@@ -136,7 +137,28 @@ class LibretroSession implements EmulatorSession {
       return null;
     }
   }
+  captureAudioStream() {
+    try {
+      if (this.audioDest) return this.audioDest.stream;
+      // Fan the existing gain node out to a second destination alongside the normal
+      // speaker output — Web Audio nodes support multiple simultaneous connections,
+      // so this doesn't touch what the player actually hears.
+      const ctx = audioContexts(this.n).find((c) => c.gain && c.audioCtx);
+      if (!ctx?.gain || !ctx.audioCtx) return null;
+      this.audioDest = ctx.audioCtx.createMediaStreamDestination();
+      ctx.gain.connect(this.audioDest);
+      return this.audioDest.stream;
+    } catch {
+      return null;
+    }
+  }
   async destroy() {
+    try {
+      this.audioDest?.disconnect();
+    } catch {
+      /* already gone */
+    }
+    this.audioDest = null;
     try {
       this.n.exit({ removeCanvas: false });
     } catch {

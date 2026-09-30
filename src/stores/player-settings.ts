@@ -16,6 +16,9 @@ export interface PlayerSettings {
   autosaveEvery: number;
   touchControls: "auto" | "always" | "never";
   touchStyle: TouchStyle;
+  /** How the mirrored picture is composed for AirPlay — independent of the on-device `aspect`,
+   *  since the receiving TV's screen shape has nothing to do with this device's own stage. */
+  airplayScaling: AspectMode;
 }
 
 export const DEFAULT_PLAYER: PlayerSettings = {
@@ -28,4 +31,5 @@ export const DEFAULT_PLAYER: PlayerSettings = {
   autosaveEvery: 60,
   touchControls: "auto",
   touchStyle: "floating",
+  airplayScaling: "native",
 };

@@ -261,6 +261,11 @@ function Display({ settings: s, onSettings }: Props) {
           />
         </section>
       )}
+      <section>
+        <h3 className="mb-2 text-sm text-muted">{t("display.airplayScaling")}</h3>
+        <Segmented label={t("display.airplayScaling")} value={s.airplayScaling} options={aspects} onChange={(v) => void onSettings({ airplayScaling: v })} />
+        <p className="mt-2 text-xs text-faint">{t("display.airplayScalingHint")}</p>
+      </section>
     </div>
   );
 }
