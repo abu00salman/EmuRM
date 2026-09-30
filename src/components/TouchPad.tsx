@@ -1,10 +1,20 @@
 "use client";
 import { useRef, useState } from "react";
 import type { ConsoleDef, PadButton } from "@/lib/consoles/types";
-import type { TouchStyle } from "@/stores/player-settings";
+import type { TouchStyle, TouchTheme } from "@/stores/player-settings";
 import { useT } from "@/lib/i18n";
 
 type Press = (b: PadButton, down: boolean) => void;
+
+/** Visual skins for the on-screen buttons. Each overrides the resting bg/border/text of
+ *  every button and, optionally, the pressed-state accent color — the console's own
+ *  accent (c.accent) stays the default so the pad still matches its game's branding. */
+export const TOUCH_THEMES: Record<TouchTheme, { bg: string; border: string; text: string; accent?: string }> = {
+  default: { bg: "rgba(255,255,255,0.08)", border: "rgba(255,255,255,0.15)", text: "rgba(255,255,255,0.9)" },
+  neon: { bg: "rgba(12,10,24,0.55)", border: "color-mix(in oklab, var(--accent) 55%, transparent)", text: "#ffffff" },
+  mono: { bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.24)", text: "rgba(255,255,255,0.82)", accent: "#e6e6e6" },
+  retro: { bg: "rgba(46,26,10,0.6)", border: "rgba(255,183,77,0.4)", text: "#ffd699", accent: "#ff8a3d" },
+};
 
 const buzz = () => {
   try {
@@ -26,10 +36,11 @@ function sectorButtons(dx: number, dy: number): PadButton[] {
 }
 
 /** A multi-touch pad: slide across the D-pad for diagonals, face buttons press on contact. */
-export function TouchPad({ console: c, onPress, mode, style = "fixed" }: { console: ConsoleDef; onPress: Press; mode: "below" | "overlay"; style?: TouchStyle }) {
+export function TouchPad({ console: c, onPress, mode, style = "fixed", theme = "default" }: { console: ConsoleDef; onPress: Press; mode: "below" | "overlay"; style?: TouchStyle; theme?: TouchTheme }) {
   const shoulders = c.shoulderButtons;
   const overlay = mode === "overlay";
   const floating = style === "floating";
+  const skin = TOUCH_THEMES[theme];
   const t = useT();
   const startLabel = t(c.id === "pce" ? "pad.run" : "pad.start");
   return (
@@ -41,7 +52,10 @@ export function TouchPad({ console: c, onPress, mode, style = "fixed" }: { conso
       }
       dir="ltr"
       style={{
-        ["--accent" as string]: c.accent,
+        ["--accent" as string]: skin.accent ?? c.accent,
+        ["--pad-bg" as string]: skin.bg,
+        ["--pad-border" as string]: skin.border,
+        ["--pad-text" as string]: skin.text,
         touchAction: "none",
         WebkitUserSelect: "none",
         userSelect: "none",
@@ -223,7 +237,7 @@ function FaceButton({ label, pressed, refCb, className = "" }: { label: string; 
       className={`grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border font-display text-xl font-bold backdrop-blur transition-[transform,background-color,color,box-shadow,border-color] duration-100 ease-out ${
         pressed
           ? "scale-[0.86] border-transparent bg-[color:var(--accent)] text-black shadow-[0_0_0_7px_color-mix(in_oklab,var(--accent)_35%,transparent)]"
-          : "scale-100 border-white/15 bg-white/[0.08] text-white/90"
+          : "scale-100 border-[color:var(--pad-border)] bg-[color:var(--pad-bg)] text-[color:var(--pad-text)]"
       } ${className}`}
     >
       {label}
@@ -237,7 +251,7 @@ function Pill({ label, pad, onPress }: { label: string; pad: PadButton; onPress:
     <button
       {...hold}
       className={`rounded-full border px-4 py-1.5 text-xs transition-[transform,background-color,color] duration-100 ease-out ${
-        pressed ? "scale-[0.92] border-transparent bg-white text-black" : "scale-100 border-white/15 bg-white/[0.06] text-white/80"
+        pressed ? "scale-[0.92] border-transparent bg-white text-black" : "scale-100 border-[color:var(--pad-border)] bg-[color:var(--pad-bg)] text-[color:var(--pad-text)]"
       }`}
     >
       {label}
@@ -251,7 +265,7 @@ function Shoulder({ b, onPress }: { b: { pad: PadButton; label: string }; onPres
     <button
       {...hold}
       className={`min-w-16 rounded-xl border px-4 py-2 text-sm font-semibold transition-[transform,background-color,color] duration-100 ease-out ${
-        pressed ? "scale-[0.94] border-transparent bg-white text-black" : "scale-100 border-white/15 bg-white/[0.06] text-white/85"
+        pressed ? "scale-[0.94] border-transparent bg-white text-black" : "scale-100 border-[color:var(--pad-border)] bg-[color:var(--pad-bg)] text-[color:var(--pad-text)]"
       }`}
     >
       {b.label}
@@ -299,8 +313,8 @@ function DPad({ onPress, translucent }: { onPress: Press; translucent: boolean }
       onContextMenu={(e) => e.preventDefault()}
       className={`relative h-40 w-40 rounded-full ${translucent ? "bg-white/[0.04]" : ""}`}
     >
-      <div className="absolute left-1/2 top-1/2 h-[3.4rem] w-[9.4rem] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-white/12 bg-white/[0.08] backdrop-blur" />
-      <div className="absolute left-1/2 top-1/2 h-[9.4rem] w-[3.4rem] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-white/12 bg-white/[0.08] backdrop-blur" />
+      <div className="absolute left-1/2 top-1/2 h-[3.4rem] w-[9.4rem] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[color:var(--pad-border)] bg-[color:var(--pad-bg)] backdrop-blur" />
+      <div className="absolute left-1/2 top-1/2 h-[9.4rem] w-[3.4rem] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[color:var(--pad-border)] bg-[color:var(--pad-bg)] backdrop-blur" />
       <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/40" />
     </div>
   );
@@ -371,11 +385,11 @@ function FloatingDPad({ onPress, zoneClassName }: { onPress: Press; zoneClassNam
       {origin && (
         <div
           aria-hidden
-          className="pointer-events-none absolute h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-white/[0.06] backdrop-blur"
+          className="pointer-events-none absolute h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[color:var(--pad-border)] bg-[color:var(--pad-bg)] backdrop-blur"
           style={{ left: origin.x, top: origin.y }}
         >
           <div
-            className="absolute left-1/2 top-1/2 h-11 w-11 rounded-full border border-white/25 bg-white/25"
+            className="absolute left-1/2 top-1/2 h-11 w-11 rounded-full border border-[color:var(--accent)] bg-[color:var(--accent)]/40"
             style={{ transform: `translate(calc(-50% + ${knob.x}px), calc(-50% + ${knob.y}px))` }}
           />
         </div>

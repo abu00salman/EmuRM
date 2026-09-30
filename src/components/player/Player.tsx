@@ -295,7 +295,7 @@ export function Player() {
       <div className="relative min-h-0 flex-1 pt-[var(--safe-t)]">
         <div ref={host} className={`absolute inset-0 filter-${settings.filter}`} onDoubleClick={() => void toggleFullscreen()} />
 
-        {showTouch && c && !portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" style={settings.touchStyle} />}
+        {showTouch && c && !portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" style={settings.touchStyle} theme={settings.touchTheme} />}
 
         {/* Always-reachable menu button: unlike the top chrome, this never auto-hides —
             not even in "immersive" mode (the iPhone Safari fallback for real fullscreen),
@@ -433,7 +433,7 @@ export function Player() {
         />
       </div>
 
-      {showTouch && c && portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="below" style={settings.touchStyle} />}
+      {showTouch && c && portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="below" style={settings.touchStyle} theme={settings.touchTheme} />}
     </div>
   );
 }

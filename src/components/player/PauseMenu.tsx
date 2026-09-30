@@ -5,10 +5,11 @@ import type { GameRecord, SlotId, StateRecord } from "@/lib/db/schema";
 import type { AspectMode } from "@/lib/engine/types";
 import { formatRelative } from "@/lib/format";
 import { useObjectUrl } from "@/lib/object-url";
-import type { PlayerSettings, ScreenFilter } from "@/stores/player-settings";
+import type { PlayerSettings, ScreenFilter, TouchTheme } from "@/stores/player-settings";
 import { useT, useLocale } from "@/lib/i18n";
 import { RemapEditor } from "../RemapEditor";
 import { Icon } from "./Icon";
+import { TOUCH_THEMES } from "../TouchPad";
 
 export type Panel = "main" | "states" | "display" | "controls";
 
@@ -182,6 +183,38 @@ function Segmented<T extends string>({ value, options, onChange, label }: { valu
   );
 }
 
+/** Visual skin picker: a swatch preview of each theme's own colors (not just a text
+ *  label), like the skin-picker grids in third-party emulator apps — pick with your
+ *  eyes, not a settings label. */
+function ThemeSwatches({ value, options, onChange, label }: { value: TouchTheme; options: { v: TouchTheme; label: string }[]; onChange: (v: TouchTheme) => void; label: string }) {
+  return (
+    <div role="radiogroup" aria-label={label} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {options.map((o) => {
+        const skin = TOUCH_THEMES[o.v];
+        const accent = skin.accent ?? "var(--accent)";
+        return (
+          <button
+            key={o.v}
+            data-nav
+            role="radio"
+            aria-checked={value === o.v}
+            onClick={() => onChange(o.v)}
+            className={`flex flex-col items-center gap-2 rounded-2xl border p-3 transition-colors ${value === o.v ? "border-white bg-white/10" : "border-line hover:border-white/30"}`}
+          >
+            <span
+              className="grid h-12 w-12 place-items-center rounded-full border-2"
+              style={{ background: skin.bg, borderColor: skin.border, boxShadow: `0 0 0 3px color-mix(in oklab, ${accent} 35%, transparent)` }}
+            >
+              <span className="h-5 w-5 rounded-full" style={{ background: accent }} />
+            </span>
+            <span className="text-xs text-muted">{o.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function Toggle({ label, checked, onChange, hint }: { label: string; checked: boolean; onChange: (v: boolean) => void; hint?: string }) {
   return (
     <label className="flex cursor-pointer items-center justify-between gap-4 py-2">
@@ -258,6 +291,22 @@ function Display({ settings: s, onSettings }: Props) {
             value={s.touchStyle}
             options={[{ v: "floating", label: t("display.touchStyleFloating") }, { v: "fixed", label: t("display.touchStyleFixed") }]}
             onChange={(v) => void onSettings({ touchStyle: v })}
+          />
+        </section>
+      )}
+      {s.touchControls !== "never" && (
+        <section>
+          <h3 className="mb-2 text-sm text-muted">{t("display.touchTheme")}</h3>
+          <ThemeSwatches
+            label={t("display.touchTheme")}
+            value={s.touchTheme}
+            options={[
+              { v: "default", label: t("display.themeDefault") },
+              { v: "neon", label: t("display.themeNeon") },
+              { v: "mono", label: t("display.themeMono") },
+              { v: "retro", label: t("display.themeRetro") },
+            ]}
+            onChange={(v) => void onSettings({ touchTheme: v })}
           />
         </section>
       )}

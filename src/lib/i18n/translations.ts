@@ -288,6 +288,11 @@ export const en = {
   "display.touchStyle": "Touch control style",
   "display.touchStyleFixed": "Fixed pad",
   "display.touchStyleFloating": "Floating stick",
+  "display.touchTheme": "Skin",
+  "display.themeDefault": "Default",
+  "display.themeNeon": "Neon",
+  "display.themeMono": "Mono",
+  "display.themeRetro": "Retro",
   "display.airplayScaling": "AirPlay scaling",
   "display.airplayScalingHint": "How the mirrored picture fits your TV — separate from this screen's own shape.",
 
@@ -635,6 +640,11 @@ export const ar: Record<TranslationKey, string> = {
   "display.touchStyle": "طريقة أزرار اللمس",
   "display.touchStyleFixed": "لوحة ثابتة",
   "display.touchStyleFloating": "عصا عائمة",
+  "display.touchTheme": "السكن",
+  "display.themeDefault": "افتراضي",
+  "display.themeNeon": "نيون",
+  "display.themeMono": "أحادي",
+  "display.themeRetro": "كلاسيكي",
   "display.airplayScaling": "مقياس عرض AirPlay",
   "display.airplayScalingHint": "طريقة ملاءمة الصورة المُعادة بثّها لشاشة التلفاز — منفصلة عن شكل شاشة هذا الجهاز.",
 
