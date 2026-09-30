@@ -58,7 +58,7 @@ async function parse(files: { name: string; buffer: ArrayBuffer }[]): Promise<Pa
   for (const cue of expanded.filter((e) => /\.(cue|m3u)$/i.test(e.name))) {
     const text = new TextDecoder().decode(cue.bytes);
     const refs = Array.from(text.matchAll(/FILE\s+"([^"]+)"/gi), (m) => m[1] ?? "")
-      .concat(cue.name.toLowerCase().endsWith(".m3u") ? text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean) : []);
+      .concat(cue.name.toLowerCase().endsWith(".m3u") ? text.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#")) : []);
     const parts = refs.map((r) => byName.get(r.toLowerCase())).filter((x): x is { name: string; bytes: Uint8Array } => !!x);
     const missing = refs.filter((r) => !byName.has(r.toLowerCase()));
     [cue, ...parts].forEach((p) => consumed.add(p.name.toLowerCase()));
@@ -68,7 +68,7 @@ async function parse(files: { name: string; buffer: ArrayBuffer }[]): Promise<Pa
       title: cleanTitle(cue.name),
       fileName: cue.name,
       size: [cue, ...parts].reduce((n, p) => n + p.bytes.length, 0),
-      candidates: detectConsole(cue.name, first.bytes),
+      candidates: detectConsole(/\.m3u$/i.test(cue.name) ? first.name : cue.name, first.bytes),
       files: [cue, ...parts].map((p) => ({ name: p.name, bytes: p.bytes })),
       missing,
     });

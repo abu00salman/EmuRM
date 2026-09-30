@@ -12,21 +12,52 @@ repo — no env var needed, it's always used. Built by the
 `src/lib/consoles/cores.ts` marks a core as one of these — see `libretro-engine.ts`,
 which points bundled cores at this folder regardless of `NEXT_PUBLIC_CORE_BASE`.
 
-## Still genuinely unavailable
+## MSX / Sakhr (bundled)
 
-| System | Core | Why |
-|---|---|---|
-| MSX / Sakhr | `fmsx` (or `bluemsx`) | No working public web build anywhere. Re-checked jsDelivr's retroarch-emscripten-build, webretro, and [EmulatorJS](https://emulatorjs.org)'s own published core set (`@emulatorjs/cores` on npm) — none ship it. EmulatorJS's own tracker ([issue #1048](https://github.com/EmulatorJS/EmulatorJS/issues/1048)) reports that even a manually-built blueMSX core deadlocks in the browser: it reads machine-config XML synchronously while loading a game, which blocks Emscripten's event loop unless the core is built with JSPI (modern browsers) or an ASYNCIFY fallback — a fix EmulatorJS itself is still landing ([PR #46](https://github.com/EmulatorJS/RetroArch/pull/46)). So this isn't a missing-binary gap we can just bundle around; a build made without those flags would ship broken. |
+`bluemsx_libretro.{js,wasm}` is built from blueMSX and RetroArch with Emscripten
+4.0.15, full ASYNCIFY, single-threaded WebGL and OpenAL. No JSPI, browser feature
+flag or cross-origin isolation header is required. `bluemsx-system.zip` contains
+Databases, machine configs and only C-BIOS ROM binaries. It is installed into
+`/home/web_user/retroarch/userdata/system` before RetroArch starts.
 
-To add one yourself:
-1. Build RetroArch for Emscripten with the core statically linked
-   (see libretro's `Makefile.emscripten` and `dist-scripts/dist-cores.sh emscripten`).
-   For MSX specifically, compile with JSPI (or ASYNCIFY as a fallback) so the
-   synchronous BIOS-config read doesn't deadlock the browser — see the EmulatorJS
-   issue/PR linked above for the exact flags they're using.
-2. Copy the output here as `<core>_libretro.js` and `<core>_libretro.wasm`.
-3. Either mark it `bundled: true` in `cores.ts` (ships with every deployment, like N64
-   above), or set `NEXT_PUBLIC_CORE_BASE=/cores` and rebuild (applies to every *non*-bundled
-   "self"-hosted core at once, so every such core you want served locally must be present).
+Cartridges need no uploaded BIOS. Disk images and tapes require a suitable real
+system BIOS: add `MSX.ROM` (or `MSX2.ROM` + `MSX2EXT.ROM`) in Settings → System files;
+disks additionally require `DISK.ROM`. A full user-provided `blueMSX.zip` with
+Machines/ and Databases/ is accepted, including wrapped system-directory archives.
+C-BIOS does not implement BASIC or disk boot. Some cartridge games also need a real
+BIOS for compatibility. Save states are specific to the selected core and machine.
 
-Serve `.wasm` with `Content-Type: application/wasm` and long-lived caching.
+MSX is the default bundled blueMSX core. Earlier saved fMSX core preferences fall
+back to it. ROM and BIOS inputs use explicit `fileName`/`fileContent` objects:
+Nostalgist 0.22 treats a bare File as Blob and otherwise generates a `.bin` name,
+which prevents blueMSX from recognizing the media type.
+
+### Sources, licences and rebuilding
+
+- blueMSX: https://github.com/libretro/blueMSX-libretro/tree/e3086eb5d36d77fa11704cf53dc176686e70127d
+- RetroArch: https://github.com/libretro/RetroArch/tree/2790aa0cce9308695c0f612cc56a803e978beb08
+- C-BIOS source: https://sourceforge.net/projects/cbios/files/cbios/0.23/
+- Licence notices: `BLUEMSX-LICENSE.txt`, `RETROARCH-LICENSE.txt`, `C-BIOS-LICENSE.txt`.
+
+Activate Emscripten 4.0.15, then run `bash scripts/build-bluemsx.sh`. The script pins
+both source commits, packages system files reproducibly, and records these patches:
+
+1. Define missing OpenAL calling-convention macros for Emscripten's headers.
+2. Call the no-argument board saveState callback without an extra argument. Native
+   C tolerates the old call, but WebAssembly traps on the indirect-call signature.
+3. Expose the runtime helpers and canvas sizing expected by Nostalgist 0.22.
+
+Other self-hosted cores can be added as `<core>_libretro.js` and
+`<core>_libretro.wasm`, then marked `bundled: true` in `cores.ts`.
+Serve `.wasm` with `Content-Type: application/wasm`.
+
+### Verification
+
+`npm run test:msx` validates the packaged system, archive paths, GitHub Pages
+base path, disk/tape firmware requirements and cancellation. For the browser
+test, install Chromium using `npx playwright install chromium`, start the app,
+then run `npm run test:msx:browser`. It downloads blueMSX's diagnostic test
+cartridge from the pinned source commit (or accepts `MSX_TEST_ROM=/path/testcart.rom`),
+imports it as ZIP and checks changing video, state save/load, keyboard and
+multi-disk playlist handling. `MSX_TEST_URL` can point to a static export under
+`/EmuRM/`. The diagnostic ROM is not shipped in the public website.

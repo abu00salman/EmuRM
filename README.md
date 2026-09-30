@@ -43,7 +43,7 @@ By default, cores load lazily from jsDelivr (`arianrhodsandlot/retroarch-emscrip
 NEXT_PUBLIC_CORE_BASE=/cores
 ```
 
-MSX (`bluemsx` / `fmsx`) and Nintendo 64 (`mupen64plus_next`) have no public web build and only work once you do this. See `public/cores/README.md`.
+MSX (`bluemsx`) and Nintendo 64 (`mupen64plus_next`) are bundled under `public/cores/` and need no environment variable. MSX cartridge files (`.rom`, `.mx1`, `.mx2`) use bundled C-BIOS. Disk/tape games need user-provided system ROMs from Settings → System files; a `blueMSX.zip` containing `Machines/` and `Databases/` is also accepted. See `public/cores/README.md`.
 
 3DO (`opera`) additionally needs a BIOS file (`panafz1.bin`) added in Settings → System files before it will boot any disc.
 
@@ -90,7 +90,7 @@ Honest limits: RetroArch's emscripten build renders with WebGL on the main threa
 | System | Core (default first) | Licence |
 |---|---|---|
 | Atari 2600 | Stella, Stella 2014 (low-end) | GPL-2.0 |
-| MSX / Sakhr | blueMSX, fMSX (self-hosted) | GPL-2.0 / non-commercial |
+| MSX / Sakhr | blueMSX (bundled ASYNCIFY + C-BIOS) | GPL-2.0 / BSD-like C-BIOS |
 | NES / Famicom | FCEUmm, Nestopia UE | GPL-2.0 |
 | Master System | Genesis Plus GX, Gearsystem | GPX non-commercial / GPL-3.0 |
 | PC Engine | Beetle PCE Fast | GPL-2.0 |
@@ -115,5 +115,5 @@ EmuRM ships no games and no BIOS files. The demo shelf links to freely distribut
 - Library backup: export / import a single archive of states, SRAM and metadata.
 - Optional, opt-in cloud sync of saves (never ROMs).
 - Netplay via WebRTC for 2-player systems.
-- Self-host all cores with integrity hashes; build the MSX, N64 and 3DO cores in CI.
+- Self-host all cores with integrity hashes; rebuild bundled cores in CI.
 - Arcade (FBNeo / MAME) support — needs multi-file romset handling that the current single-file import pipeline doesn't do yet.

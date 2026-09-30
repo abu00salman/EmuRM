@@ -46,10 +46,11 @@ export function detectConsole(fileName: string, bytes: Uint8Array): ConsoleId[] 
   if ((ext === "rom" || ext === "mx1" || ext === "mx2") && ascii(0, 2) === "AB") return ["msx"];
 
   // CD images: a raw PS1 sector carries "PLAYSTATION" in the licence area.
-  // .pbp and .m3u are PSX-only containers in this app; .cue/.chd/.bin/.iso/.img
+  // .pbp is PSX-only; .m3u playlists are shared by PSX and MSX.
+  // .cue/.chd/.bin/.iso/.img
   // are shared with 3DO, so fall through to the console picker when the
   // signature doesn't confirm PSX.
-  if (ext === "pbp" || ext === "m3u") return ["psx"];
+  if (ext === "pbp") return ["psx"];
   if (ext === "cue" || ext === "chd" || ext === "bin" || ext === "iso" || ext === "img") {
     const head = ascii(0x9320, 64) + ascii(0x9340, 64);
     if (head.includes("PLAYSTATION")) return ["psx"];

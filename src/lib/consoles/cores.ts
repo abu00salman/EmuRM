@@ -18,7 +18,7 @@ export const CORES = {
   pcsx_rearmed: { id: "pcsx_rearmed", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/pcsx_rearmed", hosting: "cdn", notes: "Built-in HLE BIOS; a real BIOS improves compatibility" },
   mednafen_pce_fast: { id: "mednafen_pce_fast", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/beetle-pce-fast-libretro", hosting: "cdn" },
   fmsx: { id: "fmsx", engine: "libretro", license: "fMSX licence (non-commercial)", upstream: "https://github.com/libretro/fmsx-libretro", hosting: "self", notes: "No public web build — compile with Emscripten, or use blueMSX" },
-  bluemsx: { id: "bluemsx", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/blueMSX-libretro", hosting: "self", notes: "Most complete MSX/MSX2 core; needs its Machines folder" },
+  bluemsx: { id: "bluemsx", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/blueMSX-libretro", hosting: "self", bundled: true, notes: "Bundled ASYNCIFY web build with C-BIOS for cartridge games; disks and tapes need user system ROMs" },
   mupen64plus_next: {
     id: "mupen64plus_next", engine: "libretro", license: "GPL-2.0",
     upstream: "https://github.com/libretro/mupen64plus-libretro-nx", hosting: "self", bundled: true,

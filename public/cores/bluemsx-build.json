@@ -1,0 +1,12 @@
+{
+  "emscripten": "4.0.15",
+  "bluemsxCommit": "e3086eb5d36d77fa11704cf53dc176686e70127d",
+  "retroarchCommit": "2790aa0cce9308695c0f612cc56a803e978beb08",
+  "asyncify": true,
+  "threads": false,
+  "sha256": {
+    "bluemsx_libretro.js": "844848106e0e87f5d8192ca09c8e39488735da907dbf9cecde51bd4cd2226053",
+    "bluemsx_libretro.wasm": "586b7cbb1a20b86fac1454d46d11b5c2914c4c9335b0c6c7ae404c8c7a74da4a",
+    "bluemsx-system.zip": "738be6d2570b4ca9ad87dd4c28e50c0f8bfd127f82895b7716f650979e6be271"
+  }
+}

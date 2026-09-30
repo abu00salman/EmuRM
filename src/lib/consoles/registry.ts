@@ -23,14 +23,15 @@ export const CONSOLES: ConsoleDef[] = [
   {
     id: "msx", name: "MSX", short: "MSX", aliases: ["Sakhr", "صخر", "MSX2", "AX-170"],
     maker: "ASCII · Microsoft · Sakhr", year: 1983, family: "msx", form: "computer",
-    accent: "#D8A84E", photo: "msx.jpg", extensions: ["rom", "mx1", "mx2", "dsk", "cas"],
-    cores: [CORES.fmsx, CORES.bluemsx], aspect: 4 / 3,
+    accent: "#D8A84E", photo: "msx.jpg", extensions: ["rom", "mx1", "mx2", "dsk", "cas", "m3u"],
+    cores: [CORES.bluemsx], aspect: 4 / 3,
     faceButtons: [{ pad: "a", label: "1" }, { pad: "b", label: "2" }], shoulderButtons: [], hasSelect: true,
     bios: [
-      { fileName: "MSX.ROM", required: true, description: "MSX1 BIOS — the open-source C-BIOS works" },
+      { fileName: "MSX.ROM", required: false, description: "MSX1 BIOS for disk/tape games; cartridges use bundled C-BIOS" },
       { fileName: "MSX2.ROM", required: false, description: "MSX2 BIOS" },
       { fileName: "MSX2EXT.ROM", required: false, description: "MSX2 extended BIOS" },
       { fileName: "DISK.ROM", required: false, description: "Disk drive ROM for .dsk images" },
+      { fileName: "blueMSX.zip", required: false, description: "Full system archive with Machines/ and Databases/" },
     ],
     status: "experimental",
   },

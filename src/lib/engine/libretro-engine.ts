@@ -1,5 +1,6 @@
 import { Nostalgist } from "nostalgist";
 import type { PadButton } from "@/lib/consoles/types";
+import { installMsxSystem, MSX_SYSTEM_DIRECTORY, prepareMsxSystem } from "./msx-system";
 import {
   CoreUnavailableError,
   type AspectMode,
@@ -157,6 +158,7 @@ export const libretroEngine: EmulatorEngine = {
       );
     }
     spec.onPhase?.("core");
+    const msxSystem = core.id === "bluemsx" ? await prepareMsxSystem(spec) : undefined;
 
     const coreInput = base
       ? { name: core.id, js: `${base}/${core.id}_libretro.js`, wasm: `${base}/${core.id}_libretro.wasm` }
@@ -164,8 +166,10 @@ export const libretroEngine: EmulatorEngine = {
 
     // Cue sheets must come first so the core opens the right file.
     const files = [...spec.files].sort((a, b) => Number(/\.(cue|m3u)$/i.test(b.name)) - Number(/\.(cue|m3u)$/i.test(a.name)));
-    const rom = files.map((f) => new File([f.blob], f.name));
-    const bios = spec.bios.map((f) => new File([f.blob], f.name));
+    // Nostalgist treats File as Blob and generates a .bin name. Pass explicit
+    // filenames: blueMSX uses the extension to identify cartridge/disk/tape media.
+    const rom = files.map((f) => ({ fileName: f.name, fileContent: f.blob }));
+    const bios = msxSystem ? [] : spec.bios.map((f) => ({ fileName: f.name, fileContent: f.blob }));
 
     const n = await Nostalgist.launch({
       element: spec.canvas,
@@ -178,7 +182,9 @@ export const libretroEngine: EmulatorEngine = {
       respondToGlobalEvents: true,
       style: { width: "100%", height: "100%", backgroundColor: "transparent", imageRendering: spec.smoothing ? "auto" : "pixelated" },
       size: "auto",
+      retroarchCoreConfig: msxSystem ? { bluemsx_msxtype: msxSystem.machine } : {},
       retroarchConfig: {
+        ...(msxSystem ? { system_directory: MSX_SYSTEM_DIRECTORY } : {}),
         ...inputConfig(spec.input),
         ...aspectConfig(spec.aspect, spec.console.aspect, spec.stageAspect),
         video_smooth: spec.smoothing,
@@ -206,7 +212,23 @@ export const libretroEngine: EmulatorEngine = {
         input_exit_emulator: "nul",
         input_pause_toggle: "nul",
       } as never,
-      beforeLaunch: () => spec.onPhase?.("boot"),
+      beforeLaunch: async (emulator) => {
+        // Multiple machines contain config.ini. Install directly into their
+        // own directories; Nostalgist's BIOS writer stages basenames at /.
+        if (msxSystem) {
+          const fs = emulator.getEmscriptenFS();
+          installMsxSystem(fs, msxSystem.files);
+          // blueMSX opens its entire M3U playlist during boot. Nostalgist
+          // normally stages additional discs lazily, so write all of them now.
+          const contentDirectory = "/home/web_user/retroarch/userdata/content";
+          for (const file of files) {
+            if (file.name.includes("/") || file.name.includes("\\") || file.name === "..") throw new Error("Invalid MSX content filename.");
+            fs.writeFile(`${contentDirectory}/${file.name}`, new Uint8Array(await file.blob.arrayBuffer()));
+          }
+          spec.signal?.throwIfAborted();
+        }
+        spec.onPhase?.("boot");
+      },
     });
 
     const session = new LibretroSession(n);

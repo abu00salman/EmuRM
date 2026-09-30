@@ -1,0 +1,48 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const ts = require('typescript');
+const { zipSync } = require('fflate');
+const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'emurm-msx-test-'));
+process.env.NEXT_PUBLIC_BASE_PATH = '/EmuRM';
+function compile(source, target) {
+  const output = ts.transpileModule(fs.readFileSync(source, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+  fs.writeFileSync(path.join(temporary, target), output.replace('require("fflate")', `require(${JSON.stringify(require.resolve('fflate'))})`));
+}
+compile('src/lib/engine/types.ts', 'types.js');
+compile('src/lib/engine/msx-system.ts', 'msx-system.js');
+const { unpackMsxSystem, prepareMsxSystem, installMsxSystem, MSX_SYSTEM_DIRECTORY } = require(path.join(temporary, 'msx-system.js'));
+const zip = fs.readFileSync('public/cores/bluemsx-system.zip');
+const encoder = new TextEncoder();
+(async () => {
+  const system = unpackMsxSystem(zip);
+  assert(system.has('Databases/msxromdb.xml'));
+  assert(system.has('Machines/MSX2+ - C-BIOS/config.ini'));
+  assert([...system.keys()].filter(p => /\.rom$/i.test(p)).every(p => p.includes('C-BIOS/')), 'Bundle must not contain proprietary firmware');
+  const writes = new Map();
+  installMsxSystem({ mkdirTree() {}, writeFile(p, b) { writes.set(p, b); } }, system);
+  assert(writes.has(`${MSX_SYSTEM_DIRECTORY}/Machines/MSX - C-BIOS/config.ini`));
+  assert(writes.has(`${MSX_SYSTEM_DIRECTORY}/Machines/MSX2 - C-BIOS/config.ini`), 'Repeated config.ini basenames must coexist');
+  assert.throws(() => unpackMsxSystem(zipSync({ 'Machines/../bad.rom': new Uint8Array([1]) })), /Invalid.*path/);
+  assert.throws(() => unpackMsxSystem(zipSync({ 'unrelated.rom': new Uint8Array([1]) })), /Machines/);
+  const wrapped = unpackMsxSystem(zipSync({ 'home/web_user/retroarch/system/Machines/Test/config.ini': encoder.encode('test') }));
+  assert(wrapped.has('Machines/Test/config.ini'));
+  let requested;
+  global.fetch = async url => { requested = url; return new Response(zip); };
+  const cartridge = { files: [{ name: 'game.rom', blob: new Blob([new Uint8Array([65, 66])]) }], bios: [] };
+  assert.equal((await prepareMsxSystem(cartridge)).machine, 'Auto');
+  assert.equal(requested, '/EmuRM/cores/bluemsx-system.zip');
+  await assert.rejects(prepareMsxSystem({ ...cartridge, files: [{ name: 'game.dsk', blob: new Blob() }] }), /DISK.ROM/);
+  await assert.rejects(prepareMsxSystem({ ...cartridge, files: [{ name: 'game.cas', blob: new Blob() }] }), /MSX.ROM/);
+  const bios = ['MSX2.ROM', 'MSX2EXT.ROM', 'DISK.ROM'].map(name => ({ name, blob: new Blob([new Uint8Array(32768)]) }));
+  const disk = await prepareMsxSystem({ files: [{ name: 'game.dsk', blob: new Blob() }], bios });
+  assert.equal(disk.machine, 'EmuRM - User');
+  assert(disk.files.has('Machines/EmuRM - User/MSX2EXT.ROM'));
+  assert(new TextDecoder().decode(disk.files.get('Machines/EmuRM - User/config.ini')).includes('DISK.ROM'));
+  const ctrl = new AbortController(); ctrl.abort();
+  await assert.rejects(prepareMsxSystem({ ...cartridge, signal: ctrl.signal }), { name: 'AbortError' });
+  global.fetch = async () => new Response('', { status: 404 });
+  await assert.rejects(prepareMsxSystem(cartridge), /404/);
+  console.log('MSX system tests passed: bundle, nested files, archive validation, base path, BIOS requirements and abort handling.');
+})().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => fs.rmSync(temporary, { recursive: true, force: true }));
