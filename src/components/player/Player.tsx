@@ -84,7 +84,7 @@ export function Player() {
   // skins.json's own `orientation` field — a future landscape skin just needs that
   // field flipped and a second branch here, no other code changes).
   const skinApplies = !!showTouch && portrait && activeSkin?.orientation === "portrait";
-  const { hostStyle, frame } = useSkinFrame(stageArea, skinApplies ? activeSkin : undefined);
+  const { windowStyle, hostStyle, frame } = useSkinFrame(stageArea, skinApplies ? activeSkin : undefined);
 
   const updateSettings = useCallback(
     async (patch: Partial<PlayerSettings>, needsRelaunch = false) => {
@@ -314,7 +314,12 @@ export function Player() {
   return (
     <div ref={stage} className="fixed inset-0 flex flex-col bg-black" style={{ ["--accent" as string]: accent }}>
       <div ref={stageArea} className="relative min-h-0 flex-1 pt-[var(--safe-t)]">
-        <div ref={host} className={`filter-${settings.filter}`} style={hostStyle} onDoubleClick={() => void toggleFullscreen()} />
+        {/* This wrapper is always mounted, skin or not — only its style changes between
+            full-bleed and the skin's small screen cut-out — so host (and the emulator's
+            canvas appended into it) never gets reparented, which would unmount it. */}
+        <div style={windowStyle}>
+          <div ref={host} className={`filter-${settings.filter}`} style={hostStyle} onDoubleClick={() => void toggleFullscreen()} />
+        </div>
 
         {skinApplies && activeSkin && frame && c && p.phase === "running" && !menu && (
           <SkinOverlay console={c} skin={activeSkin} frame={frame} onPress={press} />

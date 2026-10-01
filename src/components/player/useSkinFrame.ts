@@ -12,16 +12,25 @@ export interface SkinFrameRect {
   scale: number;
 }
 
+const FULL_BLEED: CSSProperties = { position: "absolute", inset: 0 };
+
 /**
  * Fits the skin's 941×1672 reference canvas inside `containerRef` — contain-style, so
  * the whole device mockup is always visible and never stretched or cropped — and
- * derives the exact pixel box the live game canvas (`host`) needs so it lands inside
- * the skin's own drawn screen cut-out.
+ * places the live game canvas inside the skin's own drawn screen cut-out.
  *
- * Returns `hostStyle` to apply to the *existing* host div (never replace that element —
- * only its inline style — so the emulator's own canvas, appended into it imperatively,
- * is never unmounted by a skin change) and `frame`, the same box in reference-space,
- * for the skin image and its button zones to position themselves against.
+ * Shrinking the engine's own canvas element down to that small cut-out turns out to
+ * break its internal video geometry (confirmed directly: the libretro/RetroArch web
+ * build keeps rendering — frame count keeps advancing — but the image lands outside
+ * the now-tiny buffer and never appears; reproduced with a plain resize, nothing to do
+ * with skins specifically). So `host` is never actually resized for a skin: it keeps
+ * being measured and resized at the player's full natural stage size — exactly the
+ * size class that has always worked — and is instead visually scaled down with a CSS
+ * transform into a separate, stably-mounted clipping window sized to the screen
+ * cut-out. `windowStyle` goes on that always-present wrapper div (never conditionally
+ * mounted, so it never forces host to remount either); `hostStyle` goes on the
+ * existing host div itself, which an emulator session's canvas is appended into
+ * imperatively and must never be unmounted by a skin change.
  */
 export function useSkinFrame(containerRef: RefObject<HTMLElement | null>, skin: SkinDef | undefined) {
   const [size, setSize] = useState({ w: 0, h: 0 });
@@ -38,32 +47,54 @@ export function useSkinFrame(containerRef: RefObject<HTMLElement | null>, skin: 
   }, [containerRef]);
 
   if (!skin || size.w <= 0 || size.h <= 0) {
-    const hostStyle: CSSProperties = { position: "absolute", inset: 0 };
-    return { hostStyle, frame: null as SkinFrameRect | null };
+    return { windowStyle: FULL_BLEED, hostStyle: FULL_BLEED, frame: null as SkinFrameRect | null };
   }
 
   const { width: refW, height: refH } = SKINS_CONFIG.coordinateSystem;
-  const scale = Math.min(size.w / refW, size.h / refH);
-  const frameW = refW * scale;
-  const frameH = refH * scale;
+  const deviceScale = Math.min(size.w / refW, size.h / refH);
+  const frameW = refW * deviceScale;
+  const frameH = refH * deviceScale;
   const frame: SkinFrameRect = {
     left: (size.w - frameW) / 2,
     top: (size.h - frameH) / 2,
     width: frameW,
     height: frameH,
-    scale,
+    scale: deviceScale,
   };
 
   const s = SKINS_CONFIG.screen;
-  const hostStyle: CSSProperties = {
+  const screenW = s.width * deviceScale;
+  const screenH = s.height * deviceScale;
+
+  const windowStyle: CSSProperties = {
     position: "absolute",
-    left: frame.left + s.x * scale,
-    top: frame.top + s.y * scale,
-    width: s.width * scale,
-    height: s.height * scale,
-    borderRadius: s.radius * scale,
+    left: frame.left + s.x * deviceScale,
+    top: frame.top + s.y * deviceScale,
+    width: screenW,
+    height: screenH,
+    borderRadius: s.radius * deviceScale,
     overflow: "hidden",
+    zIndex: 1,
   };
 
-  return { hostStyle, frame };
+  // Contain-fit the host's own *natural, full-stage* size (size.w×size.h — the exact
+  // dimensions it would have with no skin at all) into the small screen window, purely
+  // as a paint-time transform. Host's actual CSS width/height stay pinned to that full
+  // size (not 100% of the now-small window), so resize()/ResizeObserver always see the
+  // same kind of dimensions as the no-skin case.
+  const fitScale = Math.min(screenW / size.w, screenH / size.h);
+  const tx = (screenW - size.w * fitScale) / 2;
+  const ty = (screenH - size.h * fitScale) / 2;
+
+  const hostStyle: CSSProperties = {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    width: size.w,
+    height: size.h,
+    transformOrigin: "0 0",
+    transform: `translate(${tx}px, ${ty}px) scale(${fitScale})`,
+  };
+
+  return { windowStyle, hostStyle, frame };
 }

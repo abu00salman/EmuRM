@@ -123,7 +123,10 @@ export function SkinOverlay({ console: c, skin, frame, onPress }: { console: Con
     <div
       className="absolute inset-0 select-none"
       dir="ltr"
-      style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none" }}
+      // z-0, explicitly below the host canvas's z-1 (see useSkinFrame.ts) — this image's
+      // own "screen" rectangle is painted black, not a real cut-out, so the live canvas
+      // has to out-rank it in stacking or it would hide the game it's meant to frame.
+      style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", zIndex: 0 }}
       onPointerDown={(e) => {
         e.preventDefault();
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
