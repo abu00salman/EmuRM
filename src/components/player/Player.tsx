@@ -24,6 +24,11 @@ import { useSkinFrame } from "./useSkinFrame";
 import { SkinOverlay } from "./SkinOverlay";
 import { SkinPicker } from "./SkinPicker";
 
+/** Turned off for now at the requester's choice — the Controller Skin Manager (button,
+ *  picker, screen-frame overlay) stays fully built and wired below, just unreachable,
+ *  so it's a one-line flip to bring back rather than a re-implementation. */
+const CONTROLLER_SKINS_ENABLED = false;
+
 function useMedia(q: string) {
   const [m, setM] = useState(false);
   useEffect(() => {
@@ -83,7 +88,7 @@ export function Player() {
   // floating/fixed touch pad regardless of the saved choice (see useSkinFrame.ts and
   // skins.json's own `orientation` field — a future landscape skin just needs that
   // field flipped and a second branch here, no other code changes).
-  const skinApplies = !!showTouch && portrait && activeSkin?.orientation === "portrait";
+  const skinApplies = CONTROLLER_SKINS_ENABLED && !!showTouch && portrait && activeSkin?.orientation === "portrait";
   const { windowStyle, hostStyle, frame } = useSkinFrame(stageArea, skinApplies ? activeSkin : undefined);
 
   const updateSettings = useCallback(
@@ -373,7 +378,7 @@ export function Player() {
         {/* Its own corner, opposite AirPlay, for the same reason: the top chrome row is
             already packed (menu/ff/save/load/camera/fullscreen), and this needs to stay
             reachable in one tap, not buried in Display settings. */}
-        {showTouch && p.phase === "running" && (
+        {CONTROLLER_SKINS_ENABLED && showTouch && p.phase === "running" && (
           <div
             className={`absolute start-[max(0.75rem,var(--safe-l))] bottom-[max(0.75rem,var(--safe-b))] z-40 transition-opacity duration-200 ${!hideChrome && !menu ? "" : "pointer-events-none opacity-0"}`}
           >
@@ -478,17 +483,19 @@ export function Player() {
         <TouchPad console={c} onPress={press} mode="below" style={settings.touchStyle} theme={settings.touchTheme} />
       )}
 
-      <SkinPicker
-        open={skinPickerOpen}
-        onClose={() => setSkinPickerOpen(false)}
-        console={c}
-        currentSkinId={skinId}
-        onSelect={(id) => {
-          setSkinId(id);
-          if (c) saveSkinChoice(c.id, id);
-          setSkinPickerOpen(false);
-        }}
-      />
+      {CONTROLLER_SKINS_ENABLED && (
+        <SkinPicker
+          open={skinPickerOpen}
+          onClose={() => setSkinPickerOpen(false)}
+          console={c}
+          currentSkinId={skinId}
+          onSelect={(id) => {
+            setSkinId(id);
+            if (c) saveSkinChoice(c.id, id);
+            setSkinPickerOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }
