@@ -16,7 +16,7 @@ export const TOUCH_THEMES: Record<TouchTheme, { bg: string; border: string; text
   retro: { bg: "rgba(46,26,10,0.6)", border: "rgba(255,183,77,0.4)", text: "#ffd699", accent: "#ff8a3d" },
 };
 
-const buzz = () => {
+export const buzz = () => {
   try {
     navigator.vibrate?.(8);
   } catch {
@@ -29,7 +29,7 @@ const SECTOR_MAP: Record<string, PadButton[]> = {
   "0": ["right"], "1": ["right", "down"], "2": ["down"], "3": ["left", "down"],
   "4": ["left"], "-4": ["left"], "-3": ["left", "up"], "-2": ["up"], "-1": ["right", "up"],
 };
-function sectorButtons(dx: number, dy: number): PadButton[] {
+export function sectorButtons(dx: number, dy: number): PadButton[] {
   const angle = Math.atan2(dy, dx); // 45° sectors
   const sector = Math.round(angle / (Math.PI / 4));
   return SECTOR_MAP[String(sector)] ?? [];

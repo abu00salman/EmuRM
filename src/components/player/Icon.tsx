@@ -12,6 +12,7 @@ const paths = {
   close: "M6 6l12 12M18 6L6 18",
   stick: "M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8z",
   airplay: "M4 5h16a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1zM12 14l5 6H7z",
+  gamepad: "M7 9h3M8.5 7.5v3M14.5 10h.01M17 8h.01M6 6h12a4 4 0 014 4v4a3 3 0 01-5.5 1.7L15 14H9l-1.5 1.7A3 3 0 012 15.5v-5.5a4 4 0 014-4z",
 } as const;
 
 export function Icon({ name, className = "h-5 w-5" }: { name: keyof typeof paths; className?: string }) {

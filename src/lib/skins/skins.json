@@ -1,0 +1,536 @@
+{
+  "version": 3,
+  "coordinateSystem": {
+    "width": 941,
+    "height": 1672
+  },
+  "screen": {
+    "x": 28,
+    "y": 24,
+    "width": 886,
+    "height": 695,
+    "radius": 34
+  },
+  "skins": [
+    {
+      "id": "nes-classic",
+      "name": "NES Classic Pro",
+      "systems": [
+        "nes",
+        "famicom"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/nes-classic.png",
+      "thumbnail": "assets/thumbs/nes-classic.png",
+      "layout": "nes"
+    },
+    {
+      "id": "nes-modern",
+      "name": "NES Modern White",
+      "systems": [
+        "nes",
+        "famicom"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/nes-modern.png",
+      "thumbnail": "assets/thumbs/nes-modern.png",
+      "layout": "nes"
+    },
+    {
+      "id": "snes-pro",
+      "name": "SNES Pro",
+      "systems": [
+        "snes"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/snes-pro.png",
+      "thumbnail": "assets/thumbs/snes-pro.png",
+      "layout": "snes"
+    },
+    {
+      "id": "ps1-modern",
+      "name": "PS1 Modern",
+      "systems": [
+        "ps1"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/ps1-modern.png",
+      "thumbnail": "assets/thumbs/ps1-modern.png",
+      "layout": "ps"
+    },
+    {
+      "id": "psp-glass",
+      "name": "PSP Glass",
+      "systems": [
+        "psp",
+        "ps1"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/psp-glass.png",
+      "thumbnail": "assets/thumbs/psp-glass.png",
+      "layout": "psp"
+    },
+    {
+      "id": "psp-purple",
+      "name": "PSP Purple",
+      "systems": [
+        "psp",
+        "ps1"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/psp-purple.png",
+      "thumbnail": "assets/thumbs/psp-purple.png",
+      "layout": "psp"
+    },
+    {
+      "id": "gba-modern",
+      "name": "GBA Modern",
+      "systems": [
+        "gba",
+        "gb",
+        "gbc"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/gba-modern.png",
+      "thumbnail": "assets/thumbs/gba-modern.png",
+      "layout": "gba"
+    },
+    {
+      "id": "n64-style",
+      "name": "N64 Style",
+      "systems": [
+        "n64"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/n64-style.png",
+      "thumbnail": "assets/thumbs/n64-style.png",
+      "layout": "n64"
+    },
+    {
+      "id": "sega-genesis",
+      "name": "Sega Genesis",
+      "systems": [
+        "genesis",
+        "megadrive",
+        "gamegear"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/sega-genesis.png",
+      "thumbnail": "assets/thumbs/sega-genesis.png",
+      "layout": "genesis"
+    },
+    {
+      "id": "modern-neon",
+      "name": "Modern Neon",
+      "systems": [
+        "nes",
+        "snes",
+        "gba",
+        "gb",
+        "gbc",
+        "genesis",
+        "megadrive",
+        "msx",
+        "atari",
+        "ps1",
+        "psp"
+      ],
+      "orientation": "portrait",
+      "image": "assets/skins/modern-neon.png",
+      "thumbnail": "assets/thumbs/modern-neon.png",
+      "layout": "modern"
+    }
+  ],
+  "layouts": {
+    "nes": {
+      "dpad": {
+        "x": 171,
+        "y": 1115,
+        "size": 210
+      },
+      "b": {
+        "x": 598,
+        "y": 1195,
+        "size": 112
+      },
+      "a": {
+        "x": 745,
+        "y": 1170,
+        "size": 112
+      },
+      "select": {
+        "x": 360,
+        "y": 1412,
+        "w": 118,
+        "h": 40
+      },
+      "start": {
+        "x": 522,
+        "y": 1412,
+        "w": 118,
+        "h": 40
+      },
+      "l": {
+        "x": 100,
+        "y": 790,
+        "w": 88,
+        "h": 48
+      },
+      "r": {
+        "x": 808,
+        "y": 790,
+        "w": 88,
+        "h": 48
+      }
+    },
+    "snes": {
+      "dpad": {
+        "x": 188,
+        "y": 1095,
+        "size": 220
+      },
+      "y": {
+        "x": 633,
+        "y": 1118,
+        "size": 98
+      },
+      "x": {
+        "x": 713,
+        "y": 1030,
+        "size": 98
+      },
+      "b": {
+        "x": 714,
+        "y": 1220,
+        "size": 98
+      },
+      "a": {
+        "x": 798,
+        "y": 1120,
+        "size": 98
+      },
+      "select": {
+        "x": 341,
+        "y": 1405,
+        "w": 118,
+        "h": 42
+      },
+      "start": {
+        "x": 520,
+        "y": 1405,
+        "w": 118,
+        "h": 42
+      },
+      "l": {
+        "x": 102,
+        "y": 790,
+        "w": 88,
+        "h": 48
+      },
+      "r": {
+        "x": 810,
+        "y": 790,
+        "w": 88,
+        "h": 48
+      }
+    },
+    "ps": {
+      "dpad": {
+        "x": 173,
+        "y": 1110,
+        "size": 190
+      },
+      "triangle": {
+        "x": 705,
+        "y": 1034,
+        "size": 88
+      },
+      "square": {
+        "x": 620,
+        "y": 1120,
+        "size": 88
+      },
+      "circle": {
+        "x": 787,
+        "y": 1120,
+        "size": 88
+      },
+      "cross": {
+        "x": 705,
+        "y": 1207,
+        "size": 88
+      },
+      "leftStick": {
+        "x": 312,
+        "y": 1285,
+        "size": 115
+      },
+      "rightStick": {
+        "x": 595,
+        "y": 1285,
+        "size": 115
+      },
+      "select": {
+        "x": 360,
+        "y": 1455,
+        "w": 110,
+        "h": 38
+      },
+      "start": {
+        "x": 520,
+        "y": 1455,
+        "w": 110,
+        "h": 38
+      },
+      "l": {
+        "x": 92,
+        "y": 805,
+        "w": 88,
+        "h": 48
+      },
+      "r": {
+        "x": 822,
+        "y": 805,
+        "w": 88,
+        "h": 48
+      }
+    },
+    "psp": {
+      "dpad": {
+        "x": 178,
+        "y": 1122,
+        "size": 192
+      },
+      "triangle": {
+        "x": 705,
+        "y": 1048,
+        "size": 86
+      },
+      "square": {
+        "x": 620,
+        "y": 1137,
+        "size": 86
+      },
+      "circle": {
+        "x": 790,
+        "y": 1137,
+        "size": 86
+      },
+      "cross": {
+        "x": 705,
+        "y": 1226,
+        "size": 86
+      },
+      "select": {
+        "x": 365,
+        "y": 1458,
+        "w": 112,
+        "h": 40
+      },
+      "start": {
+        "x": 525,
+        "y": 1458,
+        "w": 112,
+        "h": 40
+      },
+      "l": {
+        "x": 98,
+        "y": 795,
+        "w": 88,
+        "h": 50
+      },
+      "r": {
+        "x": 810,
+        "y": 795,
+        "w": 88,
+        "h": 50
+      }
+    },
+    "gba": {
+      "dpad": {
+        "x": 172,
+        "y": 1128,
+        "size": 214
+      },
+      "b": {
+        "x": 600,
+        "y": 1187,
+        "size": 106
+      },
+      "a": {
+        "x": 757,
+        "y": 1112,
+        "size": 106
+      },
+      "select": {
+        "x": 345,
+        "y": 1410,
+        "w": 122,
+        "h": 42
+      },
+      "start": {
+        "x": 520,
+        "y": 1410,
+        "w": 122,
+        "h": 42
+      },
+      "l": {
+        "x": 78,
+        "y": 875,
+        "w": 30,
+        "h": 30
+      },
+      "r": {
+        "x": 864,
+        "y": 875,
+        "w": 30,
+        "h": 30
+      }
+    },
+    "n64": {
+      "dpad": {
+        "x": 160,
+        "y": 1120,
+        "size": 188
+      },
+      "cUp": {
+        "x": 770,
+        "y": 1042,
+        "size": 66
+      },
+      "cLeft": {
+        "x": 710,
+        "y": 1112,
+        "size": 66
+      },
+      "cRight": {
+        "x": 832,
+        "y": 1112,
+        "size": 66
+      },
+      "cDown": {
+        "x": 772,
+        "y": 1180,
+        "size": 66
+      },
+      "b": {
+        "x": 665,
+        "y": 1180,
+        "size": 92
+      },
+      "a": {
+        "x": 780,
+        "y": 1260,
+        "size": 100
+      },
+      "stick": {
+        "x": 470,
+        "y": 1255,
+        "size": 120
+      },
+      "select": {
+        "x": 332,
+        "y": 1458,
+        "w": 114,
+        "h": 40
+      },
+      "start": {
+        "x": 562,
+        "y": 1458,
+        "w": 114,
+        "h": 40
+      },
+      "l": {
+        "x": 85,
+        "y": 805,
+        "w": 88,
+        "h": 50
+      },
+      "r": {
+        "x": 821,
+        "y": 805,
+        "w": 88,
+        "h": 50
+      }
+    },
+    "genesis": {
+      "dpad": {
+        "x": 170,
+        "y": 1120,
+        "size": 210
+      },
+      "a": {
+        "x": 585,
+        "y": 1178,
+        "size": 86
+      },
+      "b": {
+        "x": 685,
+        "y": 1140,
+        "size": 86
+      },
+      "c": {
+        "x": 795,
+        "y": 1089,
+        "size": 86
+      },
+      "start": {
+        "x": 470,
+        "y": 1365,
+        "w": 150,
+        "h": 44
+      }
+    },
+    "modern": {
+      "dpad": {
+        "x": 174,
+        "y": 1110,
+        "size": 210
+      },
+      "y": {
+        "x": 666,
+        "y": 1035,
+        "size": 95
+      },
+      "x": {
+        "x": 784,
+        "y": 1110,
+        "size": 95
+      },
+      "b": {
+        "x": 663,
+        "y": 1212,
+        "size": 95
+      },
+      "a": {
+        "x": 784,
+        "y": 1212,
+        "size": 95
+      },
+      "select": {
+        "x": 357,
+        "y": 1435,
+        "w": 122,
+        "h": 42
+      },
+      "start": {
+        "x": 525,
+        "y": 1435,
+        "w": 122,
+        "h": 42
+      },
+      "l": {
+        "x": 92,
+        "y": 803,
+        "w": 92,
+        "h": 50
+      },
+      "r": {
+        "x": 818,
+        "y": 803,
+        "w": 92,
+        "h": 50
+      }
+    }
+  }
+}

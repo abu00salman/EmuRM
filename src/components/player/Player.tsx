@@ -19,6 +19,10 @@ import { usePlayerSession } from "./usePlayerSession";
 import { PauseMenu, type Panel } from "./PauseMenu";
 import { Icon } from "./Icon";
 import { AirPlayButton } from "./AirPlayButton";
+import { DEFAULT_SKIN_ID, getSkinById, loadSavedSkin, saveSkinChoice } from "@/lib/skins";
+import { useSkinFrame } from "./useSkinFrame";
+import { SkinOverlay } from "./SkinOverlay";
+import { SkinPicker } from "./SkinPicker";
 
 function useMedia(q: string) {
   const [m, setM] = useState(false);
@@ -48,6 +52,7 @@ export function Player() {
   const bindings = useMemo(() => mergeBindings(savedBindings), [savedBindings]);
 
   const stage = useRef<HTMLDivElement>(null);
+  const stageArea = useRef<HTMLDivElement>(null);
   const host = useRef<HTMLDivElement>(null);
   const fsBusy = useRef(false);
   const p = usePlayerSession({ game, resume, settings, bindings, host });
@@ -60,10 +65,26 @@ export function Player() {
   const [immersive, setImmersive] = useState(false);
   const [fps, setFps] = useState<number | null>(null);
   const [pendingRelaunch, setPendingRelaunch] = useState(false);
+  const [skinId, setSkinId] = useState(DEFAULT_SKIN_ID);
+  const [skinPickerOpen, setSkinPickerOpen] = useState(false);
 
   const coarse = useMedia("(pointer: coarse)");
   const portrait = useMedia("(orientation: portrait)");
   const showTouch = c && (settings.touchControls === "always" || (settings.touchControls === "auto" && coarse));
+
+  // Each console remembers its own skin (emurm-skin:<consoleId> in localStorage) —
+  // switching games reloads whichever one that console's player last chose.
+  useEffect(() => {
+    setSkinId(c ? loadSavedSkin(c.id) : DEFAULT_SKIN_ID);
+  }, [c]);
+
+  const activeSkin = c && skinId !== DEFAULT_SKIN_ID ? getSkinById(skinId) : undefined;
+  // The pack only ships portrait art today; landscape falls back to the normal
+  // floating/fixed touch pad regardless of the saved choice (see useSkinFrame.ts and
+  // skins.json's own `orientation` field — a future landscape skin just needs that
+  // field flipped and a second branch here, no other code changes).
+  const skinApplies = !!showTouch && portrait && activeSkin?.orientation === "portrait";
+  const { hostStyle, frame } = useSkinFrame(stageArea, skinApplies ? activeSkin : undefined);
 
   const updateSettings = useCallback(
     async (patch: Partial<PlayerSettings>, needsRelaunch = false) => {
@@ -292,8 +313,12 @@ export function Player() {
 
   return (
     <div ref={stage} className="fixed inset-0 flex flex-col bg-black" style={{ ["--accent" as string]: accent }}>
-      <div className="relative min-h-0 flex-1 pt-[var(--safe-t)]">
-        <div ref={host} className={`absolute inset-0 filter-${settings.filter}`} onDoubleClick={() => void toggleFullscreen()} />
+      <div ref={stageArea} className="relative min-h-0 flex-1 pt-[var(--safe-t)]">
+        <div ref={host} className={`filter-${settings.filter}`} style={hostStyle} onDoubleClick={() => void toggleFullscreen()} />
+
+        {skinApplies && activeSkin && frame && c && p.phase === "running" && !menu && (
+          <SkinOverlay console={c} skin={activeSkin} frame={frame} onPress={press} />
+        )}
 
         {showTouch && c && !portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" style={settings.touchStyle} theme={settings.touchTheme} />}
 
@@ -337,6 +362,17 @@ export function Player() {
         {p.phase === "running" && (
           <div className="absolute end-[max(0.75rem,var(--safe-r))] bottom-[max(0.75rem,var(--safe-b))] z-40">
             <AirPlayButton host={host} session={p.session} scaling={settings.airplayScaling} visible={!hideChrome && !menu} />
+          </div>
+        )}
+
+        {/* Its own corner, opposite AirPlay, for the same reason: the top chrome row is
+            already packed (menu/ff/save/load/camera/fullscreen), and this needs to stay
+            reachable in one tap, not buried in Display settings. */}
+        {showTouch && p.phase === "running" && (
+          <div
+            className={`absolute start-[max(0.75rem,var(--safe-l))] bottom-[max(0.75rem,var(--safe-b))] z-40 transition-opacity duration-200 ${!hideChrome && !menu ? "" : "pointer-events-none opacity-0"}`}
+          >
+            <ChromeButton label={t("player.controllerSkin")} onClick={() => setSkinPickerOpen(true)} icon="gamepad" />
           </div>
         )}
 
@@ -433,7 +469,21 @@ export function Player() {
         />
       </div>
 
-      {showTouch && c && portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="below" style={settings.touchStyle} theme={settings.touchTheme} />}
+      {showTouch && c && portrait && !skinApplies && p.phase === "running" && !menu && (
+        <TouchPad console={c} onPress={press} mode="below" style={settings.touchStyle} theme={settings.touchTheme} />
+      )}
+
+      <SkinPicker
+        open={skinPickerOpen}
+        onClose={() => setSkinPickerOpen(false)}
+        console={c}
+        currentSkinId={skinId}
+        onSelect={(id) => {
+          setSkinId(id);
+          if (c) saveSkinChoice(c.id, id);
+          setSkinPickerOpen(false);
+        }}
+      />
     </div>
   );
 }
