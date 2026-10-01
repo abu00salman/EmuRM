@@ -8,13 +8,23 @@ export function registerServiceWorker() {
 
   // The worker calls skipWaiting()+clients.claim() on its own as soon as it activates
   // (see sw.js), so an already-open tab's *fetches* start hitting the new version right
-  // away — but its React tree/JS chunks are still the old ones in memory. controllerchange
-  // fires exactly at that handoff, so this is where to tell the user a refresh is available,
-  // rather than silently leaving them on stale UI indefinitely.
+  // away — but its React tree/JS chunks already in memory are still the old build's.
+  // If that old code then asks the browser for a chunk the new deploy didn't ship (every
+  // Next.js build renames its chunks), the request 404s and the page is stuck broken
+  // with no way back short of knowing to hard-reload — exactly the "loads, then goes
+  // blank/frozen" failure this is here to prevent. controllerchange fires exactly at
+  // that handoff, so reload there, before any old code gets the chance to ask for
+  // something that no longer exists. The one case that must NOT be yanked out from
+  // under the player is mid-game — the toast still offers a manual reload there
+  // instead, and it stays reachable since the running game itself is untouched.
   let seenController = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => {
     if (!seenController) {
       seenController = true; // the very first control (fresh registration), not an update
+      return;
+    }
+    if (document.body.dataset.playing !== "true") {
+      window.location.reload();
       return;
     }
     const t = getT();

@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { requireConsole } from "@/lib/consoles/registry";
 import { loadEngine, MissingBiosError, type EmulatorSession, type InputBindings, type LaunchPhase } from "@/lib/engine";
+import { getT } from "@/lib/i18n";
 import { getRom, getSram, getState, listBios, markPlayed, putSram, putState } from "@/lib/db/repo";
 import type { GameRecord, SlotId } from "@/lib/db/schema";
 import { makeThumbnail } from "@/lib/library/worker-client";
@@ -257,6 +258,44 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
     ro.observe(el);
     return () => ro.disconnect();
   }, [host]);
+
+  // A stuck loading screen (hung engine/core fetch, a boot() that never settles) or a
+  // core that's technically "running" but never actually produces a frame (crashed
+  // mid-init, a corrupted asset) would otherwise leave the full-screen player overlay
+  // up forever with no way out. Neither failure is hypothetical — this is what catches
+  // them and turns them into the normal error screen (which already has working
+  // "back to library" and "try again" actions), instead of a dead screen.
+  const fail = useCallback(
+    (messageKey: "player.error.timeout" | "player.error.stalled") => {
+      setError(new Error(getT()(messageKey)));
+      setPhase("error");
+      void teardown();
+    },
+    [teardown],
+  );
+  useEffect(() => {
+    if (phase === "engine" || phase === "core" || phase === "boot") {
+      const timer = setTimeout(() => fail("player.error.timeout"), 30_000);
+      return () => clearTimeout(timer);
+    }
+    if (phase === "running" && !paused) {
+      let lastFrame = session.current?.frameCount() ?? null;
+      let lastProgress = performance.now();
+      const iv = setInterval(() => {
+        const now = session.current?.frameCount() ?? null;
+        if (now === null) return; // this engine can't report a frame count — nothing to watch
+        if (now !== lastFrame) {
+          lastFrame = now;
+          lastProgress = performance.now();
+          return;
+        }
+        if (performance.now() - lastProgress > 8_000) {
+          fail("player.error.stalled");
+        }
+      }, 1000);
+      return () => clearInterval(iv);
+    }
+  }, [phase, paused, fail]);
 
   return { phase, error, paused, ff, session, boot, relaunch, exit, saveTo, loadFrom, togglePause, toggleFf };
 }
