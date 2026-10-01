@@ -106,7 +106,11 @@ function TopBar() {
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 pt-[var(--safe-t)]">
       <div className="pointer-events-auto mx-auto flex max-w-[1600px] items-center gap-2 px-[max(1rem,var(--safe-l))] py-3 sm:px-8">
-        <Link href="/" data-nav className="me-auto flex items-center gap-2 rounded-lg px-1">
+        {/* glass-strong (not the lighter `glass` the other header pills use) — this sits
+            directly over the hero's own big white heading as the page scrolls, and that
+            needs real contrast behind it, not just a blur, to stay legible where the two
+            overlap. */}
+        <Link href="/" data-nav className="glass-strong me-auto flex items-center gap-2 rounded-full py-1.5 pe-3 ps-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={`${BASE}/icons/icon-192.png`} alt="" width={32} height={32} className="h-7 w-7 rounded-[9px] sm:h-8 sm:w-8" />
           <span className="font-display text-xl font-extrabold tracking-tight sm:text-2xl">{t("app.name")}</span>
