@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, u
 import { CONSOLES } from "@/lib/consoles/registry";
 import type { ConsoleDef } from "@/lib/consoles/types";
 import { useCountsByConsole } from "@/lib/db/hooks";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { DeviceGlyph } from "./DeviceGlyph";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -89,6 +89,7 @@ function ConsoleCase({
   const ref = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const t = useT();
+  const locale = useLocale();
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const sx = useSpring(px, { stiffness: 220, damping: 22 });
@@ -200,6 +201,9 @@ function ConsoleCase({
 
       {/* Placard */}
       <div className="absolute inset-x-0 bottom-0 p-5" style={{ transform: "translateZ(30px)" }}>
+        {/* The name people here actually call it by, above the English — not a
+            translation, the real colloquial nickname (e.g. MSX → صخر). */}
+        {locale === "ar" && c.nicknameAr && <p className="truncate text-xs text-white/60">{c.nicknameAr}</p>}
         <p className="font-display text-[3.4rem] font-extrabold leading-[0.8] tracking-tight text-white">{c.short}</p>
         <p className="mt-2 truncate text-sm text-white/80">{c.name}</p>
         <div

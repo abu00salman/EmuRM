@@ -56,6 +56,10 @@ export interface ConsoleDef {
   short: string;
   /** Regional / alternate names that people search for */
   aliases: string[];
+  /** The console's well-known Arabic/Gulf nickname (e.g. "صخر" for MSX) — shown above
+   *  the English name in the Arabic interface. Omitted where there's no name people
+   *  actually know it by beyond a transliteration of the English one. */
+  nicknameAr?: string;
   maker: string;
   year: number;
   family: Family;

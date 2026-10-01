@@ -7,7 +7,7 @@ import type { ConsoleId } from "@/lib/consoles/types";
 import { useCountsByConsole } from "@/lib/db/hooks";
 import { db } from "@/lib/db/schema";
 import { useUI } from "@/stores/ui";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
 import { DeviceGlyph } from "./DeviceGlyph";
 
 const CORE_BASE = process.env.NEXT_PUBLIC_CORE_BASE ?? "";
@@ -17,6 +17,7 @@ export function ConsoleHeader({ id }: { id: ConsoleId }) {
   const counts = useCountsByConsole();
   const openImport = useUI((s) => s.openImport);
   const t = useT();
+  const locale = useLocale();
   const biosHave = useLiveQuery(async () => new Set((await db().bios.where("consoleId").equals(id).toArray()).map((b) => b.fileName)), [id]);
   const missingBios = c.bios.filter((b) => b.required && biosHave && !biosHave.has(b.fileName));
   const needsCore = c.cores[0].hosting === "self" && !c.cores[0].bundled && !CORE_BASE;
@@ -38,6 +39,16 @@ export function ConsoleHeader({ id }: { id: ConsoleId }) {
           <Link href="/" className="text-sm text-muted hover:text-white" data-nav>
             {t("consoleHeader.allConsoles")}
           </Link>
+          {locale === "ar" && c.nicknameAr && (
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-3 text-sm text-muted"
+            >
+              {c.nicknameAr}
+            </motion.p>
+          )}
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}

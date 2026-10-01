@@ -12,7 +12,7 @@ const snesFace: ButtonLabel[] = [
  */
 export const CONSOLES: ConsoleDef[] = [
   {
-    id: "a2600", name: "Atari 2600", short: "2600", aliases: ["Atari VCS", "أتاري"],
+    id: "a2600", name: "Atari 2600", short: "2600", aliases: ["Atari VCS", "أتاري"], nicknameAr: "أتاري",
     maker: "Atari", year: 1977, family: "atari", form: "home",
     accent: "#D97B3C", photo: "a2600.jpg", extensions: ["a26", "bin"],
     cores: [CORES.stella2014, CORES.stella], aspect: 4 / 3,
@@ -21,7 +21,7 @@ export const CONSOLES: ConsoleDef[] = [
     faceButtons: [{ pad: "a", label: "●" }], shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
-    id: "msx", name: "MSX", short: "MSX", aliases: ["Sakhr", "صخر", "MSX2", "AX-170"],
+    id: "msx", name: "MSX", short: "MSX", aliases: ["Sakhr", "صخر", "MSX2", "AX-170"], nicknameAr: "صخر",
     maker: "ASCII · Microsoft · Sakhr", year: 1983, family: "msx", form: "computer",
     accent: "#D8A84E", photo: "msx.jpg", extensions: ["rom", "mx1", "mx2", "dsk", "cas", "m3u"],
     cores: [CORES.bluemsx], aspect: 4 / 3,
@@ -36,14 +36,14 @@ export const CONSOLES: ConsoleDef[] = [
     status: "experimental",
   },
   {
-    id: "nes", name: "Nintendo Entertainment System", short: "NES", aliases: ["Famicom", "Family Computer", "فاميلي"],
+    id: "nes", name: "Nintendo Entertainment System", short: "NES", aliases: ["Famicom", "Family Computer", "فاميلي"], nicknameAr: "ألعاب العائلة",
     maker: "Nintendo", year: 1983, family: "nintendo", form: "home",
     accent: "#E5484D", photo: "nes.jpg", extensions: ["nes", "fds", "unf", "unif"],
     cores: [CORES.fceumm, CORES.nestopia], aspect: 4 / 3,
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
-    id: "sms", name: "Master System", short: "SMS", aliases: ["Sega Mark III"],
+    id: "sms", name: "Master System", short: "SMS", aliases: ["Sega Mark III"], nicknameAr: "ماستر سيستم",
     maker: "Sega", year: 1985, family: "sega", form: "home",
     accent: "#4C7DFF", photo: "sms.jpg", extensions: ["sms", "sg"],
     cores: [CORES.genesis_plus_gx, CORES.gearsystem], aspect: 4 / 3,
@@ -57,7 +57,7 @@ export const CONSOLES: ConsoleDef[] = [
     faceButtons: [{ pad: "b", label: "II" }, { pad: "a", label: "I" }], shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
-    id: "md", name: "Mega Drive", short: "MD", aliases: ["Genesis", "Sega Genesis"],
+    id: "md", name: "Mega Drive", short: "MD", aliases: ["Genesis", "Sega Genesis"], nicknameAr: "سيجا",
     maker: "Sega", year: 1988, family: "sega", form: "home",
     accent: "#3068FF", photo: "md.jpg", extensions: ["md", "gen", "smd", "bin"],
     cores: [CORES.genesis_plus_gx, CORES.picodrive], aspect: 4 / 3,
@@ -65,21 +65,21 @@ export const CONSOLES: ConsoleDef[] = [
     shoulderButtons: [], hasSelect: false, bios: [], status: "ready",
   },
   {
-    id: "gb", name: "Game Boy", short: "GB", aliases: ["DMG"],
+    id: "gb", name: "Game Boy", short: "GB", aliases: ["DMG"], nicknameAr: "جيم بوي",
     maker: "Nintendo", year: 1989, family: "gameboy", form: "handheld-v",
     accent: "#8FB573", photo: "gb.jpg", extensions: ["gb"],
     cores: [CORES.gambatte, CORES.mgba, CORES.gearboy], aspect: 10 / 9,
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
-    id: "gg", name: "Game Gear", short: "GG", aliases: [],
+    id: "gg", name: "Game Gear", short: "GG", aliases: [], nicknameAr: "جيم جير",
     maker: "Sega", year: 1990, family: "sega", form: "handheld-h",
     accent: "#5AA2FF", photo: "gg.jpg", extensions: ["gg"],
     cores: [CORES.genesis_plus_gx, CORES.gearsystem], aspect: 10 / 9,
     faceButtons: [{ pad: "b", label: "1" }, { pad: "a", label: "2" }], shoulderButtons: [], hasSelect: false, bios: [], status: "ready",
   },
   {
-    id: "snes", name: "Super Nintendo", short: "SNES", aliases: ["Super Famicom", "SFC"],
+    id: "snes", name: "Super Nintendo", short: "SNES", aliases: ["Super Famicom", "SFC"], nicknameAr: "سوبر نينتندو",
     maker: "Nintendo", year: 1990, family: "nintendo", form: "home",
     accent: "#C9506E", photo: "snes.jpg", extensions: ["sfc", "smc", "fig", "swc"],
     cores: [CORES.snes9x, CORES.snes9x2010], aspect: 4 / 3,
@@ -97,7 +97,7 @@ export const CONSOLES: ConsoleDef[] = [
     status: "experimental",
   },
   {
-    id: "psx", name: "PlayStation", short: "PS1", aliases: ["PSX", "PSone"],
+    id: "psx", name: "PlayStation", short: "PS1", aliases: ["PSX", "PSone"], nicknameAr: "بلايستيشن",
     maker: "Sony", year: 1994, family: "sony", form: "disc",
     accent: "#6F6BF5", photo: "psx.jpg", extensions: ["cue", "chd", "pbp", "iso", "img", "m3u", "bin"],
     cores: [CORES.pcsx_rearmed], aspect: 4 / 3,
@@ -110,7 +110,7 @@ export const CONSOLES: ConsoleDef[] = [
     status: "ready",
   },
   {
-    id: "n64", name: "Nintendo 64", short: "N64", aliases: ["Ultra 64"],
+    id: "n64", name: "Nintendo 64", short: "N64", aliases: ["Ultra 64"], nicknameAr: "نينتندو 64",
     maker: "Nintendo", year: 1996, family: "nintendo", form: "home",
     accent: "#E0643C", photo: "n64.jpg", extensions: ["n64", "z64", "v64"],
     cores: [CORES.mupen64plus_next], aspect: 4 / 3,
@@ -119,14 +119,14 @@ export const CONSOLES: ConsoleDef[] = [
     hasSelect: false, bios: [], status: "experimental",
   },
   {
-    id: "gbc", name: "Game Boy Color", short: "GBC", aliases: [],
+    id: "gbc", name: "Game Boy Color", short: "GBC", aliases: [], nicknameAr: "جيم بوي كولور",
     maker: "Nintendo", year: 1998, family: "gameboy", form: "handheld-v",
     accent: "#4FB79C", photo: "gbc.jpg", extensions: ["gbc"],
     cores: [CORES.gambatte, CORES.mgba, CORES.gearboy], aspect: 10 / 9,
     faceButtons: nintendoFace, shoulderButtons: [], hasSelect: true, bios: [], status: "ready",
   },
   {
-    id: "gba", name: "Game Boy Advance", short: "GBA", aliases: ["AGB"],
+    id: "gba", name: "Game Boy Advance", short: "GBA", aliases: ["AGB"], nicknameAr: "جيم بوي أدفانس",
     maker: "Nintendo", year: 2001, family: "gameboy", form: "handheld-h",
     accent: "#8A9BE0", photo: "gba.jpg", extensions: ["gba"],
     cores: [CORES.mgba], aspect: 3 / 2,

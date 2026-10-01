@@ -365,7 +365,7 @@ export const en = {
 export type TranslationKey = keyof typeof en;
 
 export const ar: Record<TranslationKey, string> = {
-  "app.name": "إيمو آر إم",
+  "app.name": "إيميورم",
   "lang.switch": "English",
   "lang.name": "العربية",
   "app.error.title": "حدث خطأ ما",
