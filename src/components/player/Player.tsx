@@ -145,13 +145,21 @@ export function Player() {
 
   /* ---------- Actions ---------- */
   const quickSave = useCallback(async () => {
-    const rec = await p.saveTo("1");
-    if (rec) toast({ message: t("player.savedSlot1") });
+    try {
+      const rec = await p.saveTo("1");
+      if (rec) toast({ message: t("player.savedSlot1") });
+    } catch (e) {
+      toast({ message: e instanceof Error ? e.message : t("player.error.saveTimedOut"), tone: "error" });
+    }
   }, [p, toast, t]);
 
   const quickLoad = useCallback(async () => {
-    const ok = await p.loadFrom("1");
-    toast({ message: t(ok ? "player.loadedSlot1" : "player.slot1Empty"), tone: ok ? "neutral" : "error" });
+    try {
+      const ok = await p.loadFrom("1");
+      toast({ message: t(ok ? "player.loadedSlot1" : "player.slot1Empty"), tone: ok ? "neutral" : "error" });
+    } catch (e) {
+      toast({ message: e instanceof Error ? e.message : t("player.error.loadTimedOut"), tone: "error" });
+    }
   }, [p, toast, t]);
 
   const screenshot = useCallback(async () => {
@@ -218,7 +226,10 @@ export function Player() {
       };
       const fn = map[e.code];
       if (!fn) return;
-      if (e.code === "Escape" && document.querySelector("[role=dialog]")) return;
+      // Defer to a dialog stacked ON TOP of the pause menu (e.g. the skin picker),
+      // but not to the pause menu's own root — otherwise Escape could open the
+      // menu but never close it, since the menu itself matches "[role=dialog]".
+      if (e.code === "Escape" && document.querySelector("[role=dialog]:not([data-pause-menu-root])")) return;
       e.preventDefault();
       e.stopPropagation();
       fn();
@@ -459,17 +470,26 @@ export function Player() {
           console={c}
           settings={settings}
           states={states ?? []}
+          busy={p.busy}
           onResume={closeMenu}
-          onRestart={() => {
-            p.session.current?.restart();
+          onRestart={async () => {
+            await p.restart();
             closeMenu();
           }}
           onSave={async (slot) => {
-            const rec = await p.saveTo(slot);
-            if (rec) toast({ message: slot === "auto" ? t("player.savedGeneric") : t("player.savedSlot", { slot }) });
+            try {
+              const rec = await p.saveTo(slot);
+              if (rec) toast({ message: slot === "auto" ? t("player.savedGeneric") : t("player.savedSlot", { slot }) });
+            } catch (e) {
+              toast({ message: e instanceof Error ? e.message : t("player.error.saveTimedOut"), tone: "error" });
+            }
           }}
           onLoad={async (slot) => {
-            if (await p.loadFrom(slot)) closeMenu();
+            try {
+              if (await p.loadFrom(slot)) closeMenu();
+            } catch (e) {
+              toast({ message: e instanceof Error ? e.message : t("player.error.loadTimedOut"), tone: "error" });
+            }
           }}
           onScreenshot={() => void screenshot()}
           onFullscreen={() => void toggleFullscreen()}

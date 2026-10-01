@@ -10,6 +10,19 @@ import type { PlayerSettings } from "@/stores/player-settings";
 
 export type Phase = "idle" | LaunchPhase | "error";
 
+/** Bounds an engine call that can otherwise hang silently (see savestate_thumbnail_enable
+ *  in libretro-engine.ts for a confirmed real example) so a slow/stuck core fails fast
+ *  and visibly instead of leaving the busy state — and the pause menu — stuck for up to
+ *  a minute with no feedback. The underlying call isn't actually cancelled (JS promises
+ *  can't be), it's just no longer awaited; a late resolution after the timeout already
+ *  gave up is simply ignored. */
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(message)), ms)),
+  ]);
+}
+
 interface Options {
   game: GameRecord | null | undefined;
   resume: boolean;
@@ -27,10 +40,20 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
   const [error, setError] = useState<Error | null>(null);
   const [paused, setPaused] = useState(false);
   const [ff, setFf] = useState(false);
+  /** A save/load/restart in flight. Surfaced so the pause menu can disable its
+   *  buttons and show real feedback instead of looking unresponsive — the gap between
+   *  "nothing visibly happened yet" and "it's actually working" is exactly what reads
+   *  as a hang and invites the double-tap that then races two state loads against
+   *  each other (see loadFrom below). */
+  const [busy, setBusy] = useState<"saving" | "loading" | "restarting" | null>(null);
+  // Mirrors `busy` for synchronous reads inside the guards below — React state updates
+  // are batched/async, so two rapid taps (the exact double-tap this exists to stop)
+  // could both read the same stale `busy` value from before the first tap's setBusy()
+  // had actually applied. The ref updates immediately, in the same tick.
+  const busyRef = useRef<typeof busy>(null);
   const session = useRef<EmulatorSession | null>(null);
   const canvas = useRef<HTMLCanvasElement | null>(null);
   const abort = useRef<AbortController | null>(null);
-  const saving = useRef(false);
   const tick = useRef<number>(0);
   const live = useRef({ settings, bindings, game });
   live.current = { settings, bindings, game };
@@ -132,29 +155,77 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
   const saveTo = useCallback(async (slot: SlotId) => {
     const s = session.current;
     const g = live.current.game;
-    if (!s || !g || saving.current) return null;
-    saving.current = true;
+    if (!s || !g || busyRef.current) return null;
+    busyRef.current = "saving";
+    setBusy("saving");
     try {
-      const { state, thumbnail } = await s.saveState();
+      const { state, thumbnail } = await withTimeout(s.saveState(), 12_000, getT()("player.error.saveTimedOut"));
       const thumb = thumbnail ? await makeThumbnail(thumbnail, 480).catch(() => thumbnail) : undefined;
       const rec = await putState(g.id, slot, state, thumb);
       const sram = await s.saveSram();
       if (sram) await putSram(g.id, sram);
       return rec;
     } finally {
-      saving.current = false;
+      busyRef.current = null;
+      setBusy(null);
     }
   }, []);
 
   const loadFrom = useCallback(async (slot: SlotId) => {
     const s = session.current;
     const g = live.current.game;
-    if (!s || !g) return false;
-    const rec = await getState(g.id, slot);
-    if (!rec) return false;
-    await s.loadState(rec.state);
-    return true;
+    // The missing guard here was the real bug: two taps on "Load" (the natural
+    // reaction to a save/load that LOOKS like it did nothing) fired two overlapping
+    // loadState() calls — each one clears and rewrites the same state file the other
+    // is mid-read of, which is exactly the kind of corruption that leaves input dead
+    // afterward with no way back except abandoning the session entirely.
+    if (!s || !g || busyRef.current) return false;
+    busyRef.current = "loading";
+    setBusy("loading");
+    try {
+      const rec = await getState(g.id, slot);
+      if (!rec) return false;
+      await withTimeout(s.loadState(rec.state), 12_000, getT()("player.error.loadTimedOut"));
+      return true;
+    } finally {
+      busyRef.current = null;
+      setBusy(null);
+    }
   }, []);
+
+  /** Gives the core a brief, bounded window to actually start ticking again after a
+   *  command like RESET before handing control back — RESET returns immediately from
+   *  JS's point of view, but the core can still be settling for a beat, and closing
+   *  the menu right away into that window is what reads as "froze, had to leave and
+   *  come back". Never blocks indefinitely: gives up after `timeoutMs` and proceeds
+   *  regardless, so a core that can't report frameCount (returns null) or one that's
+   *  genuinely stuck doesn't hang the UI — the running-state stall watchdog elsewhere
+   *  in this hook is what catches a *persistent* freeze, not this. */
+  const waitForFrameProgress = useCallback(async (timeoutMs = 2000) => {
+    const s = session.current;
+    const start = s?.frameCount() ?? null;
+    if (start === null) return;
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 80));
+      const now = session.current?.frameCount() ?? null;
+      if (now === null || now !== start) return;
+    }
+  }, []);
+
+  const restart = useCallback(async () => {
+    const s = session.current;
+    if (!s || busyRef.current) return;
+    busyRef.current = "restarting";
+    setBusy("restarting");
+    try {
+      s.restart();
+      await waitForFrameProgress();
+    } finally {
+      busyRef.current = null;
+      setBusy(null);
+    }
+  }, [waitForFrameProgress]);
 
   const autosave = useCallback(async () => {
     if (!live.current.settings.autosave) {
@@ -297,5 +368,5 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
     }
   }, [phase, paused, fail]);
 
-  return { phase, error, paused, ff, session, boot, relaunch, exit, saveTo, loadFrom, togglePause, toggleFf };
+  return { phase, error, paused, ff, busy, session, boot, relaunch, exit, saveTo, loadFrom, restart, togglePause, toggleFf };
 }

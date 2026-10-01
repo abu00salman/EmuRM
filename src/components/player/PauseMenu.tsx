@@ -21,8 +21,13 @@ interface Props {
   console?: ConsoleDef;
   settings: PlayerSettings;
   states: StateRecord[];
+  /** A save/load/restart already in flight — disables the matching controls instead
+   *  of leaving them tappable, so a slow operation reads as "working" rather than
+   *  "unresponsive, try tapping again" (which is what used to race two loads
+   *  against each other and corrupt the session). */
+  busy?: "saving" | "loading" | "restarting" | null;
   onResume: () => void;
-  onRestart: () => void;
+  onRestart: () => void | Promise<void>;
   onSave: (slot: SlotId) => Promise<void>;
   onLoad: (slot: SlotId) => Promise<void>;
   onScreenshot: () => void;
@@ -48,6 +53,7 @@ export function PauseMenu(props: Props) {
         >
           <motion.aside
             role="dialog"
+            data-pause-menu-root=""
             aria-label={t("pauseMenu.aria")}
             initial={{ x: 40, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -90,14 +96,27 @@ export function PauseMenu(props: Props) {
   );
 }
 
-function Item({ children, onClick, primary, autoFocus }: { children: React.ReactNode; onClick: () => void; primary?: boolean; autoFocus?: boolean }) {
+function Item({
+  children,
+  onClick,
+  primary,
+  autoFocus,
+  disabled,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  primary?: boolean;
+  autoFocus?: boolean;
+  disabled?: boolean;
+}) {
   return (
     <button
       data-nav
       data-autofocus={autoFocus || undefined}
       autoFocus={autoFocus}
       onClick={onClick}
-      className={`w-full rounded-2xl px-4 py-3.5 text-left text-base transition-colors ${primary ? "bg-white font-semibold text-black" : "hover:bg-white/[0.07]"}`}
+      disabled={disabled}
+      className={`w-full rounded-2xl px-4 py-3.5 text-left text-base transition-colors disabled:opacity-40 ${primary ? "bg-white font-semibold text-black" : "hover:bg-white/[0.07]"}`}
     >
       {children}
     </button>
@@ -114,7 +133,9 @@ function Main(p: Props) {
       <Item onClick={() => p.setPanel("controls")}>{t("pauseMenu.controls")}</Item>
       <Item onClick={p.onScreenshot}>{t("pauseMenu.takeScreenshot")}</Item>
       <Item onClick={p.onFullscreen}>{t("pauseMenu.fullScreen")}</Item>
-      <Item onClick={p.onRestart}>{t("pauseMenu.restartGame")}</Item>
+      <Item onClick={p.onRestart} disabled={!!p.busy}>
+        {p.busy === "restarting" ? t("pauseMenu.restarting") : t("pauseMenu.restartGame")}
+      </Item>
       <div className="my-2 h-px bg-line" />
       <Item onClick={p.onExit}>{t("pauseMenu.saveExit")}</Item>
       <p className="mt-4 px-4 text-xs leading-relaxed text-faint">{t("pauseMenu.hotkeysFooter")}</p>
@@ -126,17 +147,32 @@ function States(p: Props) {
   const t = useT();
   const slots: SlotId[] = ["auto", "1", "2", "3", "4"];
   const by = new Map(p.states.map((s) => [s.slot, s]));
+  const busy = !!p.busy;
   return (
     <div className="flex flex-col gap-3">
       {slots.map((slot) => (
-        <Slot key={slot} slot={slot} rec={by.get(slot)} onSave={() => p.onSave(slot)} onLoad={() => p.onLoad(slot)} />
+        <Slot key={slot} slot={slot} rec={by.get(slot)} busy={busy} busyKind={p.busy} onSave={() => p.onSave(slot)} onLoad={() => p.onLoad(slot)} />
       ))}
       <p className="text-xs text-faint">{t("pauseMenu.autoSlotFooter", { seconds: p.settings.autosaveEvery })}</p>
     </div>
   );
 }
 
-function Slot({ slot, rec, onSave, onLoad }: { slot: SlotId; rec?: StateRecord; onSave: () => void; onLoad: () => void }) {
+function Slot({
+  slot,
+  rec,
+  busy,
+  busyKind,
+  onSave,
+  onLoad,
+}: {
+  slot: SlotId;
+  rec?: StateRecord;
+  busy: boolean;
+  busyKind?: "saving" | "loading" | "restarting" | null;
+  onSave: () => void;
+  onLoad: () => void;
+}) {
   const url = useObjectUrl(rec?.thumbnail);
   const t = useT();
   const locale = useLocale();
@@ -156,9 +192,13 @@ function Slot({ slot, rec, onSave, onLoad }: { slot: SlotId; rec?: StateRecord; 
       </div>
       <div className="flex gap-1">
         {slot !== "auto" && (
-          <button data-nav onClick={onSave} className="rounded-full border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10">{t("pauseMenu.save")}</button>
+          <button data-nav disabled={busy} onClick={onSave} className="rounded-full border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10 disabled:opacity-40">
+            {busyKind === "saving" ? t("pauseMenu.saving") : t("pauseMenu.save")}
+          </button>
         )}
-        <button data-nav disabled={!rec} onClick={onLoad} className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-30">{t("pauseMenu.load")}</button>
+        <button data-nav disabled={!rec || busy} onClick={onLoad} className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-30">
+          {busyKind === "loading" ? t("pauseMenu.loading") : t("pauseMenu.load")}
+        </button>
       </div>
     </div>
   );

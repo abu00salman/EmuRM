@@ -212,7 +212,16 @@ export const libretroEngine: EmulatorEngine = {
         video_smooth: spec.smoothing,
         audio_volume: toDb(spec.volume),
         fastforward_ratio: 4,
-        savestate_thumbnail_enable: true,
+        // Confirmed directly: at least stella2014 (Atari 2600) never writes the
+        // thumbnail file RetroArch's "enable" option asks for, so saveState()'s
+        // Promise.all([state file, thumbnail file]) sits waiting on the half that
+        // never arrives — up to ~60s (the fs-polling loop's own retry budget) before
+        // it finally times out. That's the save/load "hangs, sometimes comes back
+        // with a stuck save screen" symptom end to end. The thumbnail is cosmetic
+        // (a preview image in the save-slot list); disabling it removes the only
+        // unreliable half of the save, leaving just the state-file wait, which is a
+        // file this app itself just wrote and reads back almost immediately.
+        savestate_thumbnail_enable: false,
         savestate_auto_load: false,
         notification_show_fast_forward: false,
         menu_enable_widgets: false,
