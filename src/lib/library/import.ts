@@ -36,20 +36,18 @@ export async function importUrl(url: string, opts: ImportOptions & { signal?: Ab
   try {
     parsed = new URL(url);
   } catch {
-    throw new ImportError("That isn't a complete link. It should start with https://");
+    throw new ImportError(getT()("import.error.badLink"));
   }
   if (parsed.protocol !== "https:" && parsed.hostname !== "localhost") {
-    throw new ImportError("Only https:// links can be downloaded by the browser.");
+    throw new ImportError(getT()("import.error.httpsOnly"));
   }
   let res: Response;
   try {
     res = await fetch(parsed, { signal: opts.signal, mode: "cors" });
   } catch {
-    throw new ImportError(
-      "The server blocked browser downloads (CORS). Download the file yourself, then drop it here.",
-    );
+    throw new ImportError(getT()("import.error.corsBlocked"));
   }
-  if (!res.ok) throw new ImportError(`The server answered ${res.status}. Check the link and try again.`);
+  if (!res.ok) throw new ImportError(getT()("import.error.httpStatus", { status: String(res.status) }));
   const disposition = res.headers.get("content-disposition") ?? "";
   const fromHeader = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)?.[1];
   const name = decodeURIComponent(fromHeader ?? parsed.pathname.split("/").pop() ?? "download.bin");
