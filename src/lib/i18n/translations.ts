@@ -387,7 +387,13 @@ export const ar: Record<TranslationKey, string> = {
   "nav.settings": "الإعدادات",
   "nav.addGames": "أضف ألعابًا",
 
-  "footer.copyright": "جميع الحقوق محفوظة لـ @iRaMzi7 | {year}",
+  // Mirrors the English line's structure (symbol+year+handle block, then the phrase)
+  // instead of grammatically attaching an Arabic preposition ("لـ") to the handle —
+  // that attachment made Arabic shaping render the preposition's isolated glyph form
+  // right next to the Latin text, which came out looking like a stray "J". The LTR
+  // block is still wrapped in Unicode directional isolates (U+2066/U+2069) so it reads
+  // as one left-to-right unit inside the RTL paragraph.
+  "footer.copyright": "⁦© {year} @iRaMzi7⁩ — جميع الحقوق محفوظة",
   "footer.visitors": "زوار الموقع:",
 
   "home.headline": "اختر جهازك",
