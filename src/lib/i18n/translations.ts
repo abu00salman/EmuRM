@@ -16,7 +16,7 @@ export const en = {
   "nav.settings": "Settings",
   "nav.addGames": "Add games",
 
-  "footer.copyright": "© {year} @abu00salman — All rights reserved",
+  "footer.copyright": "© {year} @iRaMzi7 — All rights reserved",
   "footer.visitors": "Site visitors:",
 
   "home.headline": "Choose your console",
@@ -387,7 +387,7 @@ export const ar: Record<TranslationKey, string> = {
   "nav.settings": "الإعدادات",
   "nav.addGames": "أضف ألعابًا",
 
-  "footer.copyright": "جميع الحقوق محفوظة لـ @abu00salman | {year}",
+  "footer.copyright": "جميع الحقوق محفوظة لـ @iRaMzi7 | {year}",
   "footer.visitors": "زوار الموقع:",
 
   "home.headline": "اختر جهازك",
