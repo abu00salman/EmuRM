@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A simple block "E" monogram, kept well inside the ~66dp adaptive-icon safe zone
+     centered in this 108x108 canvas. Deliberately plain geometry (four rectangles,
+     no curves) rather than anything elaborate — easy to verify by eye and to redraw
+     later if EmuRM ever gets a dedicated mark. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#ECEDF0"
+        android:pathData="M30,24 H42 V84 H30 Z M30,24 H78 V36 H30 Z M30,48 H66 V60 H30 Z M30,72 H78 V84 H30 Z" />
+</vector>

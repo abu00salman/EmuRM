@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches EmuRM's own palette exactly (src/app/globals.css's @theme block and
+         manifest.webmanifest's background_color/theme_color) rather than a generic
+         Material palette, so the native chrome (splash, status bar, error screen)
+         never flashes a mismatched color against the web UI it wraps. EmuRM has no
+         single fixed brand accent: each console page sets its own accent color, so
+         the native side only needs the neutral scale, not an invented accent color. -->
+    <color name="emurm_ink">#000000</color>
+    <color name="emurm_graphite">#141518</color>
+    <color name="emurm_graphite_2">#1D1F24</color>
+    <color name="emurm_text">#ECEDF0</color>
+    <color name="emurm_muted">#8D919B</color>
+    <color name="emurm_faint">#5B5F69</color>
+</resources>

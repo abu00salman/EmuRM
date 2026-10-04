@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nothing here is app-private data worth restoring anyway — ROMs and saves live in
+     the web app's IndexedDB inside the WebView's own storage, and whether that should
+     transfer to a new device is the user's call, not something to force either way via
+     a silent backup. Excluding everything is the conservative default for an app whose
+     local storage may hold user-supplied ROM dumps. -->
+<data-extraction-rules>
+    <cloud-backup disableIfNoEncryptionCapability="true">
+        <exclude domain="root" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+    </device-transfer>
+</data-extraction-rules>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- EmuRM's web UI has a single fixed dark identity (color-scheme: dark in
+         globals.css, no light mode) — the native chrome matches it exactly rather
+         than following the system's day/night setting, so there's never a mismatch
+         between the native splash/status bar and the page underneath. -->
+    <style name="Theme.EmuRM" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">@color/emurm_ink</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
+    </style>
+
+    <!-- The launch theme: androidx.core.splashscreen draws this for the brief moment
+         between process start and the first WebView frame, then MainActivity switches
+         to Theme.EmuRM via setTheme(). No custom splash Activity, no artificial delay —
+         the system splash API already exits as soon as the content is ready. -->
+    <style name="Theme.EmuRM.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/emurm_ink</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.EmuRM</item>
+    </style>
+
+</resources>

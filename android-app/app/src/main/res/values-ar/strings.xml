@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">إيميورم</string>
+
+    <string name="controller_connected">تم توصيل يد التحكم</string>
+    <string name="controller_disconnected">انقطع اتصال يد التحكم</string>
+
+    <string name="error_title">تعذّر الوصول إلى إيميورم</string>
+    <string name="error_body">لا يوجد اتصال بالإنترنت، ولا شيء محفوظ بعد للعمل دون اتصال. اتصل بالإنترنت مرة واحدة لتحميل التطبيق، وبعدها يستمر بالعمل دون اتصال.</string>
+    <string name="error_retry">إعادة المحاولة</string>
+
+    <string name="http_error_title">حدث خطأ ما</string>
+    <string name="http_error_body">لم يتم تحميل إيميورم بشكل صحيح. هذا غالبًا مؤقت.</string>
+
+    <string name="external_link_chooser_title">فتح الرابط</string>
+</resources>
