@@ -91,15 +91,15 @@ What's actually native, and why each exists:
 |---|---|---|
 | Hardware-accelerated, locked-down `WebView` config | `MainActivity.configureWebView()` | `WebSettings`, layer type, mixed-content policy — Android-only API |
 | SAF file picker for ROM import | `onShowFileChooser` in `MainActivity` | Required for *any* `<input type=file>` to do anything at all in WebView — without it, taps on "Choose files" silently do nothing |
-| Immersive fullscreen while playing | `setImmersive()`, driven by `android-bridge.ts` watching `data-playing` | Status/nav bar hide-on-play — `WindowInsetsControllerCompat` |
+| Immersive fullscreen while playing | `setImmersive()`, driven by `native-bridge.ts` watching `data-playing` | Status/nav bar hide-on-play — `WindowInsetsControllerCompat` |
 | Back button → pause menu, not app-exit | `backCallback` | Dispatches a synthetic Escape keydown into the page — reuses the pause menu's *existing* Escape handling instead of a second, parallel one |
 | Audio focus (calls, other apps) | `AudioFocusController.kt` | No web API for this; on focus loss it pauses the same way Back does, for the same reason |
-| Blob-URL downloads (screenshots) | `android-bridge.ts` intercept + `JsBridge.saveBlob` | WebView's `DownloadListener` can't resolve `blob:` URLs — a known Chromium WebView gap, not an EmuRM bug |
+| Blob-URL downloads (screenshots) | `native-bridge.ts` intercept + `JsBridge.saveBlob` | WebView's `DownloadListener` can't resolve `blob:` URLs — a known Chromium WebView gap, not an EmuRM bug |
 | Splash screen | `Theme.EmuRM.Starting` + `installSplashScreen()` | Android 12+ SplashScreen API, released as soon as the first page paints |
 | Native error screen | `activity_main.xml` error overlay | Only for a failure *before* the page (and its own `error.tsx`/`global-error.tsx`) ever loaded — e.g. no network on first-ever launch |
 | Share-to-import (`ACTION_SEND`) | `MainActivity.importSharedUri()` + `window.__androidImportSharedFile` | Reuses the *exact* existing `importFiles()` pipeline and ambiguous-format picker — nothing import-specific duplicated |
 
-The JS↔native bridge (`src/lib/android-bridge.ts`) is a single new file, imported once
+The JS↔native bridge (`src/lib/native-bridge.ts`) is a single new file, imported once
 from `AppShell.tsx`, that no-ops entirely outside the Android WebView
 (`window.AndroidNative` only exists there). It does not change behavior for web,
 desktop, or iOS users, and nothing in the existing player/pause-menu/save code was

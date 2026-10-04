@@ -302,7 +302,7 @@ class MainActivity : AppCompatActivity() {
 
         webView.setDownloadListener { url, _, _, _, _ ->
             // Real network downloads only — blob: URLs are intercepted on the page side
-            // (src/lib/android-bridge.ts) before a click ever reaches here, since
+            // (src/lib/native-bridge.ts) before a click ever reaches here, since
             // WebView's download path can't resolve page-local blob storage at all.
             if (!url.startsWith("blob:")) openExternalLink(Uri.parse(url))
         }

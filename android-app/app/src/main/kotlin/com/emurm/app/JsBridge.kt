@@ -4,7 +4,7 @@ import android.webkit.JavascriptInterface
 
 /**
  * The entire native surface exposed to page JavaScript (injected in MainActivity as
- * `window.AndroidNative`, consumed by src/lib/android-bridge.ts). Deliberately tiny —
+ * `window.AndroidNative`, consumed by src/lib/native-bridge.ts). Deliberately tiny —
  * four methods, no generic eval/exec, no filesystem access beyond the one scoped save
  * path — because every method here must be treated as callable by any script running
  * in the WebView, not just EmuRM's own trusted code.

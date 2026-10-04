@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { registerServiceWorker } from "@/lib/pwa/register";
 import { initPwaInstall } from "@/lib/pwa/install";
-import "@/lib/android-bridge";
+import "@/lib/native-bridge";
 import { arrowKeyNav, startGamepadNav } from "@/lib/input/gamepad-nav";
 import { useUI } from "@/stores/ui";
 import { useLocaleStore, useT } from "@/lib/i18n";

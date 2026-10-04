@@ -1,35 +1,58 @@
 /**
- * Hooks for the native Android wrapper (android-app/). A no-op import on every other
- * platform — everything below only runs when `window.AndroidNative` exists, which is
- * true only inside that app's WebView (see android-app/.../MainActivity.kt). None of
- * this touches the web app's own behavior for browser/desktop/iOS/PWA users.
+ * Hooks for the native app wrappers (android-app/, ios-app/). A no-op import on every
+ * other platform — everything below only runs when a native bridge object is actually
+ * present, which is true only inside one of those apps' WebViews. None of this touches
+ * the web app's own behavior for browser/desktop/PWA users.
+ *
+ * Android (android-app/.../MainActivity.kt) injects `window.AndroidNative` directly via
+ * addJavascriptInterface, with synchronous method calls. iOS (ios-app/.../WebViewCoordinator.swift)
+ * registers a WKScriptMessageHandler under the name "emurmNative", reachable only via
+ * `postMessage(payload)` — one-way, no return value. getNative() below normalizes both
+ * into the same three-method shape so the rest of this file doesn't care which platform
+ * it's running on.
  */
 import { importFiles } from "@/lib/library/import";
 import { useUI } from "@/stores/ui";
 import { getT } from "@/lib/i18n";
 
+interface NativeBridge {
+  notifyPlaying(playing: boolean): void;
+  notifyMenuOpen(open: boolean): void;
+  saveBlob(base64Data: string, filename: string, mimeType: string): void;
+}
+
 declare global {
   interface Window {
-    AndroidNative?: {
-      isNativeApp(): boolean;
-      notifyPlaying(playing: boolean): void;
-      notifyMenuOpen(open: boolean): void;
-      saveBlob(base64Data: string, filename: string, mimeType: string): void;
-    };
+    AndroidNative?: NativeBridge & { isNativeApp(): boolean };
+    webkit?: { messageHandlers?: Record<string, { postMessage(message: unknown): void }> };
     __androidImportSharedFile?: (name: string, base64: string, mime: string) => void;
   }
 }
 
-if (typeof window !== "undefined" && window.AndroidNative) {
-  const native = window.AndroidNative;
+function getNative(): NativeBridge | null {
+  if (typeof window === "undefined") return null;
+  if (window.AndroidNative) return window.AndroidNative;
+  const ios = window.webkit?.messageHandlers?.emurmNative;
+  if (ios) {
+    return {
+      notifyPlaying: (playing) => ios.postMessage({ action: "notifyPlaying", playing }),
+      notifyMenuOpen: (open) => ios.postMessage({ action: "notifyMenuOpen", open }),
+      saveBlob: (base64Data, filename, mimeType) => ios.postMessage({ action: "saveBlob", base64Data, filename, mimeType }),
+    };
+  }
+  return null;
+}
 
+const native = getNative();
+
+if (native) {
   // Tracks the two bits of state the native shell needs and can't see on its own:
   // whether a game is actively running (drives immersive fullscreen + audio focus)
   // and whether the pause menu is currently open (so a phone call arriving while
   // it's already open doesn't blindly toggle it shut via the same Escape dispatch
-  // the back button uses). Both derive from DOM state Player.tsx already maintains
-  // (document.body.dataset.playing, and the pause menu's own data-pause-menu-root
-  // attribute), so this needs no changes to the player itself.
+  // the back button / audio-interruption handling uses). Both derive from DOM state
+  // Player.tsx already maintains (document.body.dataset.playing, and the pause menu's
+  // own data-pause-menu-root attribute), so this needs no changes to the player itself.
   let lastPlaying = false;
   let lastMenuOpen = false;
   const sync = () => {
@@ -52,11 +75,11 @@ if (typeof window !== "undefined" && window.AndroidNative) {
   });
   sync();
 
-  // WebView can't resolve blob: URLs through its normal download path (a well-known
-  // Chromium WebView gap — DownloadListener receives the URL string but has no way
-  // to fetch page-local blob storage from outside the page). Intercept the exact
-  // pattern the screenshot feature (and anything else using the same a[download]
-  // + blob: URL convention) already uses, and hand the bytes to native instead.
+  // Neither WebView can resolve blob: URLs through its normal download path — a
+  // well-known gap in both Chromium WebView and WKWebView, not an EmuRM bug.
+  // Intercept the exact pattern the screenshot feature (and anything else using the
+  // same a[download] + blob: URL convention) already uses, and hand the bytes to
+  // native instead.
   document.addEventListener(
     "click",
     (e) => {
@@ -80,9 +103,11 @@ if (typeof window !== "undefined" && window.AndroidNative) {
     true,
   );
 
-  // "Share to EmuRM" from a file manager or another app (see MainActivity's
-  // ACTION_SEND handling). Reuses the exact same import pipeline and ambiguous-format
-  // picker as the in-page "Add games" dialog — nothing import-specific is duplicated.
+  // "Share to EmuRM" from a file manager or another app — Android only for now (see
+  // MainActivity's ACTION_SEND handling); iOS has no equivalent yet (would need a
+  // separate Share Extension target, out of scope for the first iOS build). Reuses the
+  // exact same import pipeline and ambiguous-format picker as the in-page "Add games"
+  // dialog — nothing import-specific is duplicated.
   window.__androidImportSharedFile = (name, base64, mime) => {
     void (async () => {
       try {
