@@ -48,7 +48,7 @@ final class WebViewController: UIViewController {
 
         NotificationCenter.default.addObserver(
             self, selector: #selector(audioSessionInterrupted(_:)),
-            name: AVAudioSession.interruptionNotification, object: nil,
+            name: AVAudioSession.interruptionNotification, object: nil
         )
     }
 
@@ -179,7 +179,7 @@ final class WebViewController: UIViewController {
     private func dispatchSyntheticEscape() {
         webView.evaluateJavaScript(
             "window.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}))",
-            completionHandler: nil,
+            completionHandler: nil
         )
     }
 
