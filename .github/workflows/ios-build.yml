@@ -26,6 +26,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Select latest available Xcode
+        # macos-14 runners ship several Xcode versions side by side, and the
+        # default-selected one can be older than what xcodegen's generated project
+        # format needs (seen in practice: xcodegen wrote a project in Xcode 16's
+        # format while 15.4 was selected, which xcodebuild then refused to open at
+        # all — "future Xcode project file format"). Pick whichever is newest instead
+        # of trusting the runner image's default.
+        run: |
+          LATEST_XCODE=$(ls -d /Applications/Xcode*.app | sort -V | tail -n1)
+          echo "Selecting $LATEST_XCODE"
+          sudo xcode-select -s "$LATEST_XCODE/Contents/Developer"
+          xcodebuild -version
+
       - name: Install xcodegen
         run: brew install xcodegen
 
