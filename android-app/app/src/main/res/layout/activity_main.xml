@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<!-- A plain FrameLayout rather than ConstraintLayout: every child here is either
+     "fill the whole screen" or "center within it", which FrameLayout already does by
+     stacking children in declaration order (later = drawn on top) — no constraint
+     relationships are actually needed, so there's no reason to pull in an extra
+     dependency (and the resolution issues that come with it) for this. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,12 +16,8 @@
          real system bar/cutout insets MainActivity forwards to it in code. -->
     <WebView
         android:id="@+id/webView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <!-- Shown only while the splash-screen's own keep-on-screen condition is still true,
          as a safety net in case the page takes a moment past the splash's own timeout. -->
@@ -26,12 +26,9 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="36dp"
         android:layout_height="36dp"
+        android:layout_gravity="center"
         android:indeterminateTint="@color/emurm_muted"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:visibility="gone" />
 
     <!-- Native-level error screen: covers the WebView only when the TOP-LEVEL navigation
          itself failed (no network before the service worker ever cached anything, or a
@@ -40,17 +37,13 @@
          never appears once a page has successfully loaded once. -->
     <LinearLayout
         android:id="@+id/errorOverlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
         android:paddingHorizontal="32dp"
         android:background="@color/emurm_ink"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/errorTitle"
@@ -82,4 +75,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
