@@ -312,11 +312,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun handlePlayingChanged(playing: Boolean) {
         isPlaying = playing
-        setImmersive(playing)
+        setImmersiveMode(playing)
         if (playing) audioFocusController.request() else audioFocusController.abandon()
     }
 
-    private fun setImmersive(enabled: Boolean) {
+    // Named setImmersiveMode rather than setImmersive: android.app.Activity (a
+    // supertype here) already declares a public setImmersive(boolean) method of its
+    // own — reusing that exact name would silently hide the inherited one instead of
+    // overriding it, which Kotlin correctly refuses to compile without an explicit
+    // `override` (and this isn't actually overriding it; it's an unrelated method).
+    private fun setImmersiveMode(enabled: Boolean) {
         val controller = WindowCompat.getInsetsController(window, binding.root)
         if (enabled) {
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
