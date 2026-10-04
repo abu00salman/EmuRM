@@ -1,0 +1,44 @@
+# xcodegen spec — generates EmuRM.xcodeproj. A hand-written .pbxproj was deliberately
+# avoided: that format is extremely easy to get subtly wrong with no way to validate it
+# outside Xcode itself (which this project was written without access to — see
+# README.md). xcodegen turns this single declarative file into a project Xcode can open
+# directly; regenerate with `xcodegen generate` after editing it.
+name: EmuRM
+options:
+  bundleIdPrefix: com.emurm
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+
+targets:
+  EmuRM:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: EmuRM
+    info:
+      path: EmuRM/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.emurm.app
+        PRODUCT_NAME: EmuRM
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: LaunchBackground
+        # Unsigned build — this is meant to come out of CI (see
+        # .github/workflows/ios-build.yml) as a plain, unsigned .app that gets packaged
+        # into an IPA for the *user* to sign locally with their own Apple Developer
+        # account, not something this project signs itself.
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGNING_ALLOWED: "NO"
+        CODE_SIGN_IDENTITY: ""
+        DEVELOPMENT_TEAM: ""

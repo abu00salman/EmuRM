@@ -1,0 +1,61 @@
+name: iOS Unsigned IPA
+
+# Builds ios-app/ into an unsigned .app and packages it as an unsigned .ipa.
+#
+# This exists for the same reason android-build.yml does: the environment this was
+# written from has no macOS/Xcode access at all (it's Linux), so nothing here has ever
+# been compiled locally. GitHub's macOS runners have Xcode preinstalled, so the build
+# happens here instead — triggered manually, result attached to the run as a
+# downloadable artifact.
+#
+# The IPA this produces is intentionally unsigned (ios-app/project.yml sets
+# CODE_SIGNING_ALLOWED=NO) — Apple requires every app to be signed before it can run on
+# a real device, and this project deliberately doesn't attempt that itself (it has no
+# Apple Developer account, certificate, or provisioning profile to sign with). Download
+# the artifact and re-sign it yourself with your own account — see ios-app/README.md.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: ios-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned .app
+        run: |
+          xcodebuild build \
+            -project EmuRM.xcodeproj \
+            -scheme EmuRM \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM=""
+
+      - name: Package unsigned IPA
+        run: |
+          set -e
+          APP_PATH="build/Build/Products/Release-iphoneos/EmuRM.app"
+          test -d "$APP_PATH"
+          mkdir -p Payload
+          cp -R "$APP_PATH" Payload/
+          zip -r EmuRM-unsigned.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: emurm-unsigned-ipa
+          path: ios-app/EmuRM-unsigned.ipa
+          retention-days: 14
