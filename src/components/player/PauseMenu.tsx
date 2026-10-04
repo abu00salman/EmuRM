@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import type { ConsoleDef } from "@/lib/consoles/types";
 import type { GameRecord, SlotId, StateRecord } from "@/lib/db/schema";
 import type { AspectMode } from "@/lib/engine/types";
+import type { Busy } from "./usePlayerSession";
 import { formatRelative } from "@/lib/format";
 import { useObjectUrl } from "@/lib/object-url";
 import type { PlayerSettings, ScreenFilter, TouchTheme } from "@/stores/player-settings";
@@ -25,7 +26,7 @@ interface Props {
    *  of leaving them tappable, so a slow operation reads as "working" rather than
    *  "unresponsive, try tapping again" (which is what used to race two loads
    *  against each other and corrupt the session). */
-  busy?: "saving" | "loading" | "restarting" | null;
+  busy?: Busy;
   onResume: () => void;
   onRestart: () => void | Promise<void>;
   onSave: (slot: SlotId) => Promise<void>;
@@ -134,7 +135,7 @@ function Main(p: Props) {
       <Item onClick={p.onScreenshot}>{t("pauseMenu.takeScreenshot")}</Item>
       <Item onClick={p.onFullscreen}>{t("pauseMenu.fullScreen")}</Item>
       <Item onClick={p.onRestart} disabled={!!p.busy}>
-        {p.busy === "restarting" ? t("pauseMenu.restarting") : t("pauseMenu.restartGame")}
+        {p.busy?.kind === "restarting" ? t("pauseMenu.restarting") : t("pauseMenu.restartGame")}
       </Item>
       <div className="my-2 h-px bg-line" />
       <Item onClick={p.onExit}>{t("pauseMenu.saveExit")}</Item>
@@ -147,6 +148,9 @@ function States(p: Props) {
   const t = useT();
   const slots: SlotId[] = ["auto", "1", "2", "3", "4"];
   const by = new Map(p.states.map((s) => [s.slot, s]));
+  // Any in-flight save/load/restart disables every slot's buttons (you still shouldn't
+  // be able to start a second one), but only the slot it's actually for shows the
+  // "Saving…"/"Loading…" label — otherwise every row looked stuck at once.
   const busy = !!p.busy;
   return (
     <div className="flex flex-col gap-3">
@@ -169,13 +173,15 @@ function Slot({
   slot: SlotId;
   rec?: StateRecord;
   busy: boolean;
-  busyKind?: "saving" | "loading" | "restarting" | null;
+  busyKind?: Busy;
   onSave: () => void;
   onLoad: () => void;
 }) {
   const url = useObjectUrl(rec?.thumbnail);
   const t = useT();
   const locale = useLocale();
+  const savingThis = busyKind?.kind === "saving" && busyKind.slot === slot;
+  const loadingThis = busyKind?.kind === "loading" && busyKind.slot === slot;
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-line p-2">
       <div className="grid aspect-[4/3] w-24 shrink-0 place-items-center overflow-hidden rounded-xl bg-black">
@@ -193,11 +199,11 @@ function Slot({
       <div className="flex gap-1">
         {slot !== "auto" && (
           <button data-nav disabled={busy} onClick={onSave} className="rounded-full border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10 disabled:opacity-40">
-            {busyKind === "saving" ? t("pauseMenu.saving") : t("pauseMenu.save")}
+            {savingThis ? t("pauseMenu.saving") : t("pauseMenu.save")}
           </button>
         )}
         <button data-nav disabled={!rec || busy} onClick={onLoad} className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-30">
-          {busyKind === "loading" ? t("pauseMenu.loading") : t("pauseMenu.load")}
+          {loadingThis ? t("pauseMenu.loading") : t("pauseMenu.load")}
         </button>
       </div>
     </div>

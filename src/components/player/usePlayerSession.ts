@@ -10,6 +10,11 @@ import type { PlayerSettings } from "@/stores/player-settings";
 
 export type Phase = "idle" | LaunchPhase | "error";
 
+/** Carries which slot a save/load is actually for, so the pause menu can show the
+ *  "Saving…"/"Loading…" label on that one row only — not on every slot at once, which
+ *  read as every button being stuck rather than one being in progress. */
+export type Busy = { kind: "saving" | "loading"; slot: SlotId } | { kind: "restarting" } | null;
+
 /** Bounds an engine call that can otherwise hang silently (see savestate_thumbnail_enable
  *  in libretro-engine.ts for a confirmed real example) so a slow/stuck core fails fast
  *  and visibly instead of leaving the busy state — and the pause menu — stuck for up to
@@ -45,12 +50,12 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
    *  "nothing visibly happened yet" and "it's actually working" is exactly what reads
    *  as a hang and invites the double-tap that then races two state loads against
    *  each other (see loadFrom below). */
-  const [busy, setBusy] = useState<"saving" | "loading" | "restarting" | null>(null);
+  const [busy, setBusy] = useState<Busy>(null);
   // Mirrors `busy` for synchronous reads inside the guards below — React state updates
   // are batched/async, so two rapid taps (the exact double-tap this exists to stop)
   // could both read the same stale `busy` value from before the first tap's setBusy()
   // had actually applied. The ref updates immediately, in the same tick.
-  const busyRef = useRef<typeof busy>(null);
+  const busyRef = useRef<Busy>(null);
   const session = useRef<EmulatorSession | null>(null);
   const canvas = useRef<HTMLCanvasElement | null>(null);
   const abort = useRef<AbortController | null>(null);
@@ -68,7 +73,7 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
   }, []);
 
   const boot = useCallback(
-    async (carry?: Blob) => {
+    async (carry?: Blob, fresh = false) => {
       const g = live.current.game;
       const el = host.current;
       if (!g || !el) return;
@@ -84,7 +89,9 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
           getRom(g.id),
           listBios(c.id),
           getSram(g.id),
-          carry ? Promise.resolve(carry) : resume ? getState(g.id, "auto").then((s) => s?.state) : Promise.resolve(undefined),
+          // `fresh` forces a genuine from-scratch boot (used by restart(), below) —
+          // it overrides even an auto-resume launch, which `carry`/`resume` alone don't.
+          fresh ? Promise.resolve(undefined) : carry ? Promise.resolve(carry) : resume ? getState(g.id, "auto").then((s) => s?.state) : Promise.resolve(undefined),
         ]);
         if (!rom) throw new Error("This game's file is missing from this device. Add it again from the library.");
         const have = new Set(bios.map((b) => b.fileName));
@@ -156,8 +163,8 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
     const s = session.current;
     const g = live.current.game;
     if (!s || !g || busyRef.current) return null;
-    busyRef.current = "saving";
-    setBusy("saving");
+    busyRef.current = { kind: "saving", slot };
+    setBusy({ kind: "saving", slot });
     try {
       const { state, thumbnail } = await withTimeout(s.saveState(), 12_000, getT()("player.error.saveTimedOut"));
       const thumb = thumbnail ? await makeThumbnail(thumbnail, 480).catch(() => thumbnail) : undefined;
@@ -180,8 +187,8 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
     // is mid-read of, which is exactly the kind of corruption that leaves input dead
     // afterward with no way back except abandoning the session entirely.
     if (!s || !g || busyRef.current) return false;
-    busyRef.current = "loading";
-    setBusy("loading");
+    busyRef.current = { kind: "loading", slot };
+    setBusy({ kind: "loading", slot });
     try {
       const rec = await getState(g.id, slot);
       if (!rec) return false;
@@ -193,39 +200,26 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
     }
   }, []);
 
-  /** Gives the core a brief, bounded window to actually start ticking again after a
-   *  command like RESET before handing control back — RESET returns immediately from
-   *  JS's point of view, but the core can still be settling for a beat, and closing
-   *  the menu right away into that window is what reads as "froze, had to leave and
-   *  come back". Never blocks indefinitely: gives up after `timeoutMs` and proceeds
-   *  regardless, so a core that can't report frameCount (returns null) or one that's
-   *  genuinely stuck doesn't hang the UI — the running-state stall watchdog elsewhere
-   *  in this hook is what catches a *persistent* freeze, not this. */
-  const waitForFrameProgress = useCallback(async (timeoutMs = 2000) => {
-    const s = session.current;
-    const start = s?.frameCount() ?? null;
-    if (start === null) return;
-    const deadline = Date.now() + timeoutMs;
-    while (Date.now() < deadline) {
-      await new Promise((r) => setTimeout(r, 80));
-      const now = session.current?.frameCount() ?? null;
-      if (now === null || now !== start) return;
-    }
-  }, []);
-
+  /** "Restart game" deliberately does NOT use the engine's own restart()/RESET command.
+   *  That command sends its reset signal straight into the WASM core synchronously
+   *  (Nostalgist's sendCommand() calls the exported WASM function directly, not through
+   *  anything awaitable) while the core is still paused from opening the pause menu —
+   *  not a state the RESET path is clearly meant to handle, and not worth trusting
+   *  blind. A full teardown + reboot sidesteps it entirely and reuses the exact same
+   *  launch path every game already starts through — already covers the paused case
+   *  correctly, at the cost of a brief visible reload instead of an instant in-place
+   *  reset. */
   const restart = useCallback(async () => {
-    const s = session.current;
-    if (!s || busyRef.current) return;
-    busyRef.current = "restarting";
-    setBusy("restarting");
+    if (busyRef.current) return;
+    busyRef.current = { kind: "restarting" };
+    setBusy({ kind: "restarting" });
     try {
-      s.restart();
-      await waitForFrameProgress();
+      await boot(undefined, true);
     } finally {
       busyRef.current = null;
       setBusy(null);
     }
-  }, [waitForFrameProgress]);
+  }, [boot]);
 
   const autosave = useCallback(async () => {
     if (!live.current.settings.autosave) {
