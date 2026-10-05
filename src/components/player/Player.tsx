@@ -348,7 +348,12 @@ export function Player() {
             since that hides every OTHER way back to the menu. This has to stay visible
             precisely then, or there's no way out of fullscreen at all. The touch-style
             button next to it flips fixed/floating in one tap, right where it's needed,
-            instead of only being reachable a few taps deep in Display settings. */}
+            instead of only being reachable a few taps deep in Display settings.
+            (The redesign patch gated this on `hideChrome` too, to stop it visually
+            doubling up with the top chrome bar — but that hides the button for most of
+            normal active play, which is exactly the regression this component's own
+            comment above was written to prevent. Kept unconditional; z-40 already keeps
+            it drawn above the chrome bar's z-30, so the two don't actually conflict.) */}
         {p.phase === "running" && !menu && (
           <div className="absolute left-1/2 top-[max(0.75rem,var(--safe-t))] z-40 flex -translate-x-1/2 items-center gap-2">
             <button

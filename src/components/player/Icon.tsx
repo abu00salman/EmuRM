@@ -1,4 +1,10 @@
 const paths = {
+  plus: "M12 5v14M5 12h14",
+  arrow: "M5 12h14M13 6l6 6-6 6",
+  library: "M4 4h5v16H4zM12 4h4l4 15-4 1z",
+  discover: "M12 3a9 9 0 100 18 9 9 0 000-18zM15 9l-2 4-4 2 2-4z",
+  settings: "M4 7h16M4 17h16M9 4v6M15 14v6",
+
   back: "M15 5l-7 7 7 7",
   ff: "M4 6v12l8-6zM12 6v12l8-6z",
   save: "M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6",

@@ -60,7 +60,7 @@ export function PauseMenu(props: Props) {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 30, opacity: 0 }}
             transition={{ type: "spring", stiffness: 380, damping: 38 }}
-            className="glass-strong flex h-full w-full max-w-md flex-col overflow-y-auto px-6 pb-[max(1.5rem,var(--safe-b))] pt-[max(1.5rem,var(--safe-t))] pe-[max(1.5rem,var(--safe-r))] sm:rounded-s-3xl"
+            className="rm-pause-panel glass-strong flex h-full w-full max-w-md flex-col overflow-y-auto px-6 pb-[max(1.5rem,var(--safe-b))] pt-[max(1.5rem,var(--safe-t))] pe-[max(1.5rem,var(--safe-r))] sm:rounded-s-3xl"
           >
             <div className="flex items-start gap-3">
               {panel !== "main" && (
@@ -101,12 +101,14 @@ function Item({
   children,
   onClick,
   primary,
+  icon,
   autoFocus,
   disabled,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   primary?: boolean;
+  icon?: Parameters<typeof Icon>[0]["name"];
   autoFocus?: boolean;
   disabled?: boolean;
 }) {
@@ -117,8 +119,9 @@ function Item({
       autoFocus={autoFocus}
       onClick={onClick}
       disabled={disabled}
-      className={`w-full rounded-2xl px-4 py-3.5 text-left text-base transition-colors disabled:opacity-40 ${primary ? "bg-white font-semibold text-black" : "hover:bg-white/[0.07]"}`}
+      className={`rm-pause-item w-full rounded-2xl px-4 py-3.5 text-start text-base transition-colors disabled:opacity-40 ${primary ? "rm-pause-primary font-semibold" : "hover:bg-white/[0.07]"}`}
     >
+      {icon && <Icon name={icon} />}
       {children}
     </button>
   );
@@ -127,18 +130,18 @@ function Item({
 function Main(p: Props) {
   const t = useT();
   return (
-    <div className="flex flex-col gap-1">
-      <Item primary autoFocus onClick={p.onResume}>{t("pauseMenu.resume")}</Item>
-      <Item onClick={() => p.setPanel("states")}>{t("pauseMenu.saveLoad")}</Item>
-      <Item onClick={() => p.setPanel("display")}>{t("pauseMenu.displaySound")}</Item>
-      <Item onClick={() => p.setPanel("controls")}>{t("pauseMenu.controls")}</Item>
-      <Item onClick={p.onScreenshot}>{t("pauseMenu.takeScreenshot")}</Item>
-      <Item onClick={p.onFullscreen}>{t("pauseMenu.fullScreen")}</Item>
-      <Item onClick={p.onRestart} disabled={!!p.busy}>
+    <div className="rm-pause-list flex flex-col gap-1">
+      <Item icon="play" primary autoFocus onClick={p.onResume}>{t("pauseMenu.resume")}</Item>
+      <Item icon="save" onClick={() => p.setPanel("states")}>{t("pauseMenu.saveLoad")}</Item>
+      <Item icon="settings" onClick={() => p.setPanel("display")}>{t("pauseMenu.displaySound")}</Item>
+      <Item icon="gamepad" onClick={() => p.setPanel("controls")}>{t("pauseMenu.controls")}</Item>
+      <Item icon="camera" onClick={p.onScreenshot}>{t("pauseMenu.takeScreenshot")}</Item>
+      <Item icon="expand" onClick={p.onFullscreen}>{t("pauseMenu.fullScreen")}</Item>
+      <Item icon="restart" onClick={p.onRestart} disabled={!!p.busy}>
         {p.busy?.kind === "restarting" ? t("pauseMenu.restarting") : t("pauseMenu.restartGame")}
       </Item>
       <div className="my-2 h-px bg-line" />
-      <Item onClick={p.onExit}>{t("pauseMenu.saveExit")}</Item>
+      <Item icon="back" onClick={p.onExit}>{t("pauseMenu.saveExit")}</Item>
       <p className="mt-4 px-4 text-xs leading-relaxed text-faint">{t("pauseMenu.hotkeysFooter")}</p>
     </div>
   );

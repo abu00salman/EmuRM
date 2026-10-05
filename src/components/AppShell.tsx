@@ -13,6 +13,7 @@ import { ImportDialog } from "./ImportDialog";
 import { ConsolePicker } from "./ConsolePicker";
 import { InstallButton } from "./InstallButton";
 import { useImport } from "./useImport";
+import { Icon } from "./player/Icon";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -64,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 function Footer() {
   const t = useT();
   return (
-    <footer className="flex flex-col items-center gap-2 px-[max(1rem,var(--safe-l))] pb-[max(1.5rem,var(--safe-b))] pt-8 text-center text-xs text-faint">
+    <footer className="rm-footer flex flex-col items-center gap-2 px-[max(1rem,var(--safe-l))] pb-[max(1.5rem,var(--safe-b))] pt-8 text-center text-xs text-faint">
       <p>{t("footer.copyright", { year: new Date().getFullYear() })}</p>
       <VisitorCounter />
     </footer>
@@ -100,60 +101,34 @@ function TopBar() {
   const locale = useLocaleStore((s) => s.locale);
   const setLocale = useLocaleStore((s) => s.setLocale);
   const links = [
-    { href: "/", label: t("nav.consoles") },
-    { href: "/discover/", label: t("nav.discover") },
-    { href: "/library/", label: t("nav.library") },
-    { href: "/settings/", label: t("nav.settings") },
+    { href: "/", label: t("nav.consoles"), icon: "gamepad" as const },
+    { href: "/discover/", label: t("nav.discover"), icon: "discover" as const },
+    { href: "/library/", label: t("nav.library"), icon: "library" as const },
+    { href: "/settings/", label: t("nav.settings"), icon: "settings" as const },
   ];
-  return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-40 pt-[var(--safe-t)]">
-      <div className="pointer-events-auto mx-auto flex max-w-[1600px] items-center gap-2 px-[max(1rem,var(--safe-l))] py-3 sm:px-8">
-        {/* glass-strong (not the lighter `glass` the other header pills use) — this sits
-            directly over the hero's own big white heading as the page scrolls, and that
-            needs real contrast behind it, not just a blur, to stay legible where the two
-            overlap. */}
-        <Link href="/" data-nav className="glass-strong me-auto flex items-center gap-2 rounded-full py-1.5 pe-3 ps-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`${BASE}/icons/icon-192.png`} alt="" width={32} height={32} className="h-7 w-7 rounded-[9px] sm:h-8 sm:w-8" />
-          <span className="font-display text-xl font-extrabold tracking-tight sm:text-2xl">{t("app.name")}</span>
-        </Link>
-        <nav className="glass flex items-center gap-0.5 rounded-full p-1 text-[13px] sm:gap-1 sm:text-sm">
-          {links.map((l) => {
-            const active = l.href === "/" ? pathname === "/" : pathname?.startsWith(l.href.replace(/\/$/, ""));
-            return (
-              <Link
-                key={l.href}
-                href={l.href}
-                data-nav
-                aria-current={active ? "page" : undefined}
-                className={`rounded-full px-2.5 py-1.5 transition-colors sm:px-3.5 ${active ? "bg-white/12 text-white" : "text-muted hover:text-white"}`}
-              >
-                {l.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <button
-          data-nav
-          onClick={() => setLocale(locale === "en" ? "ar" : "en")}
-          aria-label={t("lang.switch")}
-          className="glass grid h-9 min-w-9 place-items-center rounded-full px-3 text-xs font-semibold text-muted transition-colors hover:text-white"
-        >
-          {locale === "en" ? "AR" : "EN"}
-        </button>
-        <InstallButton />
-        <button
-          data-nav
-          onClick={() => openImport("device")}
-          aria-label={t("nav.addGames")}
-          className="grid h-9 min-w-9 place-items-center rounded-full bg-white px-0 text-sm font-semibold text-black transition-transform active:scale-95 sm:h-auto sm:px-4 sm:py-2"
-        >
-          <span className="text-xl leading-none sm:hidden" aria-hidden>+</span>
-          <span className="hidden sm:inline">{t("nav.addGames")}</span>
-        </button>
+  const nav = (mobile: boolean) => <nav className={mobile ? "rm-mobile-nav" : "rm-desktop-nav"} aria-label={locale === "ar" ? "التنقل الرئيسي" : "Main navigation"}>
+    {links.map(l => {
+      const active = l.href === "/" ? pathname === "/" || pathname?.startsWith("/console/") : pathname?.startsWith(l.href.replace(/\/$/, ""));
+      return <Link key={l.href} href={l.href} data-nav aria-current={active ? "page" : undefined}><Icon name={l.icon} /><span>{l.label}</span></Link>;
+    })}
+  </nav>;
+  return <>
+    <a href="#main" className="rm-skip">{locale === "ar" ? "انتقل إلى المحتوى" : "Skip to content"}</a>
+    <header className="rm-topbar"><div className="rm-topbar-inner">
+      <Link href="/" data-nav className="rm-brand" aria-label="EmuRM">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`${BASE}/icons/icon-192.png`} alt="" width={40} height={40} />
+        <span dir="ltr">Emu<b>RM</b><small>PRESS PLAY. AGAIN.</small></span>
+      </Link>
+      {nav(false)}
+      <div className="rm-top-actions">
+        <button data-nav onClick={() => setLocale(locale === "en" ? "ar" : "en")} aria-label={t("lang.switch")} className="rm-language">{locale === "en" ? "عربي" : "EN"}</button>
+        <span className="rm-install"><InstallButton /></span>
+        <button data-nav onClick={() => openImport("device")} aria-label={t("nav.addGames")} className="rm-button rm-button-primary rm-add"><Icon name="plus" /><span>{t("nav.addGames")}</span></button>
       </div>
-    </header>
-  );
+    </div></header>
+    {nav(true)}
+  </>;
 }
 
 /** Drop ROMs anywhere on the page. */
@@ -222,7 +197,7 @@ function Toasts() {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-2 px-4 pb-[max(1.25rem,var(--safe-b))]"
+      className="rm-toasts pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-2 px-4 pb-[max(1.25rem,var(--safe-b))]"
     >
       <AnimatePresence>
         {toasts.map((t) => (

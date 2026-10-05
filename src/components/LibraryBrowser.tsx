@@ -108,7 +108,7 @@ export function LibraryBrowser({ consoleId }: { consoleId?: ConsoleId }) {
   return (
     <div>
       {/* Toolbar */}
-      <div className="sticky top-[calc(var(--safe-t)+4.25rem)] z-30 -mx-2 mb-6 flex flex-col gap-3 rounded-2xl px-2 py-2 backdrop-blur-xl sm:flex-row sm:items-center">
+      <div className="rm-library-toolbar sticky top-[calc(var(--safe-t)+4.25rem)] z-30 -mx-2 mb-6 flex flex-col gap-3 rounded-2xl px-2 py-2 backdrop-blur-xl sm:flex-row sm:items-center">
         <label className="glass flex flex-1 items-center gap-2 rounded-full px-4 py-2.5 sm:max-w-sm">
           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-muted" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
           <input
@@ -133,7 +133,7 @@ export function LibraryBrowser({ consoleId }: { consoleId?: ConsoleId }) {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2 sm:ml-auto">
+        <div className="rm-library-options flex items-center gap-2 sm:ms-auto">
           {!consoleId && systemsPresent.length > 1 && (
             <select
               aria-label={t("library.filterSystemAria")}

@@ -8,7 +8,7 @@ import { useCountsByConsole } from "@/lib/db/hooks";
 import { db } from "@/lib/db/schema";
 import { useUI } from "@/stores/ui";
 import { useLocale, useT } from "@/lib/i18n";
-import { DeviceGlyph } from "./DeviceGlyph";
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const CORE_BASE = process.env.NEXT_PUBLIC_CORE_BASE ?? "";
 
@@ -24,7 +24,7 @@ export function ConsoleHeader({ id }: { id: ConsoleId }) {
   const n = counts?.[id] ?? 0;
 
   return (
-    <header className="relative overflow-hidden">
+    <header className="rm-console-header relative overflow-hidden">
       {/* Continues the light flood from the hall */}
       <motion.div
         aria-hidden
@@ -34,7 +34,7 @@ export function ConsoleHeader({ id }: { id: ConsoleId }) {
         transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
         style={{ background: `radial-gradient(120% 90% at 50% 0%, color-mix(in oklab, ${c.accent} 34%, black) 0%, transparent 70%)` }}
       />
-      <div className="relative mx-auto flex max-w-[1600px] flex-col gap-6 px-[max(1rem,var(--safe-l))] pb-10 pt-[calc(var(--safe-t)+6.5rem)] sm:flex-row sm:items-end sm:px-8 sm:pt-[calc(var(--safe-t)+8rem)]">
+      <div className="rm-console-header-content relative mx-auto flex max-w-[1600px] flex-col gap-6 px-[max(1rem,var(--safe-l))] pb-10 pt-[calc(var(--safe-t)+6.5rem)] sm:flex-row sm:items-end sm:px-8 sm:pt-[calc(var(--safe-t)+8rem)]">
         <div className="flex-1">
           <Link href="/" className="text-sm text-muted hover:text-white" data-nav>
             {t("consoleHeader.allConsoles")}
@@ -62,7 +62,8 @@ export function ConsoleHeader({ id }: { id: ConsoleId }) {
           </p>
           {c.aliases.length > 0 && <p className="mt-1 text-sm text-faint">{t("consoleHeader.alsoKnownAs", { aliases: c.aliases.join(", ") })}</p>}
         </div>
-        <DeviceGlyph form={c.form} className="hidden h-36 w-48 text-[color:var(--accent)] opacity-80 sm:block" strokeWidth={1.4} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="rm-console-header-photo" src={`${BASE}/images/consoles/${c.photo}`} alt="" />
         <button data-nav onClick={() => openImport("device", id)} className="self-start rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black sm:self-end">
           {t("consoleHeader.addGames", { system: c.short })}
         </button>

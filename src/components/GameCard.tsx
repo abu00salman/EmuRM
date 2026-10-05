@@ -38,7 +38,7 @@ export function GameCard({ game, onMore, showConsole }: { game: GameRecord; onMo
   const t = useT();
   const locale = useLocale();
   return (
-    <motion.div layout="position" transition={{ type: "spring", stiffness: 400, damping: 38 }} className="group relative" style={{ ["--accent" as string]: c?.accent }}>
+    <motion.div layout="position" transition={{ type: "spring", stiffness: 400, damping: 38 }} className="rm-game-card group relative" style={{ ["--accent" as string]: c?.accent }}>
       <Link
         data-nav
         href={`/play/?game=${game.id}`}
