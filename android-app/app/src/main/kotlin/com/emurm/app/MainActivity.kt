@@ -387,11 +387,18 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
-    // ---------- Share-to-import (ACTION_SEND) ----------
-
+    // ---------- Share-to-import (ACTION_SEND) and "Open with EmuRM" (ACTION_VIEW) ----------
+    // Both end up at the same importSharedUri() — and from there, the same JS-side
+    // importFiles() pipeline the in-page file picker uses — so a ROM opened from a file
+    // manager goes through identical system detection, core mapping and SAF/ContentResolver
+    // handling as one dragged onto the page by hand. See AndroidManifest.xml for why the
+    // ACTION_VIEW filter is declared the way it is.
     private fun handleIntent(intent: Intent?) {
-        if (intent?.action != Intent.ACTION_SEND) return
-        val uri = intent.getStreamUriCompat() ?: return
+        val uri = when (intent?.action) {
+            Intent.ACTION_SEND -> intent.getStreamUriCompat()
+            Intent.ACTION_VIEW -> intent.data
+            else -> null
+        } ?: return
         importSharedUri(uri)
     }
 

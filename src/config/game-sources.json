@@ -1,0 +1,9 @@
+[
+  {
+    "id": "web-search",
+    "name": "Web Search",
+    "searchUrlTemplate": "https://www.google.com/search?q={query}",
+    "supportedSystems": ["*"],
+    "enabled": true
+  }
+]

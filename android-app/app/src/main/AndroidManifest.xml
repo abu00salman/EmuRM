@@ -48,6 +48,28 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="*/*" />
             </intent-filter>
+
+            <!-- "Open with EmuRM" on a ROM file tapped directly in a file manager (e.g.
+                 Samsung My Files) — the Game Discovery feature's intended end state. Scoped
+                 to "*/*" rather than per-extension on purpose: ROM extensions (.nes, .sfc,
+                 .gba…) have no registered MIME type, so a file manager almost always reports
+                 them as application/octet-stream or leaves the type unset rather than
+                 something matchable by extension in a manifest — the same reality every
+                 Android emulator frontend deals with. The cost is that EmuRM becomes a
+                 candidate "Open with" app for any file, not just ROMs; MainActivity's own
+                 import pipeline is what actually rejects anything it can't recognize, the
+                 same rejection path a misdropped file already goes through today. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="file" android:mimeType="*/*" />
+            </intent-filter>
         </activity>
 
     </application>

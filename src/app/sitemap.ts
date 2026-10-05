@@ -11,6 +11,7 @@ const SITE = process.env.NEXT_BASE_PATH ? "https://abu00salman.github.io/EmuRM" 
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages: MetadataRoute.Sitemap = [
     { url: `${SITE}/`, changeFrequency: "weekly", priority: 1 },
+    { url: `${SITE}/discover/`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/library/`, changeFrequency: "weekly", priority: 0.5 },
   ];
   for (const c of CONSOLES) {

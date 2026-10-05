@@ -101,6 +101,7 @@ function TopBar() {
   const setLocale = useLocaleStore((s) => s.setLocale);
   const links = [
     { href: "/", label: t("nav.consoles") },
+    { href: "/discover/", label: t("nav.discover") },
     { href: "/library/", label: t("nav.library") },
     { href: "/settings/", label: t("nav.settings") },
   ];
