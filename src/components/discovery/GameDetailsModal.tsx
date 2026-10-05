@@ -2,12 +2,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getConsole } from "@/lib/consoles/registry";
-import { DEMO_GAMES } from "@/lib/library/demo-catalog";
 import { useUI } from "@/stores/ui";
 import { useImport } from "@/components/useImport";
 import { useT } from "@/lib/i18n";
 import { Modal } from "@/components/Modal";
-import { getGameSources, buildSearchUrl } from "@/lib/discovery/game-sources";
+import { getGameSources } from "@/lib/discovery/game-sources";
 import type { GameMetadata } from "@/lib/discovery/types";
 
 export function GameDetailsModal({ game, onClose }: { game: GameMetadata | null; onClose: () => void }) {
@@ -22,26 +21,26 @@ export function GameDetailsModal({ game, onClose }: { game: GameMetadata | null;
   const sources = getGameSources(game.consoleId);
   const primarySource = sources[0];
 
-  const playBuiltIn = async () => {
-    const demo = DEMO_GAMES.find((d) => d.title === game.demoTitle);
-    if (!demo) return;
+  const playNow = async () => {
+    const a = game.authorized;
+    if (!a) return;
     setStarting(true);
     try {
-      const cover = await fetch(demo.cover).then((r) => (r.ok ? r.blob() : undefined)).catch(() => undefined);
-      const result = await fromUrl(demo.rom, { title: demo.title, author: demo.author, cover, source: "demo", forceConsole: demo.consoleId });
-      const game_ = result?.added[0] ?? result?.existing[0];
-      if (game_) {
+      const cover = a.coverUrl ? await fetch(a.coverUrl).then((r) => (r.ok ? r.blob() : undefined)).catch(() => undefined) : undefined;
+      const result = await fromUrl(a.romUrl, { title: a.title, author: a.publisher, cover, source: "demo", forceConsole: a.consoleId });
+      const added = result?.added[0] ?? result?.existing[0];
+      if (added) {
         onClose();
-        router.push(`/play/?game=${game_.id}`);
+        router.push(`/play/?game=${added.id}`);
       }
     } finally {
       setStarting(false);
     }
   };
 
-  const findGame = () => {
+  const searchTheWeb = () => {
     if (!primarySource) return;
-    window.open(buildSearchUrl(primarySource, game.title, game.consoleId), "_blank", "noopener,noreferrer");
+    window.open(primarySource.buildSearchUrl(game.title, game.consoleId), "_blank", "noopener,noreferrer");
   };
 
   const importAndPlay = () => {
@@ -70,42 +69,49 @@ export function GameDetailsModal({ game, onClose }: { game: GameMetadata | null;
       </div>
       {game.description && <p className="mt-3 max-w-prose text-sm text-muted">{game.description}</p>}
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {game.distributionMode === "built-in-authorized" && (
+      {game.distributionMode === "built-in-authorized" && (
+        <div className="mt-6">
           <button
             data-nav
             data-autofocus
             disabled={starting}
-            onClick={() => void playBuiltIn()}
+            onClick={() => void playNow()}
             className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black disabled:opacity-50"
           >
             {starting ? t("discover.action.starting") : t("discover.action.playNow")}
           </button>
-        )}
-        {game.distributionMode === "external-discovery" && (
-          <>
+        </div>
+      )}
+
+      {game.distributionMode === "external-discovery" && (
+        <div className="mt-6 flex flex-col gap-4">
+          <div>
             <button
               data-nav
               data-autofocus
               disabled={!primarySource}
-              onClick={findGame}
+              onClick={searchTheWeb}
               className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black disabled:opacity-50"
             >
-              {t("discover.action.findGame")}
+              {t("discover.action.searchTheWeb")}
             </button>
-            <button data-nav onClick={importAndPlay} className="rounded-full border border-white/20 px-5 py-2.5 text-sm hover:bg-white/10">
-              {t("discover.action.alreadyHaveIt")}
+            <p className="mt-2 max-w-prose text-xs text-faint">{t("discover.details.externalNote")}</p>
+          </div>
+          <div className="border-t border-line pt-4">
+            <p className="text-sm text-muted">{t("discover.alreadyHaveFile")}</p>
+            <button data-nav onClick={importAndPlay} className="mt-2 rounded-full border border-white/20 px-5 py-2.5 text-sm hover:bg-white/10">
+              {t("discover.action.importAndPlay")}
             </button>
-          </>
-        )}
-        {game.distributionMode === "user-import" && (
+          </div>
+        </div>
+      )}
+
+      {game.distributionMode === "user-import" && (
+        <div className="mt-6">
           <button data-nav data-autofocus onClick={importAndPlay} className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black">
             {t("discover.action.importAndPlay")}
           </button>
-        )}
-      </div>
-      {game.distributionMode === "external-discovery" && (
-        <p className="mt-3 text-xs text-faint">{t("discover.details.externalNote")}</p>
+        </div>
       )}
     </Modal>
   );

@@ -1,4 +1,5 @@
 import type { ConsoleId } from "@/lib/consoles/types";
+import type { AuthorizedGame } from "./authorized-source-provider";
 
 /**
  * How a discoverable title can legally reach the player:
@@ -21,8 +22,10 @@ export interface GameMetadata {
   genre?: string;
   description?: string;
   distributionMode: DistributionMode;
-  /** Only for "built-in-authorized" entries — the matching src/lib/library/demo-catalog.ts title. */
-  demoTitle?: string;
+  /** Only for "built-in-authorized" entries — the matching AuthorizedGame, carrying the
+   *  actual (legally distributable) file reference so the details screen never has to
+   *  re-look one up by title. */
+  authorized?: AuthorizedGame;
 }
 
 /**

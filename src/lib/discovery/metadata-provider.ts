@@ -1,21 +1,22 @@
 import type { ConsoleId } from "@/lib/consoles/types";
-import { DEMO_GAMES } from "@/lib/library/demo-catalog";
 import { getConsole } from "@/lib/consoles/registry";
+import { getAuthorizedGames } from "./authorized-source-provider";
 import { GAME_DATABASE } from "./game-database";
 import type { GameMetadata, GameMetadataProvider } from "./types";
 
-/** RetroBrews homebrew (demo-catalog.ts) is the one catalog EmuRM already has clear
- *  distribution rights to — everything else in Game Discovery is metadata-only. */
-function demoGamesAsMetadata(): GameMetadata[] {
-  return DEMO_GAMES.map((d) => ({
-    id: `demo:${d.rom}`,
-    title: d.title,
-    consoleId: d.consoleId,
-    publisher: d.author,
-    genre: getConsole(d.consoleId)?.short,
-    description: d.note,
+/** Every registered AuthorizedSourceProvider's titles, surfaced as "built-in-authorized"
+ *  Game Discovery entries — today that's just the RetroBrews homebrew catalog, but a
+ *  future licensed-publisher provider appears here automatically once registered. */
+function authorizedGamesAsMetadata(): GameMetadata[] {
+  return getAuthorizedGames().map((a) => ({
+    id: `authorized:${a.romUrl}`,
+    title: a.title,
+    consoleId: a.consoleId,
+    publisher: a.publisher,
+    genre: getConsole(a.consoleId)?.short,
+    description: a.note,
     distributionMode: "built-in-authorized" as const,
-    demoTitle: d.title,
+    authorized: a,
   }));
 }
 
@@ -37,7 +38,7 @@ export class LocalGameMetadataProvider implements GameMetadataProvider {
 
   async search(query: string, consoleId?: ConsoleId | "all"): Promise<GameMetadata[]> {
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const all = [...demoGamesAsMetadata(), ...GAME_DATABASE];
+    const all = [...authorizedGamesAsMetadata(), ...GAME_DATABASE];
     return all.filter((e) => matches(e, terms, consoleId));
   }
 }
