@@ -23,7 +23,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      # No separate Android SDK setup action here: ubuntu-latest already ships a
+      # working SDK with licenses pre-accepted (android-build.yml has built and
+      # signed a real APK against it with nothing more than setup-java). An
+      # earlier version of this workflow added android-actions/setup-android@v3
+      # here, which failed outright — it tries to install the legacy top-level
+      # "tools" package, removed from Google's SDK repository years ago.
       - run: npm ci
       - run: npm run typecheck
       - run: npm run test:sram
