@@ -29,6 +29,7 @@ vm.runInNewContext(source, {
     if (name === './types') return { CoreUnavailableError: Error };
     if (name === './msx-system') return {};
     if (name === './sharp-shader') return { sharpShaderFiles: () => [] };
+    if (name === './shaders') return { externalShaderFiles: async () => [], isShaderId: () => false };
     throw new Error(`Unexpected import ${name}`);
   },
 });
