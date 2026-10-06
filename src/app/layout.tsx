@@ -30,7 +30,11 @@ export const metadata: Metadata = {
   manifest: `${BASE}/manifest.webmanifest`,
   appleWebApp: { capable: true, title: "EmuRM", statusBarStyle: "black-translucent" },
   icons: {
+    // Small tab icons first, with a version query so browsers that cache favicons
+    // aggressively (Safari) fetch the current logo instead of an old one.
     icon: [
+      { url: `${BASE}/favicon.ico?v=2`, sizes: "48x48" },
+      { url: `${BASE}/icons/favicon-32.png?v=2`, sizes: "32x32", type: "image/png" },
       { url: `${BASE}/icons/icon-192.png`, sizes: "192x192", type: "image/png" },
       { url: `${BASE}/icons/icon-512.png`, sizes: "512x512", type: "image/png" },
     ],
