@@ -9,9 +9,11 @@
 type Dir = "up" | "down" | "left" | "right";
 
 function candidates(): HTMLElement[] {
-  return Array.from(document.querySelectorAll<HTMLElement>("[data-nav]")).filter((el) => {
+  const dialogs = Array.from(document.querySelectorAll<HTMLElement>('[role="dialog"]'));
+  const scope = dialogs.at(-1) ?? document;
+  return Array.from(scope.querySelectorAll<HTMLElement>(dialogs.length ? '[data-nav],button,a[href],input:not([type=hidden]):not([type=file]),select,[tabindex="0"]' : '[data-nav],input:not([type=hidden]):not([type=file]),select')).filter((el) => {
     const r = el.getBoundingClientRect();
-    return r.width > 0 && r.height > 0 && !el.closest("[inert]") && !(el as HTMLButtonElement).disabled;
+    return r.width > 0 && r.height > 0 && !el.closest("[inert]") && getComputedStyle(el).visibility !== "hidden" && !(el as HTMLButtonElement).disabled;
   });
 }
 
@@ -48,7 +50,7 @@ export function moveFocus(dir: Dir): boolean {
   }
   if (best) {
     best.focus({ preventScroll: false });
-    best.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+    best.scrollIntoView({ block: "nearest", inline: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
     return true;
   }
   return false;
@@ -67,7 +69,7 @@ export function startGamepadNav(onBack: () => void): () => void {
 
   const loop = (t: number) => {
     raf = requestAnimationFrame(loop);
-    if (document.body.dataset.playing === "true") return; // the game owns the pad
+    if (document.body.dataset.playing === "true" && !document.querySelector("[data-pause-menu-root]")) return; // the game owns the pad unless its menu is open
     const pads = navigator.getGamepads?.() ?? [];
     for (const gp of pads) {
       if (!gp) continue;
@@ -109,4 +111,25 @@ export function arrowKeyNav(e: KeyboardEvent): boolean {
   const moved = moveFocus(dir);
   if (moved) e.preventDefault();
   return moved;
+}
+
+/** Android remote input uses the same focus geometry as keyboard/gamepad navigation. */
+export function remoteKey(key: string): void {
+  if (key === "Enter") {
+    const list = candidates();
+    const active = document.activeElement as HTMLElement | null;
+    if (active && list.includes(active)) active.click();
+    else list[0]?.focus();
+    return;
+  }
+  const directions: Record<string, Dir> = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
+  const dir = directions[key];
+  if (!dir) return;
+  const active = document.activeElement;
+  if (active instanceof HTMLSelectElement && (dir === "up" || dir === "down")) {
+    active.selectedIndex = Math.max(0, Math.min(active.options.length - 1, active.selectedIndex + (dir === "down" ? 1 : -1)));
+    active.dispatchEvent(new Event("change", { bubbles: true }));
+    return;
+  }
+  moveFocus(dir);
 }

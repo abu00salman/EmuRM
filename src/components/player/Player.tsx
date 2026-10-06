@@ -73,9 +73,11 @@ export function Player() {
   const [skinId, setSkinId] = useState(DEFAULT_SKIN_ID);
   const [skinPickerOpen, setSkinPickerOpen] = useState(false);
 
+  const [television, setTelevision] = useState(false);
+  useEffect(() => { setTelevision(window.AndroidNative?.isTelevision?.() ?? false); }, []);
   const coarse = useMedia("(pointer: coarse)");
   const portrait = useMedia("(orientation: portrait)");
-  const showTouch = c && (settings.touchControls === "always" || (settings.touchControls === "auto" && coarse));
+  const showTouch = c && (settings.touchControls === "always" || (settings.touchControls === "auto" && coarse && !television));
 
   // Each console remembers its own skin (emurm-skin:<consoleId> in localStorage) —
   // switching games reloads whichever one that console's player last chose.
@@ -112,7 +114,7 @@ export function Player() {
     setPendingRelaunch(false);
     void p.relaunch().then(() => menu && p.togglePause(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings, bindings]);
+  }, [settings, bindings, pendingRelaunch]);
 
   /* ---------- Body state: gamepad/keys belong to the game while it runs ---------- */
   useEffect(() => {
@@ -333,8 +335,8 @@ export function Player() {
         {/* This wrapper is always mounted, skin or not — only its style changes between
             full-bleed and the skin's small screen cut-out — so host (and the emulator's
             canvas appended into it) never gets reparented, which would unmount it. */}
-        <div style={windowStyle}>
-          <div ref={host} className={`filter-${settings.filter}`} style={hostStyle} onDoubleClick={() => void toggleFullscreen()} />
+        <div style={windowStyle} className={`filter-${settings.filter}`}>
+          <div ref={host} style={hostStyle} onDoubleClick={() => void toggleFullscreen()} />
         </div>
 
         {skinApplies && activeSkin && frame && c && p.phase === "running" && !menu && (
@@ -349,13 +351,10 @@ export function Player() {
             precisely then, or there's no way out of fullscreen at all. The touch-style
             button next to it flips fixed/floating in one tap, right where it's needed,
             instead of only being reachable a few taps deep in Display settings.
-            (The redesign patch gated this on `hideChrome` too, to stop it visually
-            doubling up with the top chrome bar — but that hides the button for most of
-            normal active play, which is exactly the regression this component's own
-            comment above was written to prevent. Kept unconditional; z-40 already keeps
-            it drawn above the chrome bar's z-30, so the two don't actually conflict.) */}
+            Move it below the toolbar while chrome is visible so both controls
+            remain reachable without overlapping. */}
         {p.phase === "running" && !menu && (
-          <div className="absolute left-1/2 top-[max(0.75rem,var(--safe-t))] z-40 flex -translate-x-1/2 items-center gap-2">
+          <div className={`absolute left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 ${hideChrome ? "top-[max(0.75rem,var(--safe-t))]" : "top-[calc(var(--safe-t)+4rem)]"}`}>
             <button
               onClick={() => openMenu()}
               aria-label={t("player.menuButton")}

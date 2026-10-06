@@ -22,8 +22,8 @@ android {
         applicationId = "com.emurm.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
 
         // The real, deployed site. EmuRM's own service worker (public/sw.js) is what
         // gives this app its offline support and asset caching — the app itself never
@@ -36,6 +36,11 @@ android {
     }
 
     signingConfigs {
+        getByName("debug") {
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+        }
         if (keystorePropsFile.exists()) {
             create("release") {
                 storeFile = rootProject.file(keystoreProps.getProperty("storeFile"))
@@ -94,3 +99,21 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.material)
 }
+
+// Always package a validated, root-path static export, including every core and skin.
+val webExport = rootProject.layout.projectDirectory.dir("../out")
+val bundledWeb = layout.buildDirectory.dir("generated/emurmAssets")
+val bundleWebAssets by tasks.registering(Sync::class) {
+    from(webExport)
+    into(bundledWeb.map { it.dir("web") })
+    doFirst {
+        require(webExport.file("index.html").asFile.exists()) {
+            "Build the web app first: npm ci && npm run build (without NEXT_BASE_PATH)."
+        }
+        require(!webExport.file("index.html").asFile.readText().contains("/EmuRM/_next/")) {
+            "Android requires a root-path export. Rebuild without NEXT_BASE_PATH."
+        }
+    }
+}
+android.sourceSets.getByName("main").assets.srcDir(bundledWeb)
+tasks.named("preBuild").configure { dependsOn(bundleWebAssets) }

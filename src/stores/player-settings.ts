@@ -13,6 +13,8 @@ export interface PlayerSettings {
   volume: number;
   showFps: boolean;
   smoothing: boolean;
+  /** Optional GPU presentation; off by default on every device. */
+  shader: "off" | "sharp";
   autosave: boolean;
   /** Seconds between automatic saves while playing */
   autosaveEvery: number;
@@ -30,6 +32,7 @@ export const DEFAULT_PLAYER: PlayerSettings = {
   volume: 0.8,
   showFps: false,
   smoothing: false,
+  shader: "off",
   autosave: true,
   autosaveEvery: 60,
   touchControls: "auto",

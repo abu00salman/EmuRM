@@ -1,5 +1,10 @@
 package com.emurm.app
 
+import android.app.UiModeManager
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
+import android.view.InputDevice
+import android.view.KeyEvent
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
@@ -38,26 +43,17 @@ import com.emurm.app.databinding.ActivityMainBinding
 import org.json.JSONObject
 import java.io.File
 
-/**
- * The entire native shell. One Activity, one WebView, pointed at the real deployed
- * site (BuildConfig.BASE_URL) rather than a bundled copy of it — see README.md
- * "Architecture" for why that's the right call here: EmuRM's existing service worker
- * (public/sw.js) already gives it an offline-capable app shell + permanent core cache,
- * so duplicating that inside the APK would only add a second copy to keep in sync for
- * no real benefit. Everything in this file is strictly what a browser tab cannot do on
- * its own: a real app icon/splash, a scoped native file picker, immersive fullscreen,
- * back-button semantics, audio focus, and a native fallback for the one network error
- * a page can't render its own error screen for (failing before it ever loaded).
- */
+/** Native phone/tablet/TV shell, serving the Gradle-packaged web export over HTTPS. */
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var audioFocusController: AudioFocusController
     private lateinit var gamepadMonitor: GamepadMonitor
 
-    // Derived from BASE_URL rather than a second BuildConfig constant, so pointing a
-    // debug build at a local dev server (see README.md) can't leave the "is this
-    // navigation same-origin" check out of sync with where the app actually loaded.
-    private val baseHost: String? by lazy { Uri.parse(BuildConfig.BASE_URL).host }
+    private val baseHost: String = BundleAssetServer.HOST
+    private val bundledAssets by lazy { BundleAssetServer(assets) }
+    private val isTelevision: Boolean by lazy {
+        (getSystemService(UI_MODE_SERVICE) as UiModeManager).currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+    }
 
     private var pageReady = false
     private var isPlaying = false
@@ -93,10 +89,18 @@ class MainActivity : AppCompatActivity() {
                     // Reuses the pause menu's own Escape handling (opens it if closed,
                     // closes it if already open) instead of a second, parallel code path.
                     isPlaying -> dispatchSyntheticEscape()
-                    binding.webView.canGoBack() -> binding.webView.goBack()
-                    else -> {
-                        isEnabled = false
-                        onBackPressedDispatcher.onBackPressed()
+                    else -> binding.webView.evaluateJavascript(
+                        "(()=>{const handled=!window.dispatchEvent(new CustomEvent('rv:back',{cancelable:true}));" +
+                            "if(handled)return true;window.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',bubbles:true}));" +
+                            "return !!document.querySelector('[role=dialog]')})()",
+                    ) { handled ->
+                        if (handled != "true") {
+                            if (binding.webView.canGoBack()) binding.webView.goBack()
+                            else {
+                                isEnabled = false
+                                onBackPressedDispatcher.onBackPressed()
+                            }
+                        }
                     }
                 }
             }
@@ -116,6 +120,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         configureWebView()
+        if (isTelevision) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            setImmersiveMode(true)
+        }
         onBackPressedDispatcher.addCallback(this, backCallback)
 
         audioFocusController =
@@ -136,7 +144,10 @@ class MainActivity : AppCompatActivity() {
             binding.webView.reload()
         }
 
-        binding.webView.loadUrl(BuildConfig.BASE_URL)
+        // Start from packaged HTML without a network navigation/service-worker cache.
+        // Keep the previous HTTPS origin so installed users retain IndexedDB saves.
+        val home = assets.open("web/index.html").bufferedReader().use { it.readText() }
+        binding.webView.loadDataWithBaseURL(BundleAssetServer.URL, home, "text/html", "UTF-8", BundleAssetServer.URL)
         handleIntent(intent)
     }
 
@@ -164,6 +175,40 @@ class MainActivity : AppCompatActivity() {
         (binding.webView.parent as? android.view.ViewGroup)?.removeView(binding.webView)
         binding.webView.destroy()
         super.onDestroy()
+    }
+
+
+    // TV remotes are keyboard devices, not gamepads. Route only remote keys into
+    // the shared spatial navigation; leave joystick/buttons to Chromium's Gamepad API.
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val gamepad = event.isFromSource(InputDevice.SOURCE_GAMEPAD) ||
+            event.isFromSource(InputDevice.SOURCE_JOYSTICK)
+        if (!gamepad && binding.errorOverlay.visibility != View.VISIBLE) {
+            val key = when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> "ArrowUp"
+                KeyEvent.KEYCODE_DPAD_DOWN -> "ArrowDown"
+                KeyEvent.KEYCODE_DPAD_LEFT -> "ArrowLeft"
+                KeyEvent.KEYCODE_DPAD_RIGHT -> "ArrowRight"
+                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> "Enter"
+                else -> null
+            }
+            if (key != null) {
+                if (event.action == KeyEvent.ACTION_DOWN) {
+                    if (isPlaying && !isMenuOpen) {
+                        // OK opens the menu during gameplay; a TV remote cannot replace
+                        // the console's controller. D-pad gameplay belongs to gamepads.
+                        if (key == "Enter" && event.repeatCount == 0) dispatchSyntheticEscape()
+                    } else {
+                        binding.webView.evaluateJavascript(
+                            "window.dispatchEvent(new CustomEvent('emurm:remote',{detail:${JSONObject.quote(key)}}))",
+                            null,
+                        )
+                    }
+                }
+                return true
+            }
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     // ---------- WebView setup ----------
@@ -195,7 +240,9 @@ class MainActivity : AppCompatActivity() {
             // through the system document picker (SAF) or a share Intent, never a raw
             // filesystem path, so this stays off.
             allowFileAccess = false
-            allowContentAccess = false
+            // SAF grants access only to documents chosen by the user. Chromium
+            // needs content:// reads to upload those files; file:// remains disabled.
+            allowContentAccess = true
             // A fixed, app-like layout: the system's font-scale accessibility setting
             // would otherwise distort the touch-control layout independently of the
             // page's own (already responsive) sizing.
@@ -217,12 +264,16 @@ class MainActivity : AppCompatActivity() {
                         saveBlob(base64Data, filename, mimeType)
                     }
                 },
+                television = isTelevision,
             ),
             "AndroidNative",
         )
 
         webView.webViewClient =
             object : WebViewClient() {
+                override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
+                    bundledAssets.respond(request.url)
+
                 override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                     val uri = request.url
                     if (uri.host == baseHost) return false
@@ -232,6 +283,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onPageFinished(view: WebView, url: String?) {
                     pageReady = true
+                    view.evaluateJavascript("document.documentElement.dataset.tv = ${JSONObject.quote(isTelevision.toString())}", null)
                     binding.loadingSpinner.visibility = View.GONE
                     binding.errorOverlay.visibility = View.GONE
                     pendingSharedImportJs?.let {
@@ -282,7 +334,11 @@ class MainActivity : AppCompatActivity() {
                                 putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                             }
                         }
-                    filePickerLauncher.launch(intent)
+                    runCatching { filePickerLauncher.launch(intent) }.onFailure {
+                        pendingFileCallback = null
+                        filePathCallback.onReceiveValue(null)
+                        toastShort(R.string.file_picker_unavailable)
+                    }
                     return true
                 }
 
@@ -312,7 +368,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handlePlayingChanged(playing: Boolean) {
         isPlaying = playing
-        setImmersiveMode(playing)
+        setImmersiveMode(playing || isTelevision)
         if (playing) audioFocusController.request() else audioFocusController.abandon()
     }
 
@@ -333,7 +389,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun dispatchSyntheticEscape() {
         binding.webView.evaluateJavascript(
-            "window.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',bubbles:true}))",
+            "window.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',bubbles:true}))",
             null,
         )
     }

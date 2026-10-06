@@ -13,4 +13,5 @@
     <string name="http_error_body">EmuRM didn\'t load correctly. This is usually temporary.</string>
 
     <string name="external_link_chooser_title">Open link</string>
+    <string name="file_picker_unavailable">Install a document picker or file manager to choose game files on this device.</string>
 </resources>

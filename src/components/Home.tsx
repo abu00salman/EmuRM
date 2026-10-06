@@ -37,6 +37,7 @@ export function Home() {
           <p className="rm-hero-description">{ar ? "من صخر إلى بلايستيشن. أضف ألعابك، اختر جهازك، وارجع للحظة التي تحبّها." : "From MSX to PlayStation. Bring your games, choose your console, and return to a moment you love."}</p>
           <div className="rm-actions">
             <button data-nav className="rm-button rm-button-primary" onClick={() => openImport("device")}><Icon name="plus" />{t("nav.addGames")}</button>
+            {!total && <button data-nav className="rm-button rm-button-secondary" onClick={() => openImport("demo")}>{t("home.tryHomebrew")}</button>}
             <button data-nav className="rm-button rm-button-secondary" onClick={() => setHowToPlay(true)}><Icon name="play" />{t("howToPlay.button")}</button>
           </div>
           <div className="rm-hero-meta"><span>{CONSOLES.length} {ar ? "نظامًا" : "systems"}</span><span>{ar ? "مكتبتك على جهازك" : "Your library, on your device"}</span></div>

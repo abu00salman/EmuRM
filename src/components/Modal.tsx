@@ -20,16 +20,34 @@ export function Modal({
     if (!open) return;
     const prev = document.activeElement as HTMLElement | null;
     const t = setTimeout(() => ref.current?.querySelector<HTMLElement>("[data-autofocus],button,input")?.focus(), 30);
+    const isTop = () => Array.from(document.querySelectorAll('[role="dialog"]')).at(-1) === ref.current;
     const onKey = (e: KeyboardEvent) => {
+      if (!isTop()) return;
       if (e.key === "Escape") {
-        e.stopPropagation();
+        e.preventDefault();
+        e.stopImmediatePropagation();
         onClose();
+      } else if (e.key === "Tab") {
+        const items = Array.from(ref.current?.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],input:not([type=hidden]):not([type=file]),select:not(:disabled),[tabindex="0"]') ?? [])
+          .filter((el) => el.getClientRects().length && !el.closest('[inert]'));
+        const first = items[0];
+        const last = items.at(-1);
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
       }
     };
+    const onBack = (e: Event) => {
+      if (!isTop()) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      onClose();
+    };
+    window.addEventListener("rv:back", onBack);
     window.addEventListener("keydown", onKey, true);
     return () => {
       clearTimeout(t);
       window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("rv:back", onBack);
       prev?.focus?.();
     };
   }, [open, onClose]);

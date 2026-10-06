@@ -20,6 +20,7 @@ function Heart({ on }: { on: boolean }) {
 function MoreButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button
+      data-nav
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -52,6 +53,7 @@ export function GameCard({ game, onMore, showConsole }: { game: GameRecord; onMo
         </div>
       </Link>
       <button
+        data-nav
         onClick={() => void toggleFavorite(game.id)}
         aria-label={t(game.favorite ? "gameActions.removeFavoriteFor" : "gameActions.addFavoriteFor", { title: game.title })}
         aria-pressed={!!game.favorite}
@@ -78,7 +80,7 @@ export function GameRow({ game, onMore }: { game: GameRecord; onMore: (g: GameRe
   const t = useT();
   const locale = useLocale();
   return (
-    <motion.div layout="position" className="group flex items-center gap-4 rounded-2xl px-2 py-2 transition-colors hover:bg-white/[0.04]" style={{ ["--accent" as string]: c?.accent }}>
+    <motion.div layout="position" className="rm-game-row group flex items-center gap-4 rounded-2xl px-2 py-2 transition-colors hover:bg-white/[0.04]" style={{ ["--accent" as string]: c?.accent }}>
       <Link data-nav href={`/play/?game=${game.id}`} onPointerEnter={() => prefetchEngine()} className="flex min-w-0 flex-1 items-center gap-4 rounded-xl">
         <div className="h-16 w-12 shrink-0 overflow-hidden rounded-lg border border-line">
           <GameCover game={game} />
@@ -94,6 +96,7 @@ export function GameRow({ game, onMore }: { game: GameRecord; onMore: (g: GameRe
         <span className="hidden w-32 text-end text-sm tabular-nums text-muted md:block">{formatPlayTime(game.playTimeSec, locale)}</span>
       </Link>
       <button
+        data-nav
         onClick={() => void toggleFavorite(game.id)}
         aria-label={t(game.favorite ? "gameActions.removeFavorite" : "gameActions.addFavorite")}
         aria-pressed={!!game.favorite}

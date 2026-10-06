@@ -1,14 +1,13 @@
 "use client";
 import { useRef, useState } from "react";
 import { useUI } from "@/stores/ui";
-import { ALL_EXTENSIONS, getConsole } from "@/lib/consoles/registry";
+import { getConsole } from "@/lib/consoles/registry";
 import { DEMO_GAMES, type DemoGame } from "@/lib/library/demo-catalog";
 import { useGames } from "@/lib/db/hooks";
 import { useT } from "@/lib/i18n";
 import { Modal } from "./Modal";
 import { useImport } from "./useImport";
 
-const ACCEPT = ALL_EXTENSIONS.map((e) => `.${e}`).join(",");
 
 export function ImportDialog() {
   const open = useUI((s) => s.importOpen);
@@ -68,11 +67,9 @@ function DeviceTab() {
   const close = useUI((s) => s.closeImport);
   const { busy, fromFiles } = useImport();
   const t = useT();
-  // Scoped to the console's own extensions when opened from its page — the OS file
-  // picker then only shows compatible files. Native `accept` is advisory (drag-and-drop
-  // still lands in the same handler either way), so this only ever helps, never blocks.
-  const target = consoleId ? getConsole(consoleId) : undefined;
-  const accept = target ? Array.from(new Set([...target.extensions, "zip"])).map((e) => `.${e}`).join(",") : ACCEPT;
+  // Many Android/iOS providers cannot map ROM extensions to MIME types and
+  // disable valid files when accept is supplied. Keep selection unrestricted;
+  // fromFiles still validates content/ZIPs and applies the selected console.
 
   const handle = async (files: File[]) => {
     const r = await fromFiles(files, consoleId);
@@ -108,7 +105,6 @@ function DeviceTab() {
         ref={input}
         type="file"
         multiple
-        accept={accept}
         className="sr-only"
         onChange={(e) => {
           void handle(Array.from(e.target.files ?? []));
