@@ -35,6 +35,12 @@ npm start            # serve out/ locally
 
 Node ≥ 20.9. The build is a fully static site (`output: "export"`), so `out/` deploys to any static host: Cloudflare Pages, Netlify, Vercel, GitHub Pages, S3 + CloudFront, nginx. Serve it over HTTPS (required for the service worker, gamepads and storage persistence).
 
+### Deploy to Cloudflare Workers
+
+`.github/workflows/deploy-cloudflare.yml` builds the site and deploys `out/` with `wrangler deploy` (static assets, configured in `wrangler.jsonc`) on every push to `main`, or manually via *Run workflow*. Setup: add the repository secrets `CLOUDFLARE_API_TOKEN` (a token allowed to edit Workers) and `CLOUDFLARE_ACCOUNT_ID`. The Worker is named `emurm` unless the repo variable `CLOUDFLARE_WORKER_NAME` says otherwise — it must match the existing Worker's name.
+
+`public/_headers` is honoured by Workers static assets. No `NEXT_BASE_PATH` is needed — Cloudflare serves from the root.
+
 ### Optional: self-hosting cores
 
 By default, cores load lazily from jsDelivr (`arianrhodsandlot/retroarch-emscripten-build`). To self-host — recommended for production — place `<core>_libretro.js` and `<core>_libretro.wasm` in `public/cores/` (or a CDN) and set:
