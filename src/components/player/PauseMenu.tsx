@@ -300,6 +300,8 @@ function Display({ settings: s, onSettings }: Props) {
       </section>
       <section>
         <h3 className="mb-2 text-sm text-muted">{t("display.screenFilter")}</h3>
+        <Segmented label={t("display.shader")} value={s.shader ?? "off"} options={[{ v: "off" as const, label: t("display.filterOff") }, { v: "sharp" as const, label: t("display.shaderSharp") }]} onChange={(shader) => void onSettings({ shader }, true)} />
+        <p className="text-xs text-muted">{t("display.shaderHint")}</p>
         <Segmented label={t("display.screenFilter")} value={s.filter} options={filters} onChange={(v) => void onSettings({ filter: v })} />
       </section>
       <section>

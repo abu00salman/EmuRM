@@ -1,3 +1,4 @@
+import { sharpShaderFiles } from "./sharp-shader";
 import { Nostalgist } from "nostalgist";
 import type { PadButton } from "@/lib/consoles/types";
 import { installMsxSystem, MSX_SYSTEM_DIRECTORY, prepareMsxSystem } from "./msx-system";
@@ -97,8 +98,26 @@ class LibretroSession implements EmulatorSession {
   }
   async saveSram() {
     try {
-      const blob = await this.n.saveSRAM();
-      return blob.size ? blob : null;
+      // _cmd_savefiles flushes battery memory synchronously into Emscripten FS.
+      // Nostalgist.saveSRAM() then polls for a file for up to a minute even when
+      // this cartridge has no battery RAM. Read only a file that actually exists:
+      // optional SRAM must never keep a completed savestate busy or block exit.
+      const emulator = this.n.getEmulator();
+      emulator.callCommand("_cmd_savefiles");
+      const options = emulator.getOptions();
+      const rom = options.rom[0];
+      if (!rom) return null;
+      const name = `${rom.baseName}.${options.sramType}`;
+      const fs = this.n.getEmscriptenFS();
+      const directory = "/home/web_user/retroarch/userdata/saves";
+      for (const core of fs.readdir(directory)) {
+        if (core === "." || core === "..") continue;
+        try {
+          const data = fs.readFile(`${directory}/${core}/${name}`, { encoding: "binary" });
+          if (data.length) return new Blob([new Uint8Array(data).buffer], { type: "application/octet-stream" });
+        } catch { /* This core has no battery file for the current cartridge. */ }
+      }
+      return null;
     } catch {
       return null; // core has no battery RAM
     }
@@ -195,6 +214,8 @@ export const libretroEngine: EmulatorEngine = {
 
     const n = await Nostalgist.launch({
       element: spec.canvas,
+      shader: spec.shader === "sharp" ? "emurm-sharp" : undefined,
+      resolveShader: () => sharpShaderFiles(),
       core: coreInput,
       rom: rom.length === 1 ? rom[0] : rom,
       bios: bios.length ? bios : undefined,
@@ -210,6 +231,7 @@ export const libretroEngine: EmulatorEngine = {
         ...inputConfig(spec.input),
         ...aspectConfig(spec.aspect, spec.console.aspect, spec.stageAspect),
         video_smooth: spec.smoothing,
+        video_shader_enable: spec.shader === "sharp",
         audio_volume: toDb(spec.volume),
         fastforward_ratio: 4,
         // Confirmed directly: at least stella2014 (Atari 2600) never writes the

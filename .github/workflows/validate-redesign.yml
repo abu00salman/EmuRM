@@ -1,0 +1,46 @@
+name: Validate web and Android
+
+on:
+  push:
+    branches: [redesign-console-lounge]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:sram
+      - run: npm run test:msx
+      - run: npm run build
+      - name: Gradle build and debug APK
+        working-directory: android-app
+        run: bash ./gradlew --no-daemon build assembleDebug
+      - name: Verify APK signatures and packaging
+        run: |
+          SIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -n1)
+          "$SIGNER" verify --verbose --print-certs android-app/app/build/outputs/apk/debug/app-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: emurm-phone-tablet-tv-debug
+          path: android-app/app/build/outputs/apk/debug/app-debug.apk
+      - name: GitHub Pages basePath build
+        run: npm run build
+        env:
+          NEXT_BASE_PATH: /EmuRM

@@ -30,6 +30,7 @@ export interface LaunchSpec {
   /** Current stage aspect, used for "stretch" */
   stageAspect: number;
   smoothing: boolean;
+  shader?: "off" | "sharp";
   signal?: AbortSignal;
   onPhase?: (phase: LaunchPhase) => void;
 }

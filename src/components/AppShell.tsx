@@ -6,7 +6,7 @@ import Link from "next/link";
 import { registerServiceWorker } from "@/lib/pwa/register";
 import { initPwaInstall } from "@/lib/pwa/install";
 import "@/lib/native-bridge";
-import { arrowKeyNav, startGamepadNav } from "@/lib/input/gamepad-nav";
+import { arrowKeyNav, remoteKey, startGamepadNav } from "@/lib/input/gamepad-nav";
 import { useUI } from "@/stores/ui";
 import { useLocaleStore, useT } from "@/lib/i18n";
 import { ImportDialog } from "./ImportDialog";
@@ -32,10 +32,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     useLocaleStore.getState().hydrateFromStorage();
-    registerServiceWorker();
-    initPwaInstall();
+    if (window.AndroidNative?.isBundledApp?.()) {
+      // APK updates carry their own assets; retain IndexedDB, discard only obsolete
+      // worker registrations from the older online wrapper on the same origin.
+      void navigator.serviceWorker?.getRegistrations().then((registrations) =>
+        Promise.all(registrations.map((registration) => registration.unregister())),
+      ).catch(() => undefined);
+    } else registerServiceWorker();
+    if (!window.AndroidNative) initPwaInstall();
     const onKey = (e: KeyboardEvent) => arrowKeyNav(e);
     window.addEventListener("keydown", onKey);
+    const onRemote = (e: Event) => remoteKey((e as CustomEvent<string>).detail);
+    window.addEventListener("emurm:remote", onRemote);
     const stop = startGamepadNav(() => {
       // Let open surfaces (dialogs, the in-game menu) claim "back" first.
       const handled = !window.dispatchEvent(new CustomEvent("rv:back", { cancelable: true }));
@@ -45,6 +53,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     });
     return () => {
       window.removeEventListener("keydown", onKey);
+      window.removeEventListener("emurm:remote", onRemote);
       stop();
     };
   }, [router]);
@@ -52,7 +61,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!inPlayer && <TopBar />}
-      <main id="main">{children}</main>
+      <main id="main" tabIndex={-1}>{children}</main>
       {!inPlayer && <GlobalDrop />}
       {!inPlayer && <Footer />}
       <ImportDialog />

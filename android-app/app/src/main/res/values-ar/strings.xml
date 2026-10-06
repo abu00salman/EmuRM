@@ -13,4 +13,5 @@
     <string name="http_error_body">لم يتم تحميل إيميورم بشكل صحيح. هذا غالبًا مؤقت.</string>
 
     <string name="external_link_chooser_title">فتح الرابط</string>
+    <string name="file_picker_unavailable">ثبّت منتقي مستندات أو مدير ملفات لاختيار ملفات الألعاب على هذا الجهاز.</string>
 </resources>

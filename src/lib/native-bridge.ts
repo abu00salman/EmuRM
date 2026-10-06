@@ -23,7 +23,7 @@ interface NativeBridge {
 
 declare global {
   interface Window {
-    AndroidNative?: NativeBridge & { isNativeApp(): boolean };
+    AndroidNative?: NativeBridge & { isNativeApp(): boolean; isBundledApp?(): boolean; isTelevision?(): boolean };
     webkit?: { messageHandlers?: Record<string, { postMessage(message: unknown): void }> };
     __androidImportSharedFile?: (name: string, base64: string, mime: string) => void;
   }

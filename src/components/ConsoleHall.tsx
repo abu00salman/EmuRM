@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CONSOLES } from "@/lib/consoles/registry";
 import { useCountsByConsole } from "@/lib/db/hooks";
 import { useLocale, useT } from "@/lib/i18n";
+import { DeviceGlyph } from "./DeviceGlyph";
 import { Icon } from "./player/Icon";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 type Filter = "all" | "home" | "portable";
@@ -18,10 +19,10 @@ export function ConsoleHall() {
       {([ ["all", ar ? "كل الأجهزة" : "All systems"], ["home", ar ? "أجهزة منزلية" : "Home consoles"], ["portable", ar ? "أجهزة محمولة" : "Handhelds"] ] as const).map(([id, label]) => <button data-nav key={id} aria-pressed={filter === id} onClick={() => setFilter(id)}>{label}</button>)}
     </div>
     <div className="rm-console-grid">
-      {systems.map(c => <Link data-nav key={c.id} href={`/console/${c.id}/`} className="rm-console-card" style={{ "--console-accent": c.accent } as React.CSSProperties}>
+      {systems.map(c => <Link data-nav key={c.id} href={`/console/${c.id}/`} className="rm-console-card" aria-label={t("consoleCase.aria", { name: c.name, maker: c.maker, year: c.year, count: counts?.[c.id] ?? 0, games: t(counts?.[c.id] === 1 ? "home.game.one" : "home.game.other") })} style={{ "--console-accent": c.accent } as React.CSSProperties}>
         <div className="rm-console-photo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`${BASE}/images/consoles/${c.photo}`} loading="lazy" alt="" />
+          {c.photo ? <img src={`${BASE}/images/consoles/${c.photo}`} loading="lazy" alt="" /> : <DeviceGlyph form={c.form} className="h-full w-full p-6" />}
           <span className="rm-console-year">{c.year}</span>
           {c.status === "experimental" && <span className="rm-experimental">{t("consoleCase.experimental")}</span>}
         </div>

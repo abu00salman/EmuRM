@@ -24,7 +24,7 @@ export function ConsolePicker() {
             data-nav
             onClick={() => answer(c.id)}
             style={{ ["--accent" as string]: c.accent }}
-            className="group flex flex-col items-start gap-2 rounded-2xl border border-line bg-white/[0.03] p-3 text-left transition-colors hover:border-[color:var(--accent)]"
+            className="group flex flex-col items-start gap-2 rounded-2xl border border-line bg-white/[0.03] p-3 text-start transition-colors hover:border-[color:var(--accent)]"
           >
             <DeviceGlyph form={c.form} className="h-10 w-14 text-[color:var(--accent)]" />
             <span className="text-sm font-semibold">{c.name}</span>

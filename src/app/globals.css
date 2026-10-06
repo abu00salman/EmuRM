@@ -290,3 +290,30 @@ body[data-playing="true"] {
 .rm-library-options { flex-wrap: wrap; min-width: 0; }
 .rm-library-options select { max-width: 100%; }
 .rm-library-toolbar > label { min-width: min(230px,100%); }
+
+/* Keep install available at every width, including compact phones and tablets. */
+.rm-install { display: inline-flex; flex-shrink: 0; }
+.rm-install button { min-height: 44px; min-width: 44px; }
+.rm-console-header-content > .flex-1 { min-width: 0; }
+.rm-console-header-photo { flex-shrink: 0; }
+.rm-game-card button, .rm-game-row button { min-height: 44px; min-width: 44px; }
+@media (min-width: 769px) and (max-width: 1100px) {
+  .rm-desktop-nav { gap: 10px; }
+  .rm-brand small { display: none; }
+  .rm-topbar-inner { gap: 10px; }
+  .rm-install button { font-size: 12px; padding-inline: 10px; }
+}
+@media (max-width: 768px) {
+  .rm-install button { width: 44px; padding-inline: 8px; }
+  .rm-install button svg { flex-shrink: 0; }
+  .rm-install button { font-size: 0; gap: 0; }
+}
+html[data-tv="true"] { font-size: 20px; scroll-padding: 110px 48px; }
+html[data-tv="true"] .rm-container, html[data-tv="true"] .rm-topbar-inner { padding-inline: 48px; }
+html[data-tv="true"] :focus-visible { outline: 4px solid #c1d7ff; outline-offset: 5px; box-shadow: 0 0 24px #629bff66; }
+html[data-tv="true"] .rm-console-card:focus-visible { transform: translateY(-5px); border-color: var(--console-accent); }
+html[data-tv="true"] .rm-game-card button { opacity: 1; }
+html[data-tv="true"] .rm-hero { min-height: 500px; }
+@media (prefers-reduced-motion: reduce) {
+  html[data-tv="true"] .rm-console-card:focus-visible { transform: none; }
+}

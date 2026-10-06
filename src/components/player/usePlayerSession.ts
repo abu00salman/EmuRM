@@ -123,6 +123,7 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
           aspect: st.aspect,
           stageAspect: rect.width / Math.max(1, rect.height),
           smoothing: st.smoothing,
+          shader: st.shader,
           signal: ctrl.signal,
           onPhase: (p) => !ctrl.signal.aborted && setPhase(p),
         });

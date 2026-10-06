@@ -42,6 +42,7 @@ export function DiscoveryCard({ game, onOpen }: { game: GameMetadata; onOpen: (g
   const t = useT();
   return (
     <motion.button
+      data-nav
       layout="position"
       transition={{ type: "spring", stiffness: 400, damping: 38 }}
       onClick={() => onOpen(game)}
