@@ -35,6 +35,16 @@ npm start            # serve out/ locally
 
 Node ≥ 20.9. The build is a fully static site (`output: "export"`), so `out/` deploys to any static host: Cloudflare Pages, Netlify, Vercel, GitHub Pages, S3 + CloudFront, nginx. Serve it over HTTPS (required for the service worker, gamepads and storage persistence).
 
+### Deploy to Cloudflare Pages
+
+`.github/workflows/deploy-cloudflare.yml` builds the site and publishes `out/` with Wrangler on every push to `main` (or manually via *Run workflow*). One-time setup:
+
+1. In Cloudflare: **Workers & Pages → Create → Pages → Direct Upload**, and create a project named `emurm` (or set the repo variable `CLOUDFLARE_PAGES_PROJECT` to another name).
+2. Create an API token with the **Cloudflare Pages: Edit** permission.
+3. In GitHub: **Settings → Secrets and variables → Actions**, add the secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
+`public/_headers` is applied automatically by Pages. No `NEXT_BASE_PATH` is needed — Cloudflare serves from the root. Every file is under Pages' 25 MiB per-file limit.
+
 ### Optional: self-hosting cores
 
 By default, cores load lazily from jsDelivr (`arianrhodsandlot/retroarch-emscripten-build`). To self-host — recommended for production — place `<core>_libretro.js` and `<core>_libretro.wasm` in `public/cores/` (or a CDN) and set:
