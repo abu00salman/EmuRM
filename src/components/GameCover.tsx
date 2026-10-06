@@ -3,6 +3,7 @@ import { getConsole } from "@/lib/consoles/registry";
 import { useObjectUrl } from "@/lib/object-url";
 import type { GameRecord } from "@/lib/db/schema";
 import { DeviceGlyph } from "./DeviceGlyph";
+import { bundledCoverUrl } from "@/lib/library/bundled-covers";
 
 /** Stable 0..1 from a string, so a generated cover never changes between visits. */
 function seeded(s: string) {
@@ -12,7 +13,9 @@ function seeded(s: string) {
 }
 
 export function GameCover({ game, className = "" }: { game: Pick<GameRecord, "id" | "title" | "consoleId" | "cover">; className?: string }) {
-  const url = useObjectUrl(game.cover);
+  const objectUrl = useObjectUrl(game.cover);
+  const bundledUrl = bundledCoverUrl(game.consoleId, game.title, game.id);
+  const url = objectUrl ?? bundledUrl;
   const c = getConsole(game.consoleId);
   const accent = c?.accent ?? "#8d919b";
 
