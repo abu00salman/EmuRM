@@ -1,4 +1,5 @@
 import type { ConsoleDef, CoreDef, PadButton } from "@/lib/consoles/types";
+import type { ShaderChoice } from "./shaders";
 
 /**
  * The seam between EmuRM's UI and whatever actually emulates.
@@ -30,7 +31,7 @@ export interface LaunchSpec {
   /** Current stage aspect, used for "stretch" */
   stageAspect: number;
   smoothing: boolean;
-  shader?: "off" | "sharp";
+  shader?: ShaderChoice;
   signal?: AbortSignal;
   onPhase?: (phase: LaunchPhase) => void;
 }
