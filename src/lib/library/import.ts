@@ -5,6 +5,7 @@ import type { ConsoleId } from "@/lib/consoles/types";
 import type { ParsedRom } from "@/workers/rom.protocol";
 import { makeThumbnail, parseFiles } from "./worker-client";
 import { fetchBoxArt } from "./boxart";
+import { bundledGameMeta, fetchBundledCover } from "./bundled-covers";
 import { getT } from "@/lib/i18n";
 
 export interface ImportOptions {
@@ -92,14 +93,18 @@ async function importBuffers(payload: { name: string; buffer: ArrayBuffer }[], o
       continue;
     }
 
-    // Explicit cover (demo catalog, custom import) wins; otherwise best-effort box art
-    // for a known official title, so a plain drag-and-drop still gets real cover art
-    // instead of only ever showing the generated placeholder.
-    const rawCover = opts.cover ?? (await fetchBoxArt(consoleId, rom.fileName, rom.title).catch(() => null)) ?? undefined;
+    // Explicit cover wins. Then check app-bundled localized/custom ROM metadata by
+    // SHA-1 so every visitor gets the same cover regardless of filename. Finally,
+    // fall back to libretro thumbnails for official releases.
+    const bundledMeta = bundledGameMeta(rom.id);
+    const rawCover = opts.cover
+      ?? (await fetchBundledCover(consoleId, rom.fileName, rom.title, rom.id).catch(() => null))
+      ?? (await fetchBoxArt(consoleId, rom.fileName, rom.title).catch(() => null))
+      ?? undefined;
 
     const game: GameRecord = {
       id: rom.id,
-      title: opts.titleOverride ?? rom.title,
+      title: opts.titleOverride ?? bundledMeta?.title ?? rom.title,
       consoleId,
       fileName: rom.fileName,
       size: rom.size,
@@ -110,7 +115,7 @@ async function importBuffers(payload: { name: string; buffer: ArrayBuffer }[], o
       collections: [],
       source: opts.source ?? "file",
       sourceUrl: opts.sourceUrl,
-      author: opts.author,
+      author: opts.author ?? bundledMeta?.author,
       cover: rawCover ? await makeThumbnail(rawCover, 480).catch(() => rawCover) : undefined,
     };
     const d = db();
