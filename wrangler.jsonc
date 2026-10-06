@@ -1,0 +1,10 @@
+{
+  // Static-assets-only Worker: serves the Next.js static export in out/.
+  // The Worker name is overridden in CI via --name (repo variable CLOUDFLARE_WORKER_NAME).
+  "name": "emurm",
+  "compatibility_date": "2025-10-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
