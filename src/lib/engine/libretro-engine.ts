@@ -1,4 +1,5 @@
 import { sharpShaderFiles } from "./sharp-shader";
+import { externalShaderFiles, isShaderId } from "./shaders";
 import { Nostalgist } from "nostalgist";
 import type { PadButton } from "@/lib/consoles/types";
 import { installMsxSystem, MSX_SYSTEM_DIRECTORY, prepareMsxSystem } from "./msx-system";
@@ -212,10 +213,23 @@ export const libretroEngine: EmulatorEngine = {
     const rom = files.map((f) => ({ fileName: f.name, fileContent: f.blob }));
     const bios = msxSystem ? [] : spec.bios.map((f) => ({ fileName: f.name, fileContent: f.blob }));
 
+    // A shader that fails to load must never block the game: fall back to none.
+    let shaderName: string | undefined;
+    let shaderFiles: { fileName: string; fileContent: Blob }[] = [];
+    if (spec.shader === "sharp") {
+      shaderName = "emurm-sharp";
+      shaderFiles = sharpShaderFiles();
+    } else if (isShaderId(spec.shader)) {
+      try {
+        shaderFiles = await externalShaderFiles(spec.shader);
+        shaderName = spec.shader;
+      } catch { /* run without the shader */ }
+    }
+
     const n = await Nostalgist.launch({
       element: spec.canvas,
-      shader: spec.shader === "sharp" ? "emurm-sharp" : undefined,
-      resolveShader: () => sharpShaderFiles(),
+      shader: shaderName,
+      resolveShader: () => shaderFiles,
       core: coreInput,
       rom: rom.length === 1 ? rom[0] : rom,
       bios: bios.length ? bios : undefined,
@@ -231,7 +245,7 @@ export const libretroEngine: EmulatorEngine = {
         ...inputConfig(spec.input),
         ...aspectConfig(spec.aspect, spec.console.aspect, spec.stageAspect),
         video_smooth: spec.smoothing,
-        video_shader_enable: spec.shader === "sharp",
+        video_shader_enable: !!shaderName,
         audio_volume: toDb(spec.volume),
         fastforward_ratio: 4,
         // Confirmed directly: at least stella2014 (Atari 2600) never writes the

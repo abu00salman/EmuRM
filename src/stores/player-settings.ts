@@ -1,3 +1,4 @@
+import type { ShaderChoice } from "@/lib/engine/shaders";
 import type { AspectMode } from "@/lib/engine/types";
 
 export type ScreenFilter = "off" | "scanlines" | "crt" | "lcd";
@@ -14,7 +15,7 @@ export interface PlayerSettings {
   showFps: boolean;
   smoothing: boolean;
   /** Optional GPU presentation; off by default on every device. */
-  shader: "off" | "sharp";
+  shader: ShaderChoice;
   autosave: boolean;
   /** Seconds between automatic saves while playing */
   autosaveEvery: number;

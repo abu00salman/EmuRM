@@ -10,6 +10,7 @@ import type { PlayerSettings, ScreenFilter, TouchTheme } from "@/stores/player-s
 import { useT, useLocale } from "@/lib/i18n";
 import { RemapEditor } from "../RemapEditor";
 import { Icon } from "./Icon";
+import type { ShaderChoice } from "@/lib/engine/shaders";
 import { TOUCH_THEMES } from "../TouchPad";
 
 export type Panel = "main" | "states" | "display" | "controls";
@@ -292,6 +293,11 @@ function Display({ settings: s, onSettings }: Props) {
   const filters: { v: ScreenFilter; label: string }[] = [
     { v: "off", label: t("display.filterOff") }, { v: "scanlines", label: t("display.scanlines") }, { v: "crt", label: t("display.crt") }, { v: "lcd", label: t("display.lcd") },
   ];
+  const shaders: { v: ShaderChoice; label: string }[] = [
+    { v: "off", label: t("display.filterOff") }, { v: "sharp", label: t("display.shaderSharp") }, { v: "crt-pi", label: t("display.shaderCrtPi") },
+    { v: "crt-lottes", label: t("display.shaderCrtLottes") }, { v: "crt-easymode", label: t("display.shaderCrtEasymode") }, { v: "crt-geom", label: t("display.shaderCrtGeom") },
+    { v: "lcd3x", label: t("display.shaderLcd3x") },
+  ];
   return (
     <div className="flex flex-col gap-6">
       <section>
@@ -300,7 +306,7 @@ function Display({ settings: s, onSettings }: Props) {
       </section>
       <section>
         <h3 className="mb-2 text-sm text-muted">{t("display.screenFilter")}</h3>
-        <Segmented label={t("display.shader")} value={s.shader ?? "off"} options={[{ v: "off" as const, label: t("display.filterOff") }, { v: "sharp" as const, label: t("display.shaderSharp") }]} onChange={(shader) => void onSettings({ shader }, true)} />
+        <Segmented label={t("display.shader")} value={s.shader ?? "off"} options={shaders} onChange={(shader) => void onSettings({ shader }, true)} />
         <p className="text-xs text-muted">{t("display.shaderHint")}</p>
         <Segmented label={t("display.screenFilter")} value={s.filter} options={filters} onChange={(v) => void onSettings({ filter: v })} />
       </section>
