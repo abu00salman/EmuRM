@@ -1,5 +1,5 @@
-/** Optional GPU shaders, served from /shaders (copied unmodified from libretro/glsl-shaders). */
-export const SHADER_IDS = ["crt-pi", "crt-lottes", "crt-easymode", "crt-geom", "lcd3x"] as const;
+/** Optional GPU shaders, served from /shaders (sourced from libretro/glsl-shaders; see its README). */
+export const SHADER_IDS = ["crt-pi", "crt-lottes", "crt-easymode", "crt-geom", "lcd3x", "fxaa", "pixel-aa"] as const;
 export type ShaderId = (typeof SHADER_IDS)[number];
 export type ShaderChoice = "off" | "sharp" | ShaderId;
 
