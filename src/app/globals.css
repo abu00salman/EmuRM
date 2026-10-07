@@ -317,3 +317,81 @@ html[data-tv="true"] .rm-hero { min-height: 500px; }
 @media (prefers-reduced-motion: reduce) {
   html[data-tv="true"] .rm-console-card:focus-visible { transform: none; }
 }
+
+/* ======================================================================
+   Theme switch — dark is the official default; light is opt-in from the
+   header button (remembered per device). The player stays dark always.
+   ====================================================================== */
+.rm-theme { display: grid; place-items: center; min-width: 44px; min-height: 44px; border-radius: 12px; color: #c1cbdd; transition: background .2s, color .2s; }
+.rm-theme:hover { background: #ffffff0d; color: #fff; }
+.rm-theme svg { width: 20px; height: 20px; }
+
+/* Smooth cross-fade for theme and language switches (View Transitions API). */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .32s; animation-timing-function: cubic-bezier(.22,1,.36,1); }
+
+html[data-theme="light"]:not([data-route="play"]) {
+  color-scheme: light;
+  --color-ink: #f4f6fb;
+  --color-graphite: #ffffff;
+  --color-graphite-2: #eef1f7;
+  --color-graphite-3: #e2e7f0;
+  --color-line: rgb(14 22 38 / 0.10);
+  --color-text: #0e1626;
+  --color-muted: #4a5672;
+  --color-faint: #5d6984;
+  --rm-surface: #ffffff;
+}
+html[data-theme="light"]:not([data-route="play"]) body { background: var(--color-ink); color: var(--color-text); }
+
+/* Utilities written for a dark page: white-on-dark hairlines, hovers and chips. */
+html[data-theme="light"]:not([data-route="play"]) main :is(.border-white\/15, .border-white\/20) { border-color: rgb(14 22 38 / .16); }
+html[data-theme="light"]:not([data-route="play"]) main :is(.border-white\/30, .border-white\/40, .border-white\/50, .border-white\/60) { border-color: rgb(14 22 38 / .32); }
+html[data-theme="light"]:not([data-route="play"]) :is(main, [role="dialog"]) :is(.hover\:bg-white\/10:hover, .bg-white\/10, .bg-white\/\[0\.06\]) { background: rgb(14 22 38 / .06); }
+html[data-theme="light"]:not([data-route="play"]) :is(main, [role="dialog"], .rm-topbar) .hover\:text-white:hover { color: var(--color-text); }
+html[data-theme="light"]:not([data-route="play"]) :is(main, [role="dialog"]) .bg-white.text-black { background: #0e1626; color: #fff; }
+html[data-theme="light"]:not([data-route="play"]) :is(main, [role="dialog"]) .hover\:bg-white:hover { background: #0e1626; color: #fff; }
+html[data-theme="light"]:not([data-route="play"]) :is(main, [role="dialog"]) :is(.bg-black\/40, .bg-black\/30) { background: #fff; }
+html[data-theme="light"]:not([data-route="play"]) :is(main, [role="dialog"]) :is(.border-white\/15, .border-white\/20, .border-white\/30) { border-color: rgb(14 22 38 / .18); }
+html[data-theme="light"]:not([data-route="play"]) .glass { background: rgb(255 255 255 / .78); border-color: rgb(14 22 38 / .10); }
+html[data-theme="light"]:not([data-route="play"]) .glass-strong { background: rgb(255 255 255 / .94); border-color: rgb(14 22 38 / .10); box-shadow: 0 24px 60px rgb(14 22 38 / .16); }
+
+/* Shell */
+html[data-theme="light"]:not([data-route="play"]) .rm-topbar { background: #f4f6fbe8; border-bottom-color: rgb(14 22 38 / .08); }
+html[data-theme="light"]:not([data-route="play"]) .rm-brand b { color: #2f6bff; }
+html[data-theme="light"]:not([data-route="play"]) .rm-brand small { color: #5d6984; }
+html[data-theme="light"]:not([data-route="play"]) .rm-desktop-nav a { color: #4a5672; }
+html[data-theme="light"]:not([data-route="play"]) .rm-desktop-nav a[aria-current] { color: #0e1626; }
+html[data-theme="light"]:not([data-route="play"]) .rm-desktop-nav a[aria-current]::after { background: #2f6bff; }
+html[data-theme="light"]:not([data-route="play"]) :is(.rm-language, .rm-theme) { color: #33405c; }
+html[data-theme="light"]:not([data-route="play"]) .rm-theme:hover { background: rgb(14 22 38 / .06); color: #0e1626; }
+html[data-theme="light"]:not([data-route="play"]) .rm-button-primary { background: #2f6bff; color: #fff; border-color: #2f6bff; box-shadow: 0 6px 20px rgb(47 107 255 / .25); }
+html[data-theme="light"]:not([data-route="play"]) .rm-button-primary:hover { background: #2a5fe6; }
+html[data-theme="light"]:not([data-route="play"]) .rm-mobile-nav { background: #ffffffef; border-top-color: rgb(14 22 38 / .08); }
+html[data-theme="light"]:not([data-route="play"]) .rm-mobile-nav a { color: #5d6984; }
+html[data-theme="light"]:not([data-route="play"]) .rm-mobile-nav a[aria-current] { color: #2f6bff; background: rgb(47 107 255 / .08); }
+html[data-theme="light"]:not([data-route="play"]) .rm-skip { background: #0e1626; color: #fff; }
+html[data-theme="light"]:not([data-route="play"]) :focus-visible { outline-color: #2f6bff; }
+
+/* Hero stays a dark showcase panel (it frames hardware photography), so its
+   copy keeps the dark-theme colours; only the frame softens. */
+html[data-theme="light"]:not([data-route="play"]) .rm-hero { color: #ecedf0; border-color: rgb(14 22 38 / .08); box-shadow: 0 24px 60px rgb(14 22 38 / .14); }
+html[data-theme="light"]:not([data-route="play"]) .rm-hero .rm-button-primary { background: #c1d7ff; color: #0a1730; border-color: #dfebff; box-shadow: none; }
+
+/* Sections and cards */
+html[data-theme="light"]:not([data-route="play"]) .rm-count { color: #5d6984; }
+html[data-theme="light"]:not([data-route="play"]) .rm-filter-row button { color: #4a5672; background: #fff; border-color: rgb(14 22 38 / .10); }
+html[data-theme="light"]:not([data-route="play"]) .rm-filter-row button[aria-pressed="true"] { background: #0e1626; color: #fff; border-color: #0e1626; }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-card { background: #fff; border-color: rgb(14 22 38 / .08); box-shadow: 0 1px 2px rgb(14 22 38 / .05); }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-card:hover { background: #fff; box-shadow: 0 18px 40px rgb(14 22 38 / .12); }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-photo::after { background: linear-gradient(transparent, #fff); }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-maker { color: #5d6984; }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-info p { color: #5d6984; }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-arrow { background: rgb(47 107 255 / .08); color: #2f6bff; }
+html[data-theme="light"]:not([data-route="play"]) .rm-start-banner { border-color: rgb(14 22 38 / .08); }
+html[data-theme="light"]:not([data-route="play"]) .rm-start-symbol { background: rgb(47 107 255 / .10); color: #2f6bff; }
+html[data-theme="light"]:not([data-route="play"]) .rm-start-banner p { color: #4a5672; }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-header { background: linear-gradient(120deg, #e3eafa, transparent); }
+html[data-theme="light"]:not([data-route="play"]) .rm-console-header-photo { border-color: rgb(14 22 38 / .10); }
+html[data-theme="light"]:not([data-route="play"]) .rm-library-toolbar { background: #ffffffef; border-color: rgb(14 22 38 / .08); }
+html[data-theme="light"]:not([data-route="play"]) .rm-eyebrow { color: #2f6bff; }
+html[data-theme="light"]:not([data-route="play"]) .rm-hero .rm-eyebrow { color: #a5bcdf; }

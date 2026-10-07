@@ -54,8 +54,7 @@ export const useLocaleStore = create<LocaleState>((set, get) => ({
   },
 }));
 
-/** Blocking snippet inlined in <head> so returning RTL visitors never see an LTR flash. */
-export const LOCALE_INIT_SCRIPT = `(function(){try{var k="${STORAGE_KEY}";var v=localStorage.getItem(k);if(v!=="en"&&v!=="ar"){v=(navigator.language||"").toLowerCase().indexOf("ar")===0?"ar":"en";}document.documentElement.lang=v;document.documentElement.dir=v==="ar"?"rtl":"ltr";}catch(e){}})();`;
+/* The matching <head> boot script lives in @/lib/boot-scripts (server-safe module). */
 
 function interpolate(template: string, vars?: Record<string, string | number>): string {
   if (!vars) return template;

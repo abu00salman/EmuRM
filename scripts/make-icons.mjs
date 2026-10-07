@@ -10,7 +10,7 @@ await sharp(svg).resize(512, 512).png().toFile(out("icon-512.png"));
 await sharp(svg).resize(180, 180).png().toFile(out("apple-touch-icon.png"));
 // Maskable: keep the mark inside the 80% safe zone on a full-bleed black square
 const inner = await sharp(svg).resize(400, 400).png().toBuffer();
-await sharp({ create: { width: 512, height: 512, channels: 4, background: "#000000" } })
+await sharp({ create: { width: 512, height: 512, channels: 4, background: "#0D2E8A" } })
   .composite([{ input: inner, gravity: "center" }])
   .png()
   .toFile(out("icon-maskable-512.png"));
