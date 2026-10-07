@@ -1,6 +1,6 @@
 /* EmuRM service worker — offline shell + permanent cache for emulator cores.
  * ROMs and saves never pass through here: they live in IndexedDB. */
-const VERSION = "emurm-v5"; // bumped: cacheFirst() no longer touches the cache for ranged requests
+const VERSION = "emurm-v6"; // bumped: new logo icons + light theme
 const SHELL = `${VERSION}-shell`;
 const STATIC = `${VERSION}-static`;
 const CORES = "emurm-cores-v1"; // survives app updates; cores are versioned by URL

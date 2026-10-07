@@ -5,7 +5,7 @@ import "@fontsource/ibm-plex-sans-arabic/400.css";
 import "@fontsource/ibm-plex-sans-arabic/600.css";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
-import { LOCALE_INIT_SCRIPT } from "@/lib/i18n";
+import { LOCALE_INIT_SCRIPT, THEME_INIT_SCRIPT } from "@/lib/boot-scripts";
 
 // Next doesn't rewrite metadata.manifest/icons with `basePath` on its own, unlike
 // next/link and next/image — so this mirrors it manually (see next.config.ts).
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
     // Small tab icons first, with a version query so browsers that cache favicons
     // aggressively (Safari) fetch the current logo instead of an old one.
     icon: [
-      { url: `${BASE}/favicon.ico?v=2`, sizes: "48x48" },
-      { url: `${BASE}/icons/favicon-32.png?v=2`, sizes: "32x32", type: "image/png" },
+      { url: `${BASE}/favicon.ico?v=3`, sizes: "48x48" },
+      { url: `${BASE}/icons/favicon-32.png?v=3`, sizes: "32x32", type: "image/png" },
       { url: `${BASE}/icons/icon-192.png`, sizes: "192x192", type: "image/png" },
       { url: `${BASE}/icons/icon-512.png`, sizes: "512x512", type: "image/png" },
     ],
@@ -62,8 +62,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
-  colorScheme: "dark",
+  themeColor: "#080c14",
+  colorScheme: "dark light",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -71,10 +71,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
+    <html lang="en" dir="ltr" data-theme="dark" suppressHydrationWarning>
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT + THEME_INIT_SCRIPT }} />
       </head>
       <body>
         <AppShell>{children}</AppShell>

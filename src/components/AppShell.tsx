@@ -9,6 +9,7 @@ import "@/lib/native-bridge";
 import { arrowKeyNav, remoteKey, startGamepadNav } from "@/lib/input/gamepad-nav";
 import { useUI } from "@/stores/ui";
 import { useLocaleStore, useT } from "@/lib/i18n";
+import { smoothSwitch, useThemeStore } from "@/lib/theme";
 import { ImportDialog } from "./ImportDialog";
 import { ConsolePicker } from "./ConsolePicker";
 import { InstallButton } from "./InstallButton";
@@ -30,8 +31,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     pathRef.current = pathname;
   }, [pathname]);
 
+  // The player is always dark (games are made for a dark room); the light theme
+  // only applies to the rest of the app. CSS keys off this attribute.
+  useEffect(() => {
+    if (inPlayer) document.documentElement.dataset.route = "play";
+    else delete document.documentElement.dataset.route;
+  }, [inPlayer]);
+
   useEffect(() => {
     useLocaleStore.getState().hydrateFromStorage();
+    useThemeStore.getState().hydrateFromStorage();
     if (window.AndroidNative?.isBundledApp?.()) {
       // APK updates carry their own assets; retain IndexedDB, discard only obsolete
       // worker registrations from the older online wrapper on the same origin.
@@ -109,6 +118,8 @@ function TopBar() {
   const t = useT();
   const locale = useLocaleStore((s) => s.locale);
   const setLocale = useLocaleStore((s) => s.setLocale);
+  const theme = useThemeStore((s) => s.theme);
+  const toggleTheme = useThemeStore((s) => s.toggle);
   const links = [
     { href: "/", label: t("nav.consoles"), icon: "gamepad" as const },
     { href: "/discover/", label: t("nav.discover"), icon: "discover" as const },
@@ -131,7 +142,14 @@ function TopBar() {
       </Link>
       {nav(false)}
       <div className="rm-top-actions">
-        <button data-nav onClick={() => setLocale(locale === "en" ? "ar" : "en")} aria-label={t("lang.switch")} className="rm-language">{locale === "en" ? "عربي" : "EN"}</button>
+        <button data-nav onClick={() => smoothSwitch(() => setLocale(locale === "en" ? "ar" : "en"))} aria-label={t("lang.switch")} className="rm-language">{locale === "en" ? "عربي" : "EN"}</button>
+        <button data-nav onClick={toggleTheme} aria-label={t(theme === "dark" ? "theme.toLight" : "theme.toDark")} title={t(theme === "dark" ? "theme.toLight" : "theme.toDark")} className="rm-theme" aria-pressed={theme === "light"}>
+          <svg viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            {theme === "dark"
+              ? <path d="M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 7a5 5 0 100 10 5 5 0 000-10z" />
+              : <path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z" />}
+          </svg>
+        </button>
         <span className="rm-install"><InstallButton /></span>
         <button data-nav onClick={() => openImport("device")} aria-label={t("nav.addGames")} className="rm-button rm-button-primary rm-add"><Icon name="plus" /><span>{t("nav.addGames")}</span></button>
       </div>
