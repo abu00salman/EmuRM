@@ -296,7 +296,7 @@ function Display({ settings: s, onSettings }: Props) {
   const shaders: { v: ShaderChoice; label: string }[] = [
     { v: "off", label: t("display.filterOff") }, { v: "sharp", label: t("display.shaderSharp") }, { v: "crt-pi", label: t("display.shaderCrtPi") },
     { v: "crt-lottes", label: t("display.shaderCrtLottes") }, { v: "crt-easymode", label: t("display.shaderCrtEasymode") }, { v: "crt-geom", label: t("display.shaderCrtGeom") },
-    { v: "lcd3x", label: t("display.shaderLcd3x") },
+    { v: "lcd3x", label: t("display.shaderLcd3x") }, { v: "fxaa", label: t("display.shaderFxaa") }, { v: "pixel-aa", label: t("display.shaderPixelAa") },
   ];
   return (
     <div className="flex flex-col gap-6">
