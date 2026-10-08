@@ -1,0 +1,58 @@
+name: Desktop Build (macOS, Windows)
+
+# Builds desktop-app/ into an installable .dmg (macOS) and .exe installer (Windows).
+#
+# This exists for the same reason android-build.yml and ios-build.yml do: the
+# environment this was written from is Linux with no macOS/Windows toolchain, so
+# nothing here has ever run locally. GitHub's macos-latest and windows-latest runners
+# cover both, so the build happens here instead — triggered manually, each platform's
+# result attached to the run as a downloadable artifact.
+#
+# Both builds are unsigned (no Apple Developer account or Windows code-signing
+# certificate configured) — see desktop-app/README.md for what that means on launch.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            script: dist:mac
+            artifact: emurm-macos
+            glob: "desktop-app/dist/*.dmg"
+          - os: windows-latest
+            script: dist:win
+            artifact: emurm-windows
+            glob: "desktop-app/dist/*.exe"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build web export
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+
+      - name: Install desktop-app dependencies
+        working-directory: desktop-app
+        run: npm ci
+
+      - name: Build desktop installer
+        working-directory: desktop-app
+        run: npm run ${{ matrix.script }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.glob }}
+          retention-days: 14
