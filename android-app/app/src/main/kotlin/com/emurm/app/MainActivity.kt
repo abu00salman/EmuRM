@@ -297,6 +297,7 @@ class MainActivity : AppCompatActivity() {
                         view.evaluateJavascript(it, null)
                         pendingSharedImportJs = null
                     }
+                    scheduleRenderSelfCheck(view)
                 }
 
                 override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
@@ -506,5 +507,45 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "EmuRM"
+    }
+
+    // ---------- Render self-check ----------
+    // Old Android System WebView builds have repeatedly rendered the page with NO styles
+    // (the failure is invisible to the app otherwise: the load "succeeds"). If that
+    // happens, say so on screen with the WebView version and stylesheet state, so the
+    // cause can be read straight off a screenshot instead of guessed at.
+    private var selfCheckShown = false
+
+    private fun scheduleRenderSelfCheck(view: WebView) {
+        if (selfCheckShown) return
+        view.postDelayed({
+            view.evaluateJavascript(
+                """(function(){try{
+var bg=getComputedStyle(document.body).backgroundColor;
+var sheets=[].map.call(document.styleSheets,function(s){var n;try{n=s.cssRules.length}catch(e){n='ERR '+e.name}return (s.href||'inline').split('/').pop()+':'+n});
+var probe=getComputedStyle(document.documentElement).getPropertyValue('--spacing');
+return JSON.stringify({bg:bg,sheets:sheets,spacing:probe,ua:navigator.userAgent});
+}catch(e){return JSON.stringify({err:String(e)})}})()""",
+            ) { raw ->
+                if (selfCheckShown || isFinishing) return@evaluateJavascript
+                val json = try {
+                    JSONObject(JSONObject("{\"v\":$raw}").getString("v"))
+                } catch (e: Exception) {
+                    return@evaluateJavascript
+                }
+                val bg = json.optString("bg")
+                val styled = bg != "rgb(18, 18, 18)" && bg != "rgba(0, 0, 0, 0)" && bg != "rgb(255, 255, 255)" && json.optString("spacing").isNotBlank()
+                if (styled) return@evaluateJavascript
+                selfCheckShown = true
+                val pkg = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WebView.getCurrentWebViewPackage() else null
+                val msg = "WebView: ${pkg?.packageName} ${pkg?.versionName}\nAndroid ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})\n" +
+                    "bg=$bg spacing='${json.optString("spacing")}'\nsheets=${json.optJSONArray("sheets")}\n${json.optString("ua")}"
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("EmuRM: page did not style correctly")
+                    .setMessage(msg + "\n\nPlease screenshot this and send it. Updating 'Android System WebView' in Google Play may fix it.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        }, 3000)
     }
 }
