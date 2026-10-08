@@ -25,8 +25,38 @@ targets:
     deploymentTarget: "15.0"
     sources:
       - path: EmuRM
+    # `properties` is deliberate. With only `path:`, XcodeGen (re)writes EmuRM/Info.plist
+    # itself and the hand-written keys -- notably UILaunchScreen -- can be dropped. An iOS
+    # app with no launch screen declared runs in legacy 320x480 "compatibility mode":
+    # the whole UI letterboxed in the middle of the screen. Declaring every key here makes
+    # this file the single source of truth, and CI asserts UILaunchScreen is in the build.
     info:
       path: EmuRM/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: en
+        CFBundleDisplayName: EmuRM
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSPhotoLibraryAddUsageDescription: Used only to save a screenshot you take in-game to your Photos.
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIRequiresFullScreen: true
+        UIViewControllerBasedStatusBarAppearance: true
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.emurm.app

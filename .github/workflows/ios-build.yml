@@ -58,6 +58,13 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM=""
 
+      - name: Assert launch screen is in the built Info.plist
+        # Without UILaunchScreen iOS runs the app letterboxed in legacy 320x480 mode.
+        run: |
+          set -e
+          PLIST="build/Build/Products/Release-iphoneos/EmuRM.app/Info.plist"
+          plutil -p "$PLIST"
+          plutil -extract UILaunchScreen xml1 -o - "$PLIST" | grep -q LaunchBackground
       - name: Package unsigned IPA
         run: |
           set -e
