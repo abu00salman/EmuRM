@@ -144,8 +144,17 @@ jobs:
           mkdir -p out
           mv release-assets/release-android/*.apk out/EmuRM-android.apk
           mv release-assets/release-ios/*.ipa out/EmuRM-ios-unsigned.ipa
-          mv release-assets/release-macos/*.dmg out/EmuRM-macos.dmg
           mv release-assets/release-windows/*.exe out/EmuRM-windows.exe
+          # electron-builder's mac target (x64 + arm64) produces two .dmg files, one per
+          # architecture -- unlike the other three platforms, which each produce exactly
+          # one file, so this can't be a single hardcoded mv like the others above.
+          for dmg in release-assets/release-macos/*.dmg; do
+            base=$(basename "$dmg")
+            case "$base" in
+              *arm64*) mv "$dmg" out/EmuRM-macos-arm64.dmg ;;
+              *) mv "$dmg" out/EmuRM-macos-x64.dmg ;;
+            esac
+          done
           ls -la out
 
       - name: Create release
@@ -160,5 +169,5 @@ jobs:
 
           - **Android**: EmuRM-android.apk — debug-signed, installs directly.
           - **iOS**: EmuRM-ios-unsigned.ipa — **unsigned**, needs re-signing with your own Apple Developer account before it will run on a device (see ios-app/README.md).
-          - **macOS**: EmuRM-macos.dmg — unsigned; Gatekeeper will warn on first open (right-click → Open).
+          - **macOS**: EmuRM-macos-arm64.dmg (Apple Silicon) or EmuRM-macos-x64.dmg (Intel) — unsigned; Gatekeeper will warn on first open (right-click → Open).
           - **Windows**: EmuRM-windows.exe — unsigned installer; SmartScreen may warn."
