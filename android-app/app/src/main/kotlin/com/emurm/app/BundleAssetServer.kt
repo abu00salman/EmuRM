@@ -16,10 +16,29 @@ class BundleAssetServer(private val assets: AssetManager) {
             return notFound()
         }
         val file = if (path.isEmpty() || path.endsWith('/')) "${path}index.html" else path
+        // Hardcoded rather than left to android.webkit.MimeTypeMap: its built-in table is
+        // missing entries (css above all) on a lot of OEM/TV firmware, including TCL's —
+        // a stylesheet served as application/octet-stream gets silently refused by the
+        // WebView, leaving the page fully unstyled (plain blue links, oversized icons)
+        // while everything still "works". Every extension this export actually produces
+        // (see public/ and the Next.js build output) is listed explicitly so none of them
+        // depend on a device's possibly-incomplete table.
         val mime = when (file.substringAfterLast('.').lowercase()) {
+            "html" -> "text/html"
+            "css" -> "text/css"
             "js" -> "application/javascript"
-            "wasm" -> "application/wasm"
+            "json" -> "application/json"
             "webmanifest" -> "application/manifest+json"
+            "wasm" -> "application/wasm"
+            "svg" -> "image/svg+xml"
+            "png" -> "image/png"
+            "jpg", "jpeg" -> "image/jpeg"
+            "ico" -> "image/x-icon"
+            "woff" -> "font/woff"
+            "woff2" -> "font/woff2"
+            "xml" -> "application/xml"
+            "txt", "md", "glsl", "glslp" -> "text/plain"
+            "zip" -> "application/zip"
             else -> MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.substringAfterLast('.'))
                 ?: "application/octet-stream"
         }
