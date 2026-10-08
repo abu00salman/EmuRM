@@ -132,6 +132,8 @@ jobs:
     needs: [build-android, build-ios, build-desktop]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           pattern: release-*
@@ -164,6 +166,7 @@ jobs:
           set -e
           TAG="release-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}"
           gh release create "$TAG" out/* \
+            --repo "${GITHUB_REPOSITORY}" \
             --title "EmuRM $TAG" \
             --notes "Built from commit ${GITHUB_SHA} on $(date -u +%Y-%m-%d).
 
