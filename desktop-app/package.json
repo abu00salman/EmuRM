@@ -1,0 +1,41 @@
+{
+  "name": "emurm-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EmuRM desktop shell for macOS and Windows",
+  "main": "main.js",
+  "scripts": {
+    "prebuild": "node scripts/bundle-web.js",
+    "start": "npm run prebuild && electron .",
+    "dist:mac": "npm run prebuild && electron-builder --mac",
+    "dist:win": "npm run prebuild && electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.emurm.app",
+    "productName": "EmuRM",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "web/**/*",
+      "!web/**/*.map"
+    ],
+    "icon": "build/icon.png",
+    "mac": {
+      "target": [{ "target": "dmg", "arch": ["x64", "arm64"] }],
+      "category": "public.app-category.entertainment"
+    },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
