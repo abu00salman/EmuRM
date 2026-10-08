@@ -6,7 +6,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "next build --webpack && node scripts/downlevel-js.mjs",
     "start": "npx serve@latest out -s",
     "typecheck": "tsc --noEmit",
     "icons": "node scripts/make-icons.mjs",
@@ -36,7 +36,9 @@
     "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2",
     "playwright": "1.51.1",
+    "postcss-preset-env": "^11.6.1",
     "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"
