@@ -144,37 +144,18 @@ class MainActivity : AppCompatActivity() {
             binding.webView.reload()
         }
 
-        // Start from packaged HTML without a network navigation/service-worker cache.
-        // Keep the previous HTTPS origin so installed users retain IndexedDB saves.
-        val home = inlineStylesheets(assets.open("web/index.html").bufferedReader().use { it.readText() })
-        binding.webView.loadDataWithBaseURL(BundleAssetServer.URL, home, "text/html", "UTF-8", BundleAssetServer.URL)
+        // Load the packaged export as a normal URL navigation through BundleAssetServer's
+        // shouldInterceptRequest, the same way every one of its sub-resources (CSS, JS, ...)
+        // gets served — rather than injecting the HTML directly via loadDataWithBaseURL, which
+        // two earlier attempts at this (MIME-fixing the asset server, then inlining the
+        // stylesheet into that injected HTML) both failed to get rendering correctly on real
+        // hardware (a TCL Android TV, then a Samsung phone) for a reason that couldn't be
+        // reproduced or root-caused remotely. loadDataWithBaseURL's injected-string-as-document
+        // path is a narrower, less-tested corner of WebView than an ordinary URL load is, and is
+        // the one thing that changed between "broken on real devices" and this. Same HTTPS
+        // origin either way, so installed users keep their IndexedDB saves.
+        binding.webView.loadUrl(BundleAssetServer.URL)
         handleIntent(intent)
-    }
-
-    /**
-     * Replaces every local `<link rel="stylesheet" href="/...">` in the initial HTML with the
-     * stylesheet's own content inlined in a `<style>` tag, read straight from the packaged assets.
-     *
-     * This exists because the page's very first paint otherwise depends on the WebView correctly
-     * re-requesting that stylesheet through [BundleAssetServer] after the data: load — a path that
-     * stayed broken on at least one real device (a TCL Android TV) even after the asset server's
-     * MIME type for .css was fixed, for a reason that couldn't be reproduced or root-caused without
-     * that exact hardware/firmware to test against. Inlining removes that request from the critical
-     * path entirely: nothing about how the WebView handles a secondary network-shaped request can
-     * matter when the rule is just text already sitting in the HTML `loadDataWithBaseURL` was given.
-     */
-    private fun inlineStylesheets(html: String): String {
-        val linkTag = Regex("""<link\s+rel="stylesheet"\s+href="(/[^"]+\.css)"[^>]*/?>""")
-        return linkTag.replace(html) { match ->
-            val href = match.groupValues[1].removePrefix("/")
-            val css = try {
-                assets.open("web/$href").bufferedReader().use { it.readText() }
-            } catch (e: java.io.FileNotFoundException) {
-                Log.w("EmuRM", "inlineStylesheets: missing $href, leaving link tag as-is", e)
-                return@replace match.value
-            }
-            "<style>$css</style>"
-        }
     }
 
     override fun onNewIntent(intent: Intent) {
