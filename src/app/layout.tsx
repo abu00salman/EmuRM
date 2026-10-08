@@ -5,7 +5,7 @@ import "@fontsource/ibm-plex-sans-arabic/400.css";
 import "@fontsource/ibm-plex-sans-arabic/600.css";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
-import { LOCALE_INIT_SCRIPT, THEME_INIT_SCRIPT } from "@/lib/boot-scripts";
+import { COMPAT_SCRIPT, LOCALE_INIT_SCRIPT, THEME_INIT_SCRIPT } from "@/lib/boot-scripts";
 
 // Next doesn't rewrite metadata.manifest/icons with `basePath` on its own, unlike
 // next/link and next/image — so this mirrors it manually (see next.config.ts).
@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" dir="ltr" data-theme="dark" suppressHydrationWarning>
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT + THEME_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: COMPAT_SCRIPT + LOCALE_INIT_SCRIPT + THEME_INIT_SCRIPT }} />
       </head>
       <body>
         <AppShell>{children}</AppShell>

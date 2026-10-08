@@ -18,6 +18,11 @@ name: Release All Platforms
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to update in place (replaces its files). Empty = create a new dated release."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -46,6 +51,12 @@ jobs:
           java-version: "17"
       - run: chmod +x gradlew
       - run: ./gradlew build assembleDebug --stacktrace
+      - name: Assert the APK actually contains the web bundle (_next)
+        run: |
+          set -e
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          unzip -l "$APK" | grep -c "assets/web/_next/static/css/" | grep -qv '^0$'
+          unzip -l "$APK" | grep -c "assets/web/_next/static/chunks/" | grep -qv '^0$'
       - uses: actions/upload-artifact@v4
         with:
           name: release-android
@@ -79,6 +90,13 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM=""
+      - name: Assert launch screen is in the built Info.plist
+        # Without UILaunchScreen iOS runs the app letterboxed in legacy 320x480 mode.
+        run: |
+          set -e
+          PLIST="build/Build/Products/Release-iphoneos/EmuRM.app/Info.plist"
+          plutil -p "$PLIST"
+          plutil -extract UILaunchScreen xml1 -o - "$PLIST" | grep -q LaunchBackground
       - name: Package unsigned IPA
         run: |
           set -e
@@ -159,18 +177,22 @@ jobs:
           done
           ls -la out
 
-      - name: Create release
+      - name: Create or update release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_INPUT: ${{ github.event.inputs.tag }}
         run: |
           set -e
-          TAG="release-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}"
-          gh release create "$TAG" out/* \
-            --repo "${GITHUB_REPOSITORY}" \
-            --title "EmuRM $TAG" \
-            --notes "Built from commit ${GITHUB_SHA} on $(date -u +%Y-%m-%d).
+          NOTES="Built from commit ${GITHUB_SHA} on $(date -u +%Y-%m-%d).
 
-          - **Android**: EmuRM-android.apk — debug-signed, installs directly.
-          - **iOS**: EmuRM-ios-unsigned.ipa — **unsigned**, needs re-signing with your own Apple Developer account before it will run on a device (see ios-app/README.md).
+          - **Android**: EmuRM-android.apk — debug-signed, installs directly. Works on older Android System WebView builds.
+          - **iOS**: EmuRM-ios-unsigned.ipa — **unsigned**, needs re-signing with your own Apple Developer account before it will run on a device (see ios-app/README.md). Delete any previously installed copy first.
           - **macOS**: EmuRM-macos-arm64.dmg (Apple Silicon) or EmuRM-macos-x64.dmg (Intel) — unsigned; Gatekeeper will warn on first open (right-click → Open).
           - **Windows**: EmuRM-windows.exe — unsigned installer; SmartScreen may warn."
+          if [ -n "$TAG_INPUT" ]; then
+            gh release upload "$TAG_INPUT" out/* --clobber --repo "${GITHUB_REPOSITORY}"
+            gh release edit "$TAG_INPUT" --notes "$NOTES" --repo "${GITHUB_REPOSITORY}"
+          else
+            TAG="release-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}"
+            gh release create "$TAG" out/* --repo "${GITHUB_REPOSITORY}" --title "EmuRM $TAG" --notes "$NOTES"
+          fi
