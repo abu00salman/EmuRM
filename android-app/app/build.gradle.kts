@@ -18,6 +18,16 @@ android {
     namespace = "com.emurm.app"
     compileSdk = 35
 
+    // AGP's default ignoreAssetsPattern contains `<dir>_*`, which silently DROPS every
+    // asset directory whose name starts with an underscore -- including Next.js's
+    // `_next/` (all the CSS and JS). The APK then had the HTML but no stylesheets or
+    // scripts: every /_next/... request 404'd, so the page rendered unstyled and never
+    // hydrated, on every device, regardless of WebView version. Same pattern as the
+    // default minus that one entry.
+    androidResources {
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+
     defaultConfig {
         applicationId = "com.emurm.app"
         minSdk = 26
