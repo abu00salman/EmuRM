@@ -1,0 +1,164 @@
+name: Release All Platforms
+
+# Builds every platform this project ships (Android, iOS, macOS, Windows) and publishes
+# them together as one tagged GitHub Release with all four files attached — mirroring
+# the multi-platform release pattern (e.g. KytyPS5's releases page).
+#
+# This exists because this workflow's own runner can upload straight to a GitHub
+# Release with `gh release create` — the environment driving these builds has no path
+# to download a completed Actions artifact itself (its GitHub client refuses the
+# redirect to blob storage that artifact downloads require), so collecting every
+# platform into one release has to happen here, not by re-uploading files fetched
+# locally.
+#
+# iOS is unsigned (CODE_SIGNING_ALLOWED=NO) — no Apple Developer account configured.
+# It needs re-signing with your own account before it runs on a real device; see
+# ios-app/README.md. macOS/Windows builds are unsigned too (no certificates
+# configured) — Gatekeeper/SmartScreen will warn on first launch.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build bundled web assets
+        working-directory: .
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: chmod +x gradlew
+      - run: ./gradlew build assembleDebug --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-android
+          path: android-app/app/build/outputs/apk/debug/app-debug.apk
+
+  build-ios:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: ios-app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select latest available Xcode
+        run: |
+          LATEST_XCODE=$(ls -d /Applications/Xcode*.app | sort -V | tail -n1)
+          sudo xcode-select -s "$LATEST_XCODE/Contents/Developer"
+          xcodebuild -version
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate
+      - name: Build unsigned .app
+        run: |
+          xcodebuild build \
+            -project EmuRM.xcodeproj \
+            -scheme EmuRM \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM=""
+      - name: Package unsigned IPA
+        run: |
+          set -e
+          APP_PATH="build/Build/Products/Release-iphoneos/EmuRM.app"
+          test -d "$APP_PATH"
+          mkdir -p Payload
+          cp -R "$APP_PATH" Payload/
+          zip -r EmuRM-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-ios
+          path: ios-app/EmuRM-unsigned.ipa
+
+  build-desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            script: dist:mac
+            artifact: release-macos
+            glob: "desktop-app/dist/*.dmg"
+          - os: windows-latest
+            script: dist:win
+            artifact: release-windows
+            glob: "desktop-app/dist/*.exe"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build web export
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+      - name: Install desktop-app dependencies
+        working-directory: desktop-app
+        run: npm ci
+      - name: Build desktop installer
+        working-directory: desktop-app
+        run: npm run ${{ matrix.script }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.glob }}
+
+  publish-release:
+    needs: [build-android, build-ios, build-desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: false
+
+      - name: Flatten and rename release assets
+        run: |
+          set -e
+          mkdir -p out
+          mv release-assets/release-android/*.apk out/EmuRM-android.apk
+          mv release-assets/release-ios/*.ipa out/EmuRM-ios-unsigned.ipa
+          mv release-assets/release-macos/*.dmg out/EmuRM-macos.dmg
+          mv release-assets/release-windows/*.exe out/EmuRM-windows.exe
+          ls -la out
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          TAG="release-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}"
+          gh release create "$TAG" out/* \
+            --title "EmuRM $TAG" \
+            --notes "Built from commit ${GITHUB_SHA} on $(date -u +%Y-%m-%d).
+
+          - **Android**: EmuRM-android.apk — debug-signed, installs directly.
+          - **iOS**: EmuRM-ios-unsigned.ipa — **unsigned**, needs re-signing with your own Apple Developer account before it will run on a device (see ios-app/README.md).
+          - **macOS**: EmuRM-macos.dmg — unsigned; Gatekeeper will warn on first open (right-click → Open).
+          - **Windows**: EmuRM-windows.exe — unsigned installer; SmartScreen may warn."
