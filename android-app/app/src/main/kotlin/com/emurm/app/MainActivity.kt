@@ -21,6 +21,8 @@ import android.util.Log
 import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.PermissionRequest
+import android.webkit.ServiceWorkerClient
+import android.webkit.ServiceWorkerController
 import android.webkit.SslErrorHandler
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -275,6 +277,22 @@ class MainActivity : AppCompatActivity() {
             ),
             "AndroidNative",
         )
+
+        // The site registers a service worker (offline shell + core cache). Its own
+        // fetches do NOT pass through the WebViewClient above, so on the virtual
+        // https://www.emurm.com origin they went to the REAL network and came back as
+        // whatever the live site serves -- hashed CSS/JS names from a different build
+        // -- which is how the page ended up with both stylesheets present but empty
+        // (0 rules) on a current WebView. Route the worker's requests through the same
+        // bundled-asset server so it sees exactly the files the page was built from.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ServiceWorkerController.getInstance().setServiceWorkerClient(
+                object : ServiceWorkerClient() {
+                    override fun shouldInterceptRequest(request: WebResourceRequest): WebResourceResponse? =
+                        bundledAssets.respond(request.url)
+                },
+            )
+        }
 
         webView.webViewClient =
             object : WebViewClient() {
