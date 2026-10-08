@@ -12,8 +12,9 @@
 import { transform } from "esbuild";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const OUT = new URL("../out/", import.meta.url).pathname;
+const OUT = fileURLToPath(new URL("../out/", import.meta.url));
 // chrome79 only: esbuild refuses to lower destructuring for the Safari/Firefox targets it has bug data for, and
 // lowering to the oldest engine we support produces syntax every newer engine parses too.
 const TARGET = ["chrome79"];
