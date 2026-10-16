@@ -10,7 +10,9 @@ import type { PlayerSettings, ScreenFilter, TouchTheme } from "@/stores/player-s
 import { useT, useLocale } from "@/lib/i18n";
 import { RemapEditor } from "../RemapEditor";
 import { Icon } from "./Icon";
-import type { ShaderChoice } from "@/lib/engine/shaders";
+import { HD_SHADERS, type ShaderChoice, type ShaderId } from "@/lib/engine/shaders";
+
+const isHd = (v: ShaderChoice | undefined) => !!v && (HD_SHADERS as readonly string[]).includes(v as ShaderId);
 import { TOUCH_THEMES } from "../TouchPad";
 
 export type Panel = "main" | "states" | "display" | "controls";
@@ -297,7 +299,9 @@ function Display({ settings: s, onSettings }: Props) {
     { v: "off", label: t("display.filterOff") }, { v: "sharp", label: t("display.shaderSharp") }, { v: "crt-pi", label: t("display.shaderCrtPi") },
     { v: "crt-lottes", label: t("display.shaderCrtLottes") }, { v: "crt-easymode", label: t("display.shaderCrtEasymode") }, { v: "crt-geom", label: t("display.shaderCrtGeom") },
     { v: "lcd3x", label: t("display.shaderLcd3x") }, { v: "fxaa", label: t("display.shaderFxaa") }, { v: "pixel-aa", label: t("display.shaderPixelAa") },
+    { v: "xbrz-freescale", label: `✨ ${t("display.shaderXbrz")}` }, { v: "scalefx", label: `✨ ${t("display.shaderScalefx")}` },
   ];
+  const hd = isHd(s.shader);
   return (
     <div className="flex flex-col gap-6">
       <section>
@@ -307,7 +311,13 @@ function Display({ settings: s, onSettings }: Props) {
       <section>
         <h3 className="mb-2 text-sm text-muted">{t("display.screenFilter")}</h3>
         <Segmented label={t("display.shader")} value={s.shader ?? "off"} options={shaders} onChange={(shader) => void onSettings({ shader }, true)} />
-        <p className="text-xs text-muted">{t("display.shaderHint")}</p>
+        {hd ? (
+          <p className="mt-2 rounded-lg border border-[#4D8DFF]/40 bg-[#4D8DFF]/10 px-3 py-2 text-xs text-[#4D8DFF]">
+            ✨ {t("display.shaderHdBadge")} — {s.shader === "scalefx" ? t("display.shaderHeavyHint") : t("display.shaderHdHint")}
+          </p>
+        ) : (
+          <p className="text-xs text-muted">{t("display.shaderHint")}</p>
+        )}
         <Segmented label={t("display.screenFilter")} value={s.filter} options={filters} onChange={(v) => void onSettings({ filter: v })} />
       </section>
       <section>
