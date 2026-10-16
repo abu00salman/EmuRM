@@ -1,16 +1,15 @@
 /** Optional GPU shaders, served from /shaders (sourced from libretro/glsl-shaders; see its README). */
-export const SHADER_IDS = ["crt-pi", "crt-lottes", "crt-easymode", "crt-geom", "lcd3x", "fxaa", "pixel-aa", "xbrz-freescale", "scalefx"] as const;
+export const SHADER_IDS = ["crt-pi", "crt-lottes", "crt-easymode", "crt-geom", "lcd3x", "fxaa", "pixel-aa", "scalefx"] as const;
 export type ShaderId = (typeof SHADER_IDS)[number];
 export type ShaderChoice = "off" | "sharp" | ShaderId;
 
 /** Premium HD upscalers — highlighted in the UI. */
-export const HD_SHADERS: readonly ShaderId[] = ["xbrz-freescale", "scalefx"];
+export const HD_SHADERS: readonly ShaderId[] = ["scalefx"];
 /** Heavier multi-pass shaders that may drop frames on older phones. */
 export const HEAVY_SHADERS: readonly ShaderId[] = ["scalefx"];
 
 /** Pass sources per multi-pass preset (single-pass presets default to `${id}.glsl`). */
 const PASSES: Partial<Record<ShaderId, string[]>> = {
-  "xbrz-freescale": ["xbrz-freescale-pass0.glsl", "xbrz-freescale-pass1.glsl"],
   scalefx: ["scalefx-pass0.glsl", "scalefx-pass1.glsl", "scalefx-pass2.glsl", "scalefx-pass3.glsl", "scalefx-pass4.glsl"],
 };
 

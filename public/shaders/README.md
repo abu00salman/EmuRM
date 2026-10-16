@@ -15,7 +15,6 @@ Vulkan/Metal/D3D only and cannot run in a browser.
 
 ## HD upscalers (multi-pass)
 
-`xbrz-freescale` (2 passes, Hyllian & Zenju's xBRZ, from `xbrz/shaders/xbrz-freescale-multipass/`)
-and `scalefx` (5 passes, Sp00kyFox's ScaleFX, from `scalefx/shaders/`). Shader sources are
+`scalefx` (5 passes, Sp00kyFox's ScaleFX, from `scalefx/shaders/`). Shader sources are
 unmodified and keep their original author and licence headers; only the `.glslp` presets were
 rewritten to point at the flat `shaders/<file>.glsl` layout used here.
