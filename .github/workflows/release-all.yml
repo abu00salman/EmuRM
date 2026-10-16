@@ -183,16 +183,10 @@ jobs:
           TAG_INPUT: ${{ github.event.inputs.tag }}
         run: |
           set -e
-          NOTES="Built from commit ${GITHUB_SHA} on $(date -u +%Y-%m-%d).
-
-          - **Android**: EmuRM-android.apk — debug-signed, installs directly. Works on older Android System WebView builds.
-          - **iOS**: EmuRM-ios-unsigned.ipa — **unsigned**, needs re-signing with your own Apple Developer account before it will run on a device (see ios-app/README.md). Delete any previously installed copy first.
-          - **macOS**: EmuRM-macos-arm64.dmg (Apple Silicon) or EmuRM-macos-x64.dmg (Intel) — unsigned; Gatekeeper will warn on first open (right-click → Open).
-          - **Windows**: EmuRM-windows.exe — unsigned installer; SmartScreen may warn."
           if [ -n "$TAG_INPUT" ]; then
             gh release upload "$TAG_INPUT" out/* --clobber --repo "${GITHUB_REPOSITORY}"
-            gh release edit "$TAG_INPUT" --notes "$NOTES" --repo "${GITHUB_REPOSITORY}"
+            gh release edit "$TAG_INPUT" --title "EmuRM — iPhone · Android · Mac · Windows" --notes-file .github/release-notes.md --prerelease=false --latest --repo "${GITHUB_REPOSITORY}"
           else
             TAG="release-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}"
-            gh release create "$TAG" out/* --repo "${GITHUB_REPOSITORY}" --title "EmuRM $TAG" --notes "$NOTES"
+            gh release create "$TAG" out/* --repo "${GITHUB_REPOSITORY}" --title "EmuRM — iPhone · Android · Mac · Windows" --notes-file .github/release-notes.md --latest
           fi
