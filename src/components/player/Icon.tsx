@@ -3,6 +3,7 @@ const paths = {
   arrow: "M5 12h14M13 6l6 6-6 6",
   library: "M4 4h5v16H4zM12 4h4l4 15-4 1z",
   discover: "M12 3a9 9 0 100 18 9 9 0 000-18zM15 9l-2 4-4 2 2-4z",
+  rebuilt: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5",
   settings: "M4 7h16M4 17h16M9 4v6M15 14v6",
 
   back: "M15 5l-7 7 7 7",

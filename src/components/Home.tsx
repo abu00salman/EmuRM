@@ -56,6 +56,13 @@ export function Home() {
         <div className="rm-section-heading"><div><p className="rm-eyebrow">{ar ? "عالمك الكلاسيكي" : "YOUR RETRO UNIVERSE"}</p><h2 id="systems-heading">{t("home.headline")}</h2></div><span className="rm-count">{CONSOLES.length} {ar ? "نظامًا" : "systems"} · {total ?? 0} {ar ? "لعبة" : "games"}</span></div>
         <ConsoleHall />
       </section>
+      <section className="glass my-8 flex flex-col gap-4 rounded-3xl p-6 sm:flex-row sm:items-center sm:justify-between" aria-labelledby="rebuilt-teaser">
+        <div>
+          <h2 id="rebuilt-teaser" className="font-display text-2xl font-extrabold">{t("nav.rebuilt")}</h2>
+          <p className="mt-1 max-w-[60ch] text-muted">{t("rebuilt.teaserText")}</p>
+        </div>
+        <Link data-nav href="/rebuilt/" className="rm-button rm-button-primary shrink-0">{t("rebuilt.teaser")}</Link>
+      </section>
       <section className="rm-start-banner">
         <span className="rm-start-symbol"><Icon name="gamepad" /></span>
         <div><h2>{ar ? "الخطوة الأولى؟ لعبة واحدة." : "It starts with one game."}</h2><p>{ar ? "استورد ملف لعبتك، وسيُضاف إلى مكتبتك على هذا الجهاز." : "Import a game file and make yourself at home."}</p></div>

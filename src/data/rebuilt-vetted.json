@@ -1,0 +1,5 @@
+{
+  "_comment": "Hand-reviewed overrides. A project is only ever shown as Play Now if its id is in `play` AND carries written evidence that the code, the assets and the hosting are legitimately redistributable. `planned` ids show as Coming Soon. Both are empty on purpose: nothing has been verified yet.",
+  "play": [],
+  "planned": []
+}

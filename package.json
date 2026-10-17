@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "icons": "node scripts/make-icons.mjs",
     "test:sram": "node scripts/test-sram.cjs",
+    "test:rebuilt": "node scripts/test-rebuilt-index.cjs",
+    "build:rebuilt-index": "node scripts/build-rebuilt-index.mjs",
     "test:msx": "node scripts/test-msx-system.cjs",
     "test:msx:browser": "node scripts/smoke-msx.cjs"
   },
