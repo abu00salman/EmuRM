@@ -122,6 +122,7 @@ function TopBar() {
   const toggleTheme = useThemeStore((s) => s.toggle);
   const links = [
     { href: "/", label: t("nav.consoles"), icon: "gamepad" as const },
+    { href: "/rebuilt/", label: t("nav.rebuilt"), icon: "rebuilt" as const },
     { href: "/discover/", label: t("nav.discover"), icon: "discover" as const },
     { href: "/library/", label: t("nav.library"), icon: "library" as const },
     { href: "/settings/", label: t("nav.settings"), icon: "settings" as const },
