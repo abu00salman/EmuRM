@@ -121,7 +121,9 @@ export function usePlayerSession({ game, resume, settings, bindings, host }: Opt
           input: bd,
           volume: st.volume,
           aspect: st.aspect,
-          stageAspect: rect.width / Math.max(1, rect.height),
+          // "extended" gives the whole stage to the picture (touch pad overlays it), so measure the
+          // window itself: the layout may not have reflowed yet when a relaunch starts.
+          stageAspect: st.aspect === "extended" ? window.innerWidth / Math.max(1, window.innerHeight) : rect.width / Math.max(1, rect.height),
           smoothing: st.smoothing,
           shader: st.shader,
           signal: ctrl.signal,

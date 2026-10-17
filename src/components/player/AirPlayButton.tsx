@@ -14,7 +14,7 @@ interface PlaybackTargetEvent extends Event {
 
 function outputSizeFor(mode: AspectMode, source: HTMLCanvasElement): [number, number] {
   if (mode === "4:3") return [1440, 1080];
-  if (mode === "16:9" || mode === "stretch") return [1920, 1080];
+  if (mode === "16:9" || mode === "stretch" || mode === "extended") return [1920, 1080];
   // native/integer: scale the game's own resolution up to roughly fill a 1080p frame,
   // rather than mirroring it at its tiny native pixel size.
   const scale = Math.max(1, Math.floor(1080 / Math.max(1, source.height)));
@@ -30,7 +30,7 @@ function composeFrame(ctx: CanvasRenderingContext2D, source: HTMLCanvasElement, 
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, outW, outH);
   if (!sw || !sh) return;
-  if (mode === "stretch") {
+  if (mode === "stretch" || mode === "extended") {
     ctx.drawImage(source, 0, 0, outW, outH);
     return;
   }

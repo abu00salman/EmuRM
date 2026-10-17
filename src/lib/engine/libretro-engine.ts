@@ -41,6 +41,7 @@ function aspectConfig(mode: AspectMode, native: number, stage: number): Record<s
     case "16:9":
       return { aspect_ratio_index: 20, video_aspect_ratio: "1.777778", video_force_aspect: true, video_scale_integer: false };
     case "stretch":
+    case "extended":
       return { aspect_ratio_index: 20, video_aspect_ratio: (stage || native).toFixed(6), video_force_aspect: true, video_scale_integer: false };
   }
 }

@@ -290,7 +290,7 @@ function Toggle({ label, checked, onChange, hint }: { label: string; checked: bo
 function Display({ settings: s, onSettings }: Props) {
   const t = useT();
   const aspects: { v: AspectMode; label: string }[] = [
-    { v: "native", label: t("display.original") }, { v: "integer", label: t("display.pixelPerfect") }, { v: "4:3", label: t("display.fourThree") }, { v: "16:9", label: t("display.sixteenNine") }, { v: "stretch", label: t("display.fill") },
+    { v: "native", label: t("display.original") }, { v: "integer", label: t("display.pixelPerfect") }, { v: "4:3", label: t("display.fourThree") }, { v: "16:9", label: t("display.sixteenNine") }, { v: "stretch", label: t("display.fill") }, { v: "extended", label: t("display.extended") },
   ];
   const filters: { v: ScreenFilter; label: string }[] = [
     { v: "off", label: t("display.filterOff") }, { v: "scanlines", label: t("display.scanlines") }, { v: "crt", label: t("display.crt") }, { v: "lcd", label: t("display.lcd") },
@@ -307,6 +307,7 @@ function Display({ settings: s, onSettings }: Props) {
       <section>
         <h3 className="mb-2 text-sm text-muted">{t("display.shape")}</h3>
         <Segmented label={t("display.aspectRatioAria")} value={s.aspect} options={aspects} onChange={(v) => void onSettings({ aspect: v }, true)} />
+        {s.aspect === "extended" && <p className="mt-2 text-xs text-muted">{t("display.extendedHint")}</p>}
       </section>
       <section>
         <h3 className="mb-2 text-sm text-muted">{t("display.screenFilter")}</h3>
