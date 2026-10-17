@@ -90,7 +90,8 @@ export function Player() {
   // floating/fixed touch pad regardless of the saved choice (see useSkinFrame.ts and
   // skins.json's own `orientation` field — a future landscape skin just needs that
   // field flipped and a second branch here, no other code changes).
-  const skinApplies = CONTROLLER_SKINS_ENABLED && !!showTouch && portrait && activeSkin?.orientation === "portrait";
+  const extended = settings.aspect === "extended";
+  const skinApplies = CONTROLLER_SKINS_ENABLED && !!showTouch && portrait && !extended && activeSkin?.orientation === "portrait";
   const { windowStyle, hostStyle, frame } = useSkinFrame(stageArea, skinApplies ? activeSkin : undefined);
 
   const updateSettings = useCallback(
@@ -115,6 +116,16 @@ export function Player() {
     void p.relaunch().then(() => menu && p.togglePause(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings, bindings, pendingRelaunch]);
+
+  // "Extended" bakes the screen's aspect ratio into the picture at launch, so rotating the
+  // device needs one relaunch (state is carried over) to re-fit it.
+  const lastPortrait = useRef(portrait);
+  useEffect(() => {
+    if (lastPortrait.current === portrait) return;
+    lastPortrait.current = portrait;
+    if (settings.aspect === "extended" && p.phase === "running") setPendingRelaunch(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portrait]);
 
   /* ---------- Body state: gamepad/keys belong to the game while it runs ---------- */
   useEffect(() => {
@@ -343,7 +354,7 @@ export function Player() {
           <SkinOverlay console={c} skin={activeSkin} frame={frame} onPress={press} />
         )}
 
-        {showTouch && c && !portrait && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" style={settings.touchStyle} theme={settings.touchTheme} />}
+        {showTouch && c && (!portrait || extended) && p.phase === "running" && !menu && <TouchPad console={c} onPress={press} mode="overlay" compact={portrait} style={settings.touchStyle} theme={settings.touchTheme} />}
 
         {/* Always-reachable menu button: unlike the top chrome, this never auto-hides —
             not even in "immersive" mode (the iPhone Safari fallback for real fullscreen),
@@ -503,7 +514,7 @@ export function Player() {
         />
       </div>
 
-      {showTouch && c && portrait && !skinApplies && p.phase === "running" && !menu && (
+      {showTouch && c && portrait && !extended && !skinApplies && p.phase === "running" && !menu && (
         <TouchPad console={c} onPress={press} mode="below" style={settings.touchStyle} theme={settings.touchTheme} />
       )}
 

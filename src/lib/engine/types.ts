@@ -7,7 +7,7 @@ import type { ShaderChoice } from "./shaders";
  * a native WASM emulator or a worker-hosted engine tomorrow) without touching UI code.
  */
 
-export type AspectMode = "native" | "4:3" | "16:9" | "stretch" | "integer";
+export type AspectMode = "native" | "4:3" | "16:9" | "stretch" | "extended" | "integer";
 
 export interface InputBindings {
   /** RetroPad button → RetroArch keyboard key name ("x", "enter", "up"…) */
@@ -28,7 +28,7 @@ export interface LaunchSpec {
   /** 0..1 */
   volume: number;
   aspect: AspectMode;
-  /** Current stage aspect, used for "stretch" */
+  /** Current stage aspect, used for "stretch"/"extended" */
   stageAspect: number;
   smoothing: boolean;
   shader?: ShaderChoice;

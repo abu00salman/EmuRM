@@ -36,7 +36,7 @@ export function sectorButtons(dx: number, dy: number): PadButton[] {
 }
 
 /** A multi-touch pad: slide across the D-pad for diagonals, face buttons press on contact. */
-export function TouchPad({ console: c, onPress, mode, style = "fixed", theme = "default" }: { console: ConsoleDef; onPress: Press; mode: "below" | "overlay"; style?: TouchStyle; theme?: TouchTheme }) {
+export function TouchPad({ console: c, onPress, mode, compact = false, style = "fixed", theme = "default" }: { console: ConsoleDef; onPress: Press; mode: "below" | "overlay"; /** overlay in a narrow portrait stage: stack select/start under the d-pad and face buttons */ compact?: boolean; style?: TouchStyle; theme?: TouchTheme }) {
   const shoulders = c.shoulderButtons;
   const overlay = mode === "overlay";
   const floating = style === "floating";
@@ -47,7 +47,7 @@ export function TouchPad({ console: c, onPress, mode, style = "fixed", theme = "
     <div
       className={
         overlay
-          ? "pointer-events-none absolute inset-0 z-20 flex select-none items-end justify-between px-[max(1.5rem,var(--safe-l))] pb-[max(1.25rem,var(--safe-b))]"
+          ? `pointer-events-none absolute inset-0 z-20 select-none px-[max(1rem,var(--safe-l))] pb-[max(1.25rem,var(--safe-b))] ${compact ? "grid grid-cols-2 content-end gap-x-3 gap-y-2" : "flex items-end justify-between px-[max(1.5rem,var(--safe-l))]"}`
           : "relative flex shrink-0 select-none flex-col gap-4 px-5 pb-[max(1.5rem,var(--safe-b))] pt-4"
       }
       dir="ltr"
@@ -89,12 +89,12 @@ export function TouchPad({ console: c, onPress, mode, style = "fixed", theme = "
         )}
         {!overlay && <Face c={c} onPress={onPress} />}
       </div>
-      <div className={overlay ? "pointer-events-auto mb-2 flex gap-3" : "flex justify-center gap-4"}>
+      <div className={overlay ? `pointer-events-auto mb-2 flex gap-3 ${compact ? "order-3 col-span-2 justify-center" : ""}` : "flex justify-center gap-4"}>
         {c.hasSelect && <Pill label={t("pad.select")} pad="select" onPress={onPress} />}
         <Pill label={startLabel} pad="start" onPress={onPress} />
       </div>
       {overlay && (
-        <div className="pointer-events-auto flex flex-col items-end gap-3">
+        <div className={`pointer-events-auto flex flex-col items-end gap-3 ${compact ? "order-2" : ""}`}>
           <div className="flex gap-2">{shoulders.filter((s) => s.pad === "r" || s.pad === "r2").map((s) => <Shoulder key={s.pad} b={s} onPress={onPress} />)}</div>
           <Face c={c} onPress={onPress} />
         </div>
