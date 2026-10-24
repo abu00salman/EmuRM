@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.emurm.rg353v"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.emurm.rg353v"
