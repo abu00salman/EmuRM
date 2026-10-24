@@ -69,7 +69,7 @@ class FileBrowserActivity : AppCompatActivity() {
             divider = android.graphics.drawable.ColorDrawable(Color.argb(40, 255, 255, 255)); dividerHeight = 1
             selector = android.graphics.drawable.ColorDrawable(Color.argb(70, 77, 141, 255))
             isFocusable = true
-            setOnItemClickListener { _, _, pos, _ -> open(adapter.getItem(pos)!!) }
+            setOnItemClickListener { _, _, pos, _ -> open(this@FileBrowserActivity.adapter.getItem(pos)!!) }
         }
         root.addView(list, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
 
