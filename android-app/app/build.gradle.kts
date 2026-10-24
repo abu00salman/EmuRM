@@ -35,7 +35,9 @@ android {
     defaultConfig {
         applicationId = "com.emurm.app"
         minSdk = 26
-        targetSdk = 35
+        // Handheld build: 29 keeps classic storage access (legacy external storage) on Android 11,
+        // which the built-in file browser needs because these devices have no system file picker.
+        targetSdk = if (handheldBuild) 29 else 35
         versionCode = 2
         versionName = "1.1.0"
 
@@ -87,6 +89,11 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = if (keystorePropsFile.exists()) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
         }
+    }
+
+    lint {
+        // The handheld build targets API 29 on purpose (sideloaded, not a Play Store release).
+        disable += "ExpiredTargetSdkVersion"
     }
 
     buildFeatures {

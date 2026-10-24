@@ -353,6 +353,16 @@ class MainActivity : AppCompatActivity() {
                 ): Boolean {
                     pendingFileCallback?.onReceiveValue(null)
                     pendingFileCallback = filePathCallback
+                    if (isHandheld) {
+                        // Handhelds often have no system document picker at all: use the built-in browser.
+                        val browser = Intent(this@MainActivity, FileBrowserActivity::class.java)
+                            .putExtra(FileBrowserActivity.EXTRA_MULTIPLE, fileChooserParams.mode == FileChooserParams.MODE_OPEN_MULTIPLE)
+                        runCatching { filePickerLauncher.launch(browser) }.onFailure {
+                            pendingFileCallback = null
+                            filePathCallback.onReceiveValue(null)
+                        }
+                        return true
+                    }
                     val intent =
                         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
