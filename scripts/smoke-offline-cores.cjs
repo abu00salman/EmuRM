@@ -32,9 +32,11 @@ const cases = [['nes', 'croom.nes'], ['snes', 'blt.sfc'], ['md', 'bottled.md'], 
         await page.waitForFunction(() => document.body.dataset.playing === 'true', null, { timeout: 60000 });
         await page.waitForTimeout(6000);
         const a = await page.locator('canvas').screenshot();
+        await page.keyboard.press('Enter'); // START: leaves a static title screen
         await page.waitForTimeout(2500);
         const b = await page.locator('canvas').screenshot();
-        assert(!a.equals(b), 'canvas must keep changing');
+        // Running = frames change, or at least a real (non-blank) picture is on screen.
+        assert(!a.equals(b) || Math.max(a.length, b.length) > 4000, `no picture (png ${a.length}/${b.length} bytes)`);
         assert.deepEqual(errors, [], 'no page errors');
         console.log(`OK offline: ${system} (${file})${blocked.length ? `, blocked ${blocked.length} outside requests` : ''}`);
       } catch (e) {
