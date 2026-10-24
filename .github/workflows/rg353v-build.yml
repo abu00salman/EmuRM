@@ -35,7 +35,8 @@ jobs:
         run: |
           set -e
           for c in $CORES; do
-            curl -fsSL -o "/tmp/$c.zip" "https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.2/retroarch/${c}_libretro.zip"
+            curl -fsSL --retry 3 -o "/tmp/$c.zip" "https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.2/retroarch/${c}_libretro.zip" \
+              || curl -fsSL --retry 3 -o "/tmp/$c.zip" "https://raw.githubusercontent.com/arianrhodsandlot/retroarch-emscripten-build/v1.22.2/retroarch/${c}_libretro.zip"
             unzip -o -j "/tmp/$c.zip" -d public/cores >/dev/null
             test -s "public/cores/${c}_libretro.wasm"
           done
@@ -50,7 +51,7 @@ jobs:
           set -e
           mkdir -p /tmp/roms
           for f in nes-games/croom.nes snes-games/blt.sfc md-games/bottled.md gba-games/anguna.gba sms-games/astroforce.sms; do
-            curl -fsSL -o "/tmp/roms/$(basename $f)" "https://cdn.jsdelivr.net/gh/retrobrews/${f%%/*}@master/${f#*/}"
+            curl -fsSL --retry 3 -o "/tmp/roms/$(basename $f)" "https://raw.githubusercontent.com/retrobrews/${f%%/*}/master/${f#*/}"
           done
           npx playwright install chromium
           (cd out && python3 -m http.server 4100 >/dev/null 2>&1 &)
