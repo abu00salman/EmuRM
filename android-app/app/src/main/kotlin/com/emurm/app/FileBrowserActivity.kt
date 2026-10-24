@@ -146,7 +146,7 @@ class FileBrowserActivity : AppCompatActivity() {
         if (selected.isEmpty()) return
         val uris = selected.map { Uri.fromFile(it) }
         val clip = ClipData.newRawUri("games", uris.first()).also { c -> uris.drop(1).forEach { c.addItem(ClipData.Item(it)) } }
-        setResult(RESULT_OK, Intent().setClipData(clip).setData(uris.first()))
+        setResult(RESULT_OK, Intent().apply { clipData = clip; data = uris.first() })
         finish()
     }
 
