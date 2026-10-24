@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" formatted="false">EmuRM RG353V</string>
+    <string name="all_games" formatted="false">كل الألعاب</string>
+    <string name="favorites" formatted="false">المفضلة</string>
+    <string name="recent" formatted="false">الأخيرة</string>
+    <string name="unsorted" formatted="false">غير مصنّفة</string>
+    <string name="search_title" formatted="false">بحث</string>
+    <string name="search_hint" formatted="false">اسم اللعبة</string>
+    <string name="games_count" formatted="true">%d لعبة</string>
+    <string name="empty_title" formatted="false">لا توجد ألعاب بعد</string>
+    <string name="empty_body" formatted="false">اضغط START ثم أضف مجلدًا (الذاكرة الداخلية أو microSD) أو اختر ملفات ألعاب. لا يتم نسخ شيء، تبقى الألعاب في مكانها.</string>
+    <string name="add_folder" formatted="false">إضافة مجلد ألعاب</string>
+    <string name="add_files" formatted="false">إضافة ملفات ألعاب</string>
+    <string name="rescan" formatted="false">إعادة فحص المجلدات</string>
+    <string name="scanning" formatted="false">جارٍ الفحص…</string>
+    <string name="scan_done" formatted="true">تم تحديث المكتبة: %d لعبة</string>
+    <string name="menu_title" formatted="false">القائمة</string>
+    <string name="emulators" formatted="false">المحاكيات لكل نظام</string>
+    <string name="controls" formatted="false">الأزرار</string>
+    <string name="language" formatted="false">اللغة</string>
+    <string name="about" formatted="false">حول التطبيق</string>
+    <string name="ok" formatted="false">حسنًا</string>
+    <string name="cancel" formatted="false">إلغاء</string>
+    <string name="close" formatted="false">إغلاق</string>
+    <string name="play" formatted="false">تشغيل</string>
+    <string name="play_with" formatted="false">تشغيل باستخدام…</string>
+    <string name="fav_add" formatted="false">إضافة للمفضلة</string>
+    <string name="fav_remove" formatted="false">إزالة من المفضلة</string>
+    <string name="set_system" formatted="false">تحديد النظام</string>
+    <string name="set_cover" formatted="false">اختيار صورة الغلاف</string>
+    <string name="remove_game" formatted="false">إزالة من المكتبة</string>
+    <string name="hint_play" formatted="false">تشغيل</string>
+    <string name="hint_fav" formatted="false">مفضلة</string>
+    <string name="hint_search" formatted="false">بحث</string>
+    <string name="hint_options" formatted="false">خيارات</string>
+    <string name="hint_menu" formatted="false">القائمة</string>
+    <string name="hint_cats" formatted="false">الأنظمة</string>
+    <string name="no_emu_title" formatted="false">لا يوجد محاكٍ مثبّت</string>
+    <string name="no_emu_body" formatted="true">ثبّت أحد هذه المحاكيات (التطبيق لا يتضمن محاكيات):\n\n%s</string>
+    <string name="emu_auto" formatted="false">تلقائي (أول محاكٍ مثبّت)</string>
+    <string name="emu_missing" formatted="false">غير مثبّت</string>
+    <string name="core_needed" formatted="true">يحتاج نواة «%s» محمّلة داخل RetroArch (Load Core ثم Download a Core).</string>
+    <string name="launch_failed" formatted="true">تعذر تشغيل المحاكي: %s</string>
+    <string name="path_unavailable" formatted="false">لا يمكن لمحاكٍ خارجي فتح موقع هذا الملف. أضفه من الذاكرة الداخلية أو microSD.</string>
+    <string name="perf_great" formatted="false">أداء ممتاز</string>
+    <string name="perf_good" formatted="false">أداء جيد</string>
+    <string name="perf_mixed" formatted="false">متفاوت: بعض الألعاب بطيئة</string>
+    <string name="controls_title" formatted="false">الأزرار</string>
+    <string name="press_button" formatted="false">اضغط زرًا…</string>
+    <string name="last_key" formatted="true">آخر زر: %1$s (الرمز %2$d)</string>
+    <string name="reset_defaults" formatted="false">استعادة الافتراضي</string>
+    <string name="controls_note" formatted="false">الأسهم والعصا اليسرى تحرّك التحديد دائمًا. أعد تعيين الإجراءات أدناه؛ يعرض التطبيق رمز أي زر تضغطه.</string>
+    <string name="act_confirm" formatted="false">تأكيد / تشغيل</string>
+    <string name="act_back" formatted="false">رجوع</string>
+    <string name="act_favorite" formatted="false">مفضلة</string>
+    <string name="act_search" formatted="false">بحث</string>
+    <string name="act_prev" formatted="false">النظام السابق</string>
+    <string name="act_next" formatted="false">النظام التالي</string>
+    <string name="act_pgup" formatted="false">صفحة للأعلى</string>
+    <string name="act_pgdn" formatted="false">صفحة للأسفل</string>
+    <string name="act_options" formatted="false">خيارات اللعبة</string>
+    <string name="act_menu" formatted="false">القائمة</string>
+    <string name="lang_system" formatted="false">لغة النظام</string>
+    <string name="lang_en" formatted="false">English</string>
+    <string name="lang_ar" formatted="false">العربية</string>
+    <string name="about_title" formatted="false">حول EmuRM RG353V</string>
+    <string name="about_version" formatted="true">الإصدار %s</string>
+    <string name="developed_by" formatted="false">Developed by abu00salman</string>
+    <string name="about_body" formatted="false">مشغّل ألعاب سريع يعمل دون إنترنت لجهاز ANBERNIC RG353V.\n\nينظّم ملفات ألعابك الخاصة ويشغّلها في تطبيق محاكٍ مثبّت على الجهاز (RetroArch وPPSSPP وDraStic وmelonDS وFlycast وDuckStation وM64Plus FZ). لا يتضمن محاكيات ولا ألعابًا ولا يحتاج إنترنت.</string>
+</resources>

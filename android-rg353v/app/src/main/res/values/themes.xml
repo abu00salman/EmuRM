@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark only: the app is built for a small, often-outdoor handheld screen. -->
+    <style name="Theme.RG353V" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="alertDialogTheme">@style/Theme.RG353V.Dialog</item>
+    </style>
+    <style name="Theme.RG353V.Dialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialog_bg</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+</resources>

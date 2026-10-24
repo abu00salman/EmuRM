@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" formatted="false">EmuRM RG353V</string>
+    <string name="all_games" formatted="false">All games</string>
+    <string name="favorites" formatted="false">Favorites</string>
+    <string name="recent" formatted="false">Recently played</string>
+    <string name="unsorted" formatted="false">Unsorted</string>
+    <string name="search_title" formatted="false">Search</string>
+    <string name="search_hint" formatted="false">Game name</string>
+    <string name="games_count" formatted="true">%d games</string>
+    <string name="empty_title" formatted="false">No games yet</string>
+    <string name="empty_body" formatted="false">Press START, then add a folder (internal storage or microSD) or pick game files. Nothing is copied; games stay where they are.</string>
+    <string name="add_folder" formatted="false">Add game folder</string>
+    <string name="add_files" formatted="false">Add game files</string>
+    <string name="rescan" formatted="false">Rescan folders</string>
+    <string name="scanning" formatted="false">Scanning…</string>
+    <string name="scan_done" formatted="true">Library updated: %d games</string>
+    <string name="menu_title" formatted="false">Menu</string>
+    <string name="emulators" formatted="false">Emulators per system</string>
+    <string name="controls" formatted="false">Buttons</string>
+    <string name="language" formatted="false">Language</string>
+    <string name="about" formatted="false">About</string>
+    <string name="ok" formatted="false">OK</string>
+    <string name="cancel" formatted="false">Cancel</string>
+    <string name="close" formatted="false">Close</string>
+    <string name="play" formatted="false">Play</string>
+    <string name="play_with" formatted="false">Play with…</string>
+    <string name="fav_add" formatted="false">Add to favorites</string>
+    <string name="fav_remove" formatted="false">Remove from favorites</string>
+    <string name="set_system" formatted="false">Set system</string>
+    <string name="set_cover" formatted="false">Choose cover image</string>
+    <string name="remove_game" formatted="false">Remove from library</string>
+    <string name="hint_play" formatted="false">Play</string>
+    <string name="hint_fav" formatted="false">Favorite</string>
+    <string name="hint_search" formatted="false">Search</string>
+    <string name="hint_options" formatted="false">Options</string>
+    <string name="hint_menu" formatted="false">Menu</string>
+    <string name="hint_cats" formatted="false">Systems</string>
+    <string name="no_emu_title" formatted="false">No emulator installed</string>
+    <string name="no_emu_body" formatted="true">Install one of these (this app does not include emulators):\n\n%s</string>
+    <string name="emu_auto" formatted="false">Automatic (first installed)</string>
+    <string name="emu_missing" formatted="false">not installed</string>
+    <string name="core_needed" formatted="true">Needs the \"%s\" core downloaded inside RetroArch (Load Core > Download a Core).</string>
+    <string name="launch_failed" formatted="true">Could not start the emulator: %s</string>
+    <string name="path_unavailable" formatted="false">This file\'s location can\'t be opened by an external emulator. Add it from internal storage or microSD.</string>
+    <string name="perf_great" formatted="false">Runs well</string>
+    <string name="perf_good" formatted="false">Good</string>
+    <string name="perf_mixed" formatted="false">Mixed: some games slow</string>
+    <string name="controls_title" formatted="false">Buttons</string>
+    <string name="press_button" formatted="false">Press a button…</string>
+    <string name="last_key" formatted="true">Last button: %1$s (code %2$d)</string>
+    <string name="reset_defaults" formatted="false">Reset to defaults</string>
+    <string name="controls_note" formatted="false">D-pad and left stick always move the selection. Rebind the actions below; the app shows the code of any button you press.</string>
+    <string name="act_confirm" formatted="false">Confirm / Play</string>
+    <string name="act_back" formatted="false">Back</string>
+    <string name="act_favorite" formatted="false">Favorite</string>
+    <string name="act_search" formatted="false">Search</string>
+    <string name="act_prev" formatted="false">Previous system</string>
+    <string name="act_next" formatted="false">Next system</string>
+    <string name="act_pgup" formatted="false">Page up</string>
+    <string name="act_pgdn" formatted="false">Page down</string>
+    <string name="act_options" formatted="false">Game options</string>
+    <string name="act_menu" formatted="false">Menu</string>
+    <string name="lang_system" formatted="false">System default</string>
+    <string name="lang_en" formatted="false">English</string>
+    <string name="lang_ar" formatted="false">العربية</string>
+    <string name="about_title" formatted="false">About EmuRM RG353V</string>
+    <string name="about_version" formatted="true">Version %s</string>
+    <string name="developed_by" formatted="false">Developed by abu00salman</string>
+    <string name="about_body" formatted="false">A fast, offline game launcher for the ANBERNIC RG353V.\n\nIt organizes your own game files and starts them in an emulator app installed on the device (RetroArch, PPSSPP, DraStic, melonDS, Flycast, DuckStation, M64Plus FZ). It does not contain emulators or games, and does not need the internet.</string>
+</resources>
