@@ -5,6 +5,8 @@ name: RG353V Edition APK
 # `release` is true, publishes it as a GitHub Release.
 
 on:
+  push:
+    paths: ["android-rg353v/**", ".github/workflows/rg353v-build.yml"]
   workflow_dispatch:
     inputs:
       release:
