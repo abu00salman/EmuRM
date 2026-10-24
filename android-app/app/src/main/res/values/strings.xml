@@ -14,4 +14,11 @@
 
     <string name="external_link_chooser_title">Open link</string>
     <string name="file_picker_unavailable">Install a document picker or file manager to choose game files on this device.</string>
+    <string name="browser_title">Choose game files</string>
+    <string name="browser_internal">Internal storage</string>
+    <string name="browser_sd">SD card (%s)</string>
+    <string name="browser_up">.. (up)</string>
+    <string name="browser_cancel">Cancel</string>
+    <string name="browser_select">Add %d games</string>
+    <string name="browser_no_permission">Storage permission is needed to list your game files. Close and try again, then choose Allow.</string>
 </resources>

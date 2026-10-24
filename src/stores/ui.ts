@@ -37,7 +37,15 @@ let toastSeq = 0;
 export const useUI = create<UIState>((set, get) => ({
   importOpen: false,
   importTab: "device",
-  openImport: (tab = "device", consoleId) => set({ importOpen: true, importTab: tab, importConsole: consoleId }),
+  openImport: (tab = "device", consoleId) => {
+    // Handheld app (RG353V): there is no system file picker, so the native built-in browser
+    // picks the files and hands them back through window.__androidImportUrls.
+    if (tab === "device" && typeof window !== "undefined" && window.AndroidNative?.pickGames) {
+      window.AndroidNative.pickGames(consoleId ?? "");
+      return;
+    }
+    set({ importOpen: true, importTab: tab, importConsole: consoleId });
+  },
   closeImport: () => set({ importOpen: false, importConsole: undefined }),
 
   pick: null,

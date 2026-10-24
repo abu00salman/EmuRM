@@ -188,11 +188,14 @@ class LibretroSession implements EmulatorSession {
   }
 }
 
+/** Extra cores shipped inside this build (the handheld APK bundles them so games run offline). */
+const EXTRA_BUNDLED = new Set((process.env.NEXT_PUBLIC_BUNDLED_CORES ?? "").split(",").map((s) => s.trim()).filter(Boolean));
+
 export const libretroEngine: EmulatorEngine = {
   id: "libretro",
   async launch(spec: LaunchSpec) {
     const { core } = spec;
-    const base = core.bundled ? BUNDLED_CORE_BASE : CORE_BASE;
+    const base = core.bundled || EXTRA_BUNDLED.has(core.id) ? BUNDLED_CORE_BASE : CORE_BASE;
     if (core.hosting === "self" && !base) {
       throw new CoreUnavailableError(
         core.id,

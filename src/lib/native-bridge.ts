@@ -12,6 +12,7 @@
  * it's running on.
  */
 import { importFiles } from "@/lib/library/import";
+import type { ConsoleId } from "@/lib/consoles/types";
 import { useUI } from "@/stores/ui";
 import { getT } from "@/lib/i18n";
 
@@ -23,9 +24,10 @@ interface NativeBridge {
 
 declare global {
   interface Window {
-    AndroidNative?: NativeBridge & { isNativeApp(): boolean; isBundledApp?(): boolean; isTelevision?(): boolean };
+    AndroidNative?: NativeBridge & { isNativeApp(): boolean; isBundledApp?(): boolean; isTelevision?(): boolean; isHandheld?(): boolean; pickGames?(consoleId: string): void };
     webkit?: { messageHandlers?: Record<string, { postMessage(message: unknown): void }> };
     __androidImportSharedFile?: (name: string, base64: string, mime: string) => void;
+    __androidImportUrls?: (items: { name: string; url: string }[], consoleId: string) => void;
   }
 }
 
@@ -108,6 +110,29 @@ if (native) {
   // separate Share Extension target, out of scope for the first iOS build). Reuses the
   // exact same import pipeline and ambiguous-format picker as the in-page "Add games"
   // dialog — nothing import-specific is duplicated.
+  // Files picked in the handheld app's built-in browser, streamed from the app's local origin.
+  window.__androidImportUrls = (items, consoleId) => {
+    void (async () => {
+      const ui = useUI.getState();
+      const t = getT();
+      try {
+        ui.toast({ message: t("toast.importing") });
+        const files = await Promise.all(items.map(async (it) => new File([await (await fetch(it.url)).blob()], it.name)));
+        const result = await importFiles(files, {
+          chooseConsole: (rom, candidates) => useUI.getState().askConsole(rom.title, candidates),
+          forceConsole: (consoleId || undefined) as ConsoleId | undefined,
+        });
+        const n = result.added.length;
+        if (n === 1) ui.toast({ message: t("toast.added", { title: result.added[0]!.title }) });
+        else if (n > 1) ui.toast({ message: t("toast.addedMultiple", { count: n }) });
+        else if (result.existing[0]) ui.toast({ message: t("toast.alreadyIn", { title: result.existing[0].title }) });
+        for (const s of result.skipped) ui.toast({ message: `${s.name}: ${s.reason}`, tone: "error" });
+      } catch {
+        ui.toast({ message: t("toast.importFailed"), tone: "error" });
+      }
+    })();
+  };
+
   window.__androidImportSharedFile = (name, base64, mime) => {
     void (async () => {
       try {

@@ -14,4 +14,11 @@
 
     <string name="external_link_chooser_title">فتح الرابط</string>
     <string name="file_picker_unavailable">ثبّت منتقي مستندات أو مدير ملفات لاختيار ملفات الألعاب على هذا الجهاز.</string>
+    <string name="browser_title">اختر ملفات الألعاب</string>
+    <string name="browser_internal">الذاكرة الداخلية</string>
+    <string name="browser_sd">بطاقة SD (%s)</string>
+    <string name="browser_up">.. (للأعلى)</string>
+    <string name="browser_cancel">إلغاء</string>
+    <string name="browser_select">إضافة %d ألعاب</string>
+    <string name="browser_no_permission">نحتاج صلاحية التخزين لعرض ملفات الألعاب. أغلق وجرّب مرة أخرى ثم اختر السماح.</string>
 </resources>
