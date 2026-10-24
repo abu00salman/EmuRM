@@ -82,7 +82,7 @@ class FileBrowserActivity : AppCompatActivity() {
         setContentView(root)
         updateConfirm()
 
-        if (hasStoragePermission()) show(null)
+        if (hasStoragePermission()) show(lastDir())
         else requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
     }
 
@@ -93,17 +93,23 @@ class FileBrowserActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (hasStoragePermission()) show(null) else { pathView.text = getString(R.string.browser_no_permission) }
+        if (hasStoragePermission()) show(lastDir()) else { pathView.text = getString(R.string.browser_no_permission) }
     }
 
+    /** Internal storage + every removable volume (microSD). /storage itself isn't listable on
+     *  Android 11, so volumes are found from the app's per-volume dirs (…/<volume>/Android/data/…). */
     private fun roots(): List<File> {
-        val out = mutableListOf<File>()
-        out.add(Environment.getExternalStorageDirectory())
-        File("/storage").listFiles()?.forEach { f ->
-            if (f.isDirectory && f.name != "emulated" && f.name != "self" && f.canRead()) out.add(f)
+        val out = mutableListOf(Environment.getExternalStorageDirectory())
+        getExternalFilesDirs(null).filterNotNull().forEach { d ->
+            val p = d.absolutePath
+            val i = p.indexOf("/Android/")
+            if (i > 0) out.add(File(p.substring(0, i)))
         }
-        return out.distinct()
+        File("/storage").listFiles()?.forEach { f -> if (f.isDirectory && f.name != "emulated" && f.name != "self" && f.canRead()) out.add(f) }
+        return out.map { it.absoluteFile }.distinctBy { it.absolutePath }.filter { it.exists() }
     }
+
+    private fun isGameFile(f: File) = f.extension.lowercase(Locale.ROOT) in GAME_EXTENSIONS
 
     private fun show(d: File?) {
         dir = d
@@ -114,8 +120,11 @@ class FileBrowserActivity : AppCompatActivity() {
             roots().forEach { r -> adapter.add(Row(r, if (r == internal) getString(R.string.browser_internal) else getString(R.string.browser_sd, r.name), 1)) }
         } else {
             pathView.text = d.absolutePath
+            getSharedPreferences("browser", MODE_PRIVATE).edit().putString("last", d.absolutePath).apply()
             adapter.add(Row(d.parentFile.takeIf { p -> p != null && roots().none { r -> r == d } }, getString(R.string.browser_up), 0))
-            val kids = d.listFiles()?.filter { !it.name.startsWith(".") }.orEmpty()
+            // Only folders and game files: APKs, photos, documents etc. are hidden so the
+            // list stays short and nothing unplayable can be picked by mistake.
+            val kids = d.listFiles()?.filter { !it.name.startsWith(".") && (it.isDirectory || isGameFile(it)) }.orEmpty()
                 .sortedWith(compareBy<File>({ !it.isDirectory }, { it.name.lowercase(Locale.ROOT) }))
             kids.forEach { adapter.add(Row(it, it.name, if (it.isDirectory) 1 else 2)) }
         }
@@ -161,5 +170,16 @@ class FileBrowserActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    companion object { const val EXTRA_MULTIPLE = "multiple" }
+    /** Reopens where the user last picked games (usually their ROMs folder). */
+    private fun lastDir(): File? = getSharedPreferences("browser", MODE_PRIVATE).getString("last", null)?.let(::File)?.takeIf { it.isDirectory && it.canRead() }
+
+    companion object {
+        const val EXTRA_MULTIPLE = "multiple"
+        /** Every extension the web app imports (src/lib/consoles), plus archives. */
+        val GAME_EXTENSIONS = setOf(
+            "a26", "bin", "cas", "chd", "cue", "dsk", "fds", "fig", "gb", "gba", "gbc", "gen", "gg", "img", "iso", "m3u", "md",
+            "mx1", "mx2", "n64", "nes", "pbp", "pce", "rom", "sfc", "sg", "smc", "smd", "sms", "swc", "unf", "unif", "v64", "z64",
+            "zip", "7z", "ccd", "ecm",
+        )
+    }
 }

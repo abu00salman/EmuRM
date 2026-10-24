@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var pageReady = false
+    private var webLoaded = false
     private var isPlaying = false
     private var isMenuOpen = false
     private var pendingFileCallback: ValueCallback<Array<Uri>>? = null
@@ -107,7 +108,10 @@ class MainActivity : AppCompatActivity() {
                 items.put(JSONObject().put("name", f.name).put("url", "${BundleAssetServer.URL}__local/$token"))
             }
             bundledAssets.localFiles = served
-            binding.webView.evaluateJavascript("window.__androidImportUrls && window.__androidImportUrls(${items}, ${JSONObject.quote(pickConsole)})", null)
+            // If the activity was recreated while the browser was open, the page is still
+            // loading: queue the import for onPageFinished instead of losing it.
+            val js = "(function f(n){if(window.__androidImportUrls)window.__androidImportUrls(${items}, ${JSONObject.quote(pickConsole)});else if(n<60)setTimeout(function(){f(n+1)},250)})(0)"
+            if (webLoaded) binding.webView.evaluateJavascript(js, null) else pendingSharedImportJs = js
         }
 
     // Handheld: the device's own D-pad/stick/A/B drive the page's focus navigation natively
@@ -386,6 +390,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onPageFinished(view: WebView, url: String?) {
                     pageReady = true
+                    webLoaded = true
                     view.evaluateJavascript("document.documentElement.dataset.tv = ${JSONObject.quote(isTelevision.toString())}", null)
                     binding.loadingSpinner.visibility = View.GONE
                     binding.errorOverlay.visibility = View.GONE
