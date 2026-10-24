@@ -40,7 +40,12 @@ jobs:
         working-directory: android-app
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug -Phandheld=true --stacktrace
+          set -o pipefail
+          ./gradlew assembleDebug -Phandheld=true --console=plain 2>&1 | tee ../gradle.log
+      - name: Show compile errors
+        if: failure()
+        run: |
+          grep -E "^e: |error:|Error:|What went wrong" -A3 gradle.log | head -60
       - name: Assert the APK contains the web bundle and the handheld flag
         working-directory: android-app
         run: |
