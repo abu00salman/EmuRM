@@ -28,6 +28,12 @@ android {
 
     buildFeatures { buildConfig = true }
 
+    lint {
+        // targetSdk 30 is deliberate (the device runs Android 11; this APK is sideloaded, not
+        // published on Google Play), so Play's minimum-target rule doesn't apply.
+        disable += "ExpiredTargetSdkVersion"
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
