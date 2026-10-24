@@ -20,7 +20,8 @@ const cases = [['nes', 'croom.nes'], ['snes', 'blt.sfc'], ['md', 'bottled.md'], 
       await ctx.route('**/*', (route) => (route.request().url().startsWith(origin) ? route.continue() : (blocked.push(route.request().url()), route.abort())));
       const page = await ctx.newPage();
       const errors = [];
-      page.on('pageerror', (e) => errors.push(e.message));
+      // The core's own Wake Lock request is denied in headless Chromium; harmless.
+      page.on('pageerror', (e) => { if (!/Wake Lock/i.test(e.message)) errors.push(e.message); });
       try {
         await page.goto(new URL(`console/${system}/`, url).href);
         await page.getByRole('button', { name: /^Add .* games$/ }).first().click();
