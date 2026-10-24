@@ -1,0 +1,72 @@
+name: RG353V Edition APK
+
+# Builds the bundled EmuRM web app into the ANBERNIC RG353V edition of the Android app
+# (-Phandheld=true: own app id, compact 640x480 D-pad layout, no touch overlay) and, on request,
+# publishes it as release rg353v-v1.0 (asset EmuRM-RG353V-v1.0.apk).
+
+on:
+  push:
+    branches: [feat/rg353v-web, main]
+    paths: ["android-app/**", "src/**", "public/**", "scripts/**", "package*.json", ".github/workflows/rg353v-build.yml"]
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Publish a GitHub Release with the APK"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build bundled web assets
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Build handheld APK
+        working-directory: android-app
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug -Phandheld=true --stacktrace
+      - name: Assert the APK contains the web bundle and the handheld flag
+        working-directory: android-app
+        run: |
+          set -e
+          APK=$(ls app/build/outputs/apk/debug/*.apk | head -n1)
+          unzip -l "$APK" | grep -q "assets/web/_next/static/css/"
+          unzip -l "$APK" | grep -q "assets/web/_next/static/chunks/"
+          cp "$APK" ../EmuRM-RG353V-v1.0.apk
+          ls -la ../EmuRM-RG353V-v1.0.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EmuRM-RG353V-v1.0
+          path: EmuRM-RG353V-v1.0.apk
+      - name: Publish release
+        if: ${{ github.event.inputs.release == 'true' || github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: rg353v-v1.0
+        run: |
+          set -e
+          NOTES="EmuRM for the ANBERNIC RG353V (Android 11, 640x480). The full EmuRM app (emulators inside the app, saves, shaders, controller support, Arabic/English), working offline, with a layout made for this screen: everything visible without scrolling through large art, D-pad/stick navigation, no on-screen touch buttons, and light effects only.
+
+          Developed by abu00salman. Built from commit ${GITHUB_SHA}."
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" EmuRM-RG353V-v1.0.apk --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$TAG" --notes "$NOTES" --title "EmuRM RG353V Edition v1.0" --latest=false --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" EmuRM-RG353V-v1.0.apk --repo "$GITHUB_REPOSITORY" --title "EmuRM RG353V Edition v1.0" --notes "$NOTES" --latest=false
+          fi

@@ -23,3 +23,16 @@ if(!Object.hasOwn)Object.hasOwn=function(o,k){return Object.prototype.hasOwnProp
 var c=window.crypto;
 if(c&&!c.randomUUID&&c.getRandomValues)c.randomUUID=function(){var b=new Uint8Array(16);c.getRandomValues(b);b[6]=b[6]&15|64;b[8]=b[8]&63|128;var h=[].map.call(b,function(x){return(x+256).toString(16).slice(1);}).join("");return h.slice(0,8)+"-"+h.slice(8,12)+"-"+h.slice(12,16)+"-"+h.slice(16,20)+"-"+h.slice(20);};
 }catch(e){}})();`;
+
+/**
+ * Marks handheld game consoles (e.g. ANBERNIC RG353V) so the compact, D-pad-first layout applies.
+ * Sources, in order: the Android app's bridge, `?handheld=1` (remembered), a saved choice.
+ * `?handheld=0` turns it off again.
+ */
+export const HANDHELD_INIT_SCRIPT = `(function(){try{var on=false;var q=location.search;
+if(/[?&]handheld=0/.test(q)){localStorage.setItem("emurm:device","off");}
+else if(/[?&]handheld=1/.test(q)){localStorage.setItem("emurm:device","handheld");}
+var s=localStorage.getItem("emurm:device");
+if(s==="handheld")on=true;
+else if(s!=="off"&&window.AndroidNative&&window.AndroidNative.isHandheld&&window.AndroidNative.isHandheld())on=true;
+if(on)document.documentElement.dataset.device="handheld";}catch(e){}})();`;

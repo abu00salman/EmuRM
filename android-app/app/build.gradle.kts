@@ -14,6 +14,10 @@ val keystoreProps = Properties().apply {
     if (keystorePropsFile.exists()) keystorePropsFile.inputStream().use { load(it) }
 }
 
+// `-Phandheld=true` builds the ANBERNIC RG353V edition: same bundled web app, but installed as its
+// own app (com.emurm.app.rg353v) and always in the compact handheld layout.
+val handheldBuild = project.hasProperty("handheld")
+
 android {
     namespace = "com.emurm.app"
     compileSdk = 35
@@ -43,6 +47,9 @@ android {
         // runtime rather than a second BASE_HOST constant, so editing this one value
         // (e.g. for local dev) can't leave the two out of sync with each other.
         buildConfigField("String", "BASE_URL", "\"https://www.emurm.com/\"")
+        buildConfigField("boolean", "HANDHELD", handheldBuild.toString())
+        manifestPlaceholders["appLabel"] = if (handheldBuild) "EmuRM RG353V" else "@string/app_name"
+        if (handheldBuild) applicationIdSuffix = ".rg353v"
     }
 
     signingConfigs {

@@ -74,10 +74,15 @@ export function Player() {
   const [skinPickerOpen, setSkinPickerOpen] = useState(false);
 
   const [television, setTelevision] = useState(false);
-  useEffect(() => { setTelevision(window.AndroidNative?.isTelevision?.() ?? false); }, []);
+  // Handheld consoles have physical buttons: never cover the picture with a touch pad there.
+  const [handheld, setHandheld] = useState(false);
+  useEffect(() => {
+    setTelevision(window.AndroidNative?.isTelevision?.() ?? false);
+    setHandheld(document.documentElement.dataset.device === "handheld");
+  }, []);
   const coarse = useMedia("(pointer: coarse)");
   const portrait = useMedia("(orientation: portrait)");
-  const showTouch = c && (settings.touchControls === "always" || (settings.touchControls === "auto" && coarse && !television));
+  const showTouch = c && (settings.touchControls === "always" || (settings.touchControls === "auto" && coarse && !television && !handheld));
 
   // Each console remembers its own skin (emurm-skin:<consoleId> in localStorage) —
   // switching games reloads whichever one that console's player last chose.

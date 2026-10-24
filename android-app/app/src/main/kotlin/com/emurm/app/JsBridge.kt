@@ -13,7 +13,7 @@ import android.webkit.JavascriptInterface
  * the main thread, so [Listener] implementations must hop back to the UI thread
  * themselves before touching any View.
  */
-class JsBridge(private val listener: Listener, private val television: Boolean = false) {
+class JsBridge(private val listener: Listener, private val television: Boolean = false, private val handheld: Boolean = false) {
 
     interface Listener {
         fun onPlayingChanged(playing: Boolean)
@@ -29,6 +29,10 @@ class JsBridge(private val listener: Listener, private val television: Boolean =
 
     @JavascriptInterface
     fun isTelevision(): Boolean = television
+
+    /** True on handheld game consoles (e.g. ANBERNIC RG353V): the web app switches to its compact, D-pad-first layout. */
+    @JavascriptInterface
+    fun isHandheld(): Boolean = handheld
 
     @JavascriptInterface
     fun notifyPlaying(playing: Boolean) {

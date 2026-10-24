@@ -57,6 +57,12 @@ class MainActivity : AppCompatActivity() {
         (getSystemService(UI_MODE_SERVICE) as UiModeManager).currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
     }
 
+    /** Handheld game consoles (ANBERNIC RG353V and kin): by build flag or by device identity. */
+    private val isHandheld: Boolean by lazy {
+        val id = "${Build.MANUFACTURER} ${Build.MODEL}".lowercase()
+        BuildConfig.HANDHELD || id.contains("anbernic") || Regex("\\brg\\s?(35|40|50|CubeXX|ARC)", RegexOption.IGNORE_CASE).containsMatchIn(id)
+    }
+
     private var pageReady = false
     private var isPlaying = false
     private var isMenuOpen = false
@@ -122,7 +128,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         configureWebView()
-        if (isTelevision) {
+        if (isTelevision || isHandheld) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             setImmersiveMode(true)
         }
@@ -274,6 +280,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 },
                 television = isTelevision,
+                handheld = isHandheld,
             ),
             "AndroidNative",
         )

@@ -395,3 +395,64 @@ html[data-theme="light"]:not([data-route="play"]) .rm-console-header-photo { bor
 html[data-theme="light"]:not([data-route="play"]) .rm-library-toolbar { background: #ffffffef; border-color: rgb(14 22 38 / .08); }
 html[data-theme="light"]:not([data-route="play"]) .rm-eyebrow { color: #2f6bff; }
 html[data-theme="light"]:not([data-route="play"]) .rm-hero .rm-eyebrow { color: #a5bcdf; }
+
+/* ------------------------------------------------------------------------------------------
+   Handheld profile (ANBERNIC RG353V and similar: 640x480 landscape, physical buttons, modest
+   GPU). Switched on by the Android app / ?handheld=1 (see HANDHELD_INIT_SCRIPT). Goals: show
+   everything without scrolling through giant hero art, navigate by D-pad, and stay light --
+   no blur, no animations, no shadows.
+   ------------------------------------------------------------------------------------------ */
+html[data-device="handheld"] { font-size: 14px; }
+html[data-device="handheld"] *, html[data-device="handheld"] *::before, html[data-device="handheld"] *::after {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  animation-duration: .001s !important; animation-iteration-count: 1 !important; transition: none !important;
+  box-shadow: none !important; text-shadow: none !important; scroll-behavior: auto !important;
+}
+html[data-device="handheld"] :focus-visible { outline: 3px solid #c1d7ff; outline-offset: 2px; }
+html[data-device="handheld"] .rm-topbar-inner { height: 42px; gap: 6px; padding-inline: 10px; }
+html[data-device="handheld"] .rm-brand img { width: 26px; height: 26px; }
+html[data-device="handheld"] .rm-brand > span { font-size: 17px; }
+html[data-device="handheld"] .rm-brand small, html[data-device="handheld"] .rm-install { display: none; }
+html[data-device="handheld"] .rm-desktop-nav { display: flex; gap: 4px; margin-inline: auto; }
+html[data-device="handheld"] .rm-desktop-nav a { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; font-size: 12px; }
+html[data-device="handheld"] .rm-desktop-nav a:not([aria-current]) span { display: none; }
+html[data-device="handheld"] .rm-desktop-nav a svg { display: block; width: 20px; height: 20px; }
+html[data-device="handheld"] .rm-desktop-nav a[aria-current]::after { display: none; }
+html[data-device="handheld"] .rm-desktop-nav a[aria-current] { background: #9dc1ff1f; }
+html[data-device="handheld"] .rm-add { width: 34px; height: 34px; }
+html[data-device="handheld"] .rm-mobile-nav { display: none; }
+html[data-device="handheld"] .rm-footer { padding-bottom: 16px; }
+html[data-device="handheld"] .rm-home { padding-top: calc(52px + var(--safe-t)); }
+html[data-device="handheld"] main > div[class*="pt-["] { padding-top: calc(var(--safe-t) + 3.4rem); }
+/* Home: a one-line header instead of a cinematic hero, then the consoles straight away. */
+html[data-device="handheld"] .rm-hero { min-height: 0; border-radius: 14px; }
+html[data-device="handheld"] .rm-hero-art, html[data-device="handheld"] .rm-hero-description, html[data-device="handheld"] .rm-hero-meta,
+html[data-device="handheld"] .rm-hero-bottom, html[data-device="handheld"] .rm-eyebrow, html[data-device="handheld"] .rm-hardware-label { display: none; }
+html[data-device="handheld"] .rm-hero::after { background: none; }
+html[data-device="handheld"] .rm-hero-copy { padding: 12px 16px; max-width: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+html[data-device="handheld"] .rm-hero h1, html[data-device="handheld"] [dir="rtl"] .rm-hero h1 { font-size: 22px; line-height: 1.25; margin-top: 0; letter-spacing: 0; }
+html[data-device="handheld"] .rm-actions { margin-top: 0; gap: 6px; flex-wrap: nowrap; }
+html[data-device="handheld"] .rm-actions .rm-button { padding: 8px 12px; font-size: 12px; flex: none; white-space: nowrap; }
+html[data-device="handheld"] .rm-systems { margin-top: 14px; }
+html[data-device="handheld"] .rm-section-heading { margin-bottom: 10px; }
+html[data-device="handheld"] .rm-section-heading h2, html[data-device="handheld"] .rm-resume-title { font-size: 17px; letter-spacing: 0; }
+html[data-device="handheld"] .rm-resume { margin-top: 14px; }
+html[data-device="handheld"] .rm-start-banner { display: none; }
+html[data-device="handheld"] .rm-console-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+html[data-device="handheld"] .rm-console-card { border-radius: 12px; }
+html[data-device="handheld"] .rm-console-photo { height: 74px; }
+html[data-device="handheld"] .rm-console-year, html[data-device="handheld"] .rm-console-info p, html[data-device="handheld"] .rm-console-maker { display: none; }
+html[data-device="handheld"] .rm-console-info { padding: 0 10px 10px; }
+html[data-device="handheld"] .rm-console-info h3 { font-size: 20px; margin-block: 2px 0; }
+html[data-device="handheld"] .rm-console-arrow { width: 22px; height: 22px; }
+html[data-device="handheld"] .rm-filter-row { margin-bottom: 10px; gap: 6px; }
+html[data-device="handheld"] .rm-filter-row button { padding: 6px 12px; min-height: 34px; font-size: 12px; }
+/* Console page header */
+html[data-device="handheld"] .rm-console-header-photo { display: none; }
+html[data-device="handheld"] .rm-console-header h1 { font-size: 30px; }
+html[data-device="handheld"] .rm-library-toolbar { top: 46px; }
+html[data-device="handheld"] .rm-game-card button { opacity: 1; }
+html[data-device="handheld"] .rm-console-header-content { padding-top: calc(var(--safe-t) + 3.2rem) !important; padding-bottom: 10px !important; gap: 6px !important; flex-direction: row !important; align-items: center !important; justify-content: space-between; }
+html[data-device="handheld"] .rm-console-header-content p, html[data-device="handheld"] .rm-console-header-content > div > a { display: none; }
+html[data-device="handheld"] .rm-console-header h1 { font-size: 26px; margin: 0; }
+html[data-device="handheld"] .rm-library-toolbar { margin-top: 6px; }
