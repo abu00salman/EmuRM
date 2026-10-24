@@ -9,9 +9,23 @@ import java.io.FileNotFoundException
 
 /** Serves the Gradle-packaged export over a secure virtual origin, never file://. */
 class BundleAssetServer(private val assets: AssetManager) {
+    /**
+     * Game files the user just picked in the built-in file browser, served at
+     * https://www.emurm.com/__local/<token> so the page can fetch() them as a stream (no
+     * base64 copy through the JS bridge -- PS1 discs are hundreds of MB). Only tokens handed
+     * out for an explicit pick are ever served; nothing else on storage is reachable.
+     */
+    @Volatile var localFiles: Map<String, java.io.File> = emptyMap()
+
     fun respond(uri: Uri): WebResourceResponse? {
         if (uri.scheme != "https" || uri.host != HOST) return null
         val path = (uri.path ?: "/").removePrefix("/")
+        if (path.startsWith("__local/")) {
+            val f = localFiles[path.removePrefix("__local/")] ?: return notFound()
+            return try {
+                WebResourceResponse("application/octet-stream", null, 200, "OK", mapOf("Cache-Control" to "no-store", "Content-Length" to f.length().toString()), java.io.FileInputStream(f))
+            } catch (_: Exception) { notFound() }
+        }
         if (path.split('/').any { it == ".." || it == "." } || path.contains('\\')) {
             return notFound()
         }

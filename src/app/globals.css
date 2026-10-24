@@ -464,3 +464,4 @@ html[data-device="handheld"] button, html[data-device="handheld"] [role="button"
 html[data-device="handheld"] [role="dialog"] { font-size: 1rem; }
 html[data-device="handheld"] .rm-systems .rm-filter-row, html[data-device="handheld"] .rm-systems .rm-count { display: none; }
 html[data-device="handheld"] .rm-systems { margin-top: 10px; }
+html[data-device="handheld"] :is([data-nav], button, a, input, select, [tabindex="0"]):focus { outline: 4px solid #c1d7ff; outline-offset: 2px; }

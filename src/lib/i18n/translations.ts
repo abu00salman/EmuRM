@@ -426,6 +426,7 @@ export const en = {
   "notFound.back": "Back to consoles",
 
   "toast.importFailed": "Import failed",
+  "toast.importing": "Adding games…",
   "toast.downloadFailed": "Couldn't download that file.",
   "toast.added": "Added {title}",
   "toast.addedMultiple": "Added {count} games to your library",
@@ -878,6 +879,7 @@ export const ar: Record<TranslationKey, string> = {
   "notFound.back": "العودة إلى الأجهزة",
 
   "toast.importFailed": "فشلت عملية الإضافة",
+  "toast.importing": "جارٍ إضافة الألعاب…",
   "toast.downloadFailed": "تعذّر تنزيل هذا الملف.",
   "toast.added": "تمت إضافة {title}",
   "toast.addedMultiple": "تمت إضافة {count} ألعاب إلى مكتبتك",

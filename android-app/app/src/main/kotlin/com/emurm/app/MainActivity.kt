@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.view.InputDevice
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
@@ -89,6 +90,57 @@ class MainActivity : AppCompatActivity() {
                 }
             callback?.onReceiveValue(uris)
         }
+
+    private var pickConsole = ""
+    private val pickGamesLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data = result.data
+            if (result.resultCode != RESULT_OK || data == null) return@registerForActivityResult
+            val uris = data.clipData?.let { c -> List(c.itemCount) { c.getItemAt(it).uri } } ?: listOfNotNull(data.data)
+            val files = uris.mapNotNull { it.path?.let(::File) }.filter { it.isFile }
+            if (files.isEmpty()) return@registerForActivityResult
+            val items = org.json.JSONArray()
+            val served = HashMap<String, File>()
+            files.forEach { f ->
+                val token = java.util.UUID.randomUUID().toString()
+                served[token] = f
+                items.put(JSONObject().put("name", f.name).put("url", "${BundleAssetServer.URL}__local/$token"))
+            }
+            bundledAssets.localFiles = served
+            binding.webView.evaluateJavascript("window.__androidImportUrls && window.__androidImportUrls(${items}, ${JSONObject.quote(pickConsole)})", null)
+        }
+
+    // Handheld: the device's own D-pad/stick/A/B drive the page's focus navigation natively
+    // (outside gameplay), instead of relying on the browser exposing the built-in pad.
+    private var lastStickDir = 0
+    private var lastStickAt = 0L
+
+    private fun handheldNav(key: String) {
+        if (key == "Back") { onBackPressedDispatcher.onBackPressed(); return }
+        binding.webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('emurm:remote',{detail:${JSONObject.quote(key)}}))", null)
+    }
+
+    private fun navigatingUi() = isHandheld && (!isPlaying || isMenuOpen) && binding.errorOverlay.visibility != View.VISIBLE
+
+    override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
+        if (navigatingUi() && event.isFromSource(InputDevice.SOURCE_JOYSTICK) && event.action == MotionEvent.ACTION_MOVE) {
+            val x = event.getAxisValue(MotionEvent.AXIS_X) + event.getAxisValue(MotionEvent.AXIS_HAT_X)
+            val y = event.getAxisValue(MotionEvent.AXIS_Y) + event.getAxisValue(MotionEvent.AXIS_HAT_Y)
+            val dir = when {
+                kotlin.math.abs(x) < 0.6f && kotlin.math.abs(y) < 0.6f -> 0
+                kotlin.math.abs(x) >= kotlin.math.abs(y) -> if (x > 0) 1 else 2
+                else -> if (y > 0) 3 else 4
+            }
+            val now = android.os.SystemClock.uptimeMillis()
+            if (dir != 0 && (dir != lastStickDir || now - lastStickAt > 200)) {
+                handheldNav(when (dir) { 1 -> "ArrowRight"; 2 -> "ArrowLeft"; 3 -> "ArrowDown"; else -> "ArrowUp" })
+                lastStickAt = now
+            }
+            lastStickDir = dir
+            return true
+        }
+        return super.dispatchGenericMotionEvent(event)
+    }
 
     private val backCallback =
         object : OnBackPressedCallback(true) {
@@ -196,6 +248,21 @@ class MainActivity : AppCompatActivity() {
     // TV remotes are keyboard devices, not gamepads. Route only remote keys into
     // the shared spatial navigation; leave joystick/buttons to Chromium's Gamepad API.
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (navigatingUi()) {
+            val key = when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> "ArrowUp"
+                KeyEvent.KEYCODE_DPAD_DOWN -> "ArrowDown"
+                KeyEvent.KEYCODE_DPAD_LEFT -> "ArrowLeft"
+                KeyEvent.KEYCODE_DPAD_RIGHT -> "ArrowRight"
+                KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_BUTTON_START -> "Enter"
+                KeyEvent.KEYCODE_BUTTON_B, KeyEvent.KEYCODE_BACK -> "Back"
+                else -> null
+            }
+            if (key != null) {
+                if (event.action == KeyEvent.ACTION_DOWN && (event.repeatCount == 0 || key.startsWith("Arrow"))) handheldNav(key)
+                return true
+            }
+        }
         val gamepad = event.isFromSource(InputDevice.SOURCE_GAMEPAD) ||
             event.isFromSource(InputDevice.SOURCE_JOYSTICK)
         if (!gamepad && binding.errorOverlay.visibility != View.VISIBLE) {
@@ -267,6 +334,10 @@ class MainActivity : AppCompatActivity() {
         webView.addJavascriptInterface(
             JsBridge(
                 object : JsBridge.Listener {
+                    override fun onPickGames(consoleId: String) {
+                        runOnUiThread { pickConsole = consoleId; pickGamesLauncher.launch(Intent(this@MainActivity, FileBrowserActivity::class.java)) }
+                    }
+
                     override fun onPlayingChanged(playing: Boolean) {
                         runOnUiThread { handlePlayingChanged(playing) }
                     }

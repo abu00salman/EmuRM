@@ -70,6 +70,7 @@ export function startGamepadNav(onBack: () => void): () => void {
   const loop = (t: number) => {
     raf = requestAnimationFrame(loop);
     if (document.body.dataset.playing === "true" && !document.querySelector("[data-pause-menu-root]")) return; // the game owns the pad unless its menu is open
+    if (document.documentElement.dataset.device === "handheld" && window.AndroidNative) return; // the handheld app navigates natively
     const pads = navigator.getGamepads?.() ?? [];
     for (const gp of pads) {
       if (!gp) continue;
