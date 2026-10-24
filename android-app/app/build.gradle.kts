@@ -51,7 +51,12 @@ android {
         buildConfigField("String", "BASE_URL", "\"https://www.emurm.com/\"")
         buildConfigField("boolean", "HANDHELD", handheldBuild.toString())
         manifestPlaceholders["appLabel"] = if (handheldBuild) "EmuRM RG353V" else "@string/app_name"
-        if (handheldBuild) applicationIdSuffix = ".rg353v"
+        if (handheldBuild) {
+            applicationIdSuffix = ".rg353v"
+            // RG353V edition has its own version line, shown on launch so updates are visible.
+            versionCode = 11
+            versionName = "RG353V 1.1"
+        }
     }
 
     signingConfigs {

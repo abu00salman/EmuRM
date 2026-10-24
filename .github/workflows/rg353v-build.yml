@@ -2,7 +2,7 @@ name: RG353V Edition APK
 
 # Builds the bundled EmuRM web app into the ANBERNIC RG353V edition of the Android app
 # (-Phandheld=true: own app id, compact 640x480 D-pad layout, no touch overlay) and, on request,
-# publishes it as release rg353v-v1.0 (asset EmuRM-RG353V-v1.0.apk).
+# publishes it as release rg353v-v1.0 (asset EmuRM-RG353V-v${{ env.VERSION }}.apk).
 
 on:
   push:
@@ -18,6 +18,10 @@ on:
 permissions:
   contents: write
 
+env:
+  VERSION: "1.1"
+  CORES: "fceumm snes9x snes9x2010 genesis_plus_gx picodrive gambatte mgba pcsx_rearmed mednafen_pce_fast gearsystem"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,11 +31,31 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Bundle emulator cores (so games run offline on the device)
+        run: |
+          set -e
+          for c in $CORES; do
+            curl -fsSL -o "/tmp/$c.zip" "https://cdn.jsdelivr.net/gh/arianrhodsandlot/retroarch-emscripten-build@v1.22.2/retroarch/${c}_libretro.zip"
+            unzip -o -j "/tmp/$c.zip" -d public/cores >/dev/null
+            test -s "public/cores/${c}_libretro.wasm"
+          done
+          ls -la public/cores
       - name: Build bundled web assets
         run: |
           npm ci
           npm run typecheck
-          npm run build
+          NEXT_PUBLIC_BUNDLED_CORES="$(echo $CORES | tr ' ' ',')" npm run build
+      - name: Offline smoke test (no network) - NES, SNES, MD, GBA, SMS homebrew must play
+        run: |
+          set -e
+          mkdir -p /tmp/roms
+          for f in nes-games/croom.nes snes-games/blt.sfc md-games/bottled.md gba-games/anguna.gba sms-games/astroforce.sms; do
+            curl -fsSL -o "/tmp/roms/$(basename $f)" "https://cdn.jsdelivr.net/gh/retrobrews/${f%%/*}@master/${f#*/}"
+          done
+          npx playwright install chromium
+          (cd out && python3 -m http.server 4100 >/dev/null 2>&1 &)
+          sleep 2
+          OFFLINE_TEST_URL=http://127.0.0.1:4100/ ROM_DIR=/tmp/roms node scripts/smoke-offline-cores.cjs
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -53,25 +77,25 @@ jobs:
           APK=$(ls app/build/outputs/apk/debug/*.apk | head -n1)
           unzip -l "$APK" | grep -q "assets/web/_next/static/css/"
           unzip -l "$APK" | grep -q "assets/web/_next/static/chunks/"
-          cp "$APK" ../EmuRM-RG353V-v1.0.apk
-          ls -la ../EmuRM-RG353V-v1.0.apk
+          cp "$APK" ../EmuRM-RG353V-v${{ env.VERSION }}.apk
+          ls -la ../EmuRM-RG353V-v${{ env.VERSION }}.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: EmuRM-RG353V-v1.0
-          path: EmuRM-RG353V-v1.0.apk
+          name: EmuRM-RG353V-v${{ env.VERSION }}
+          path: EmuRM-RG353V-v${{ env.VERSION }}.apk
       - name: Publish release
         if: ${{ github.event.inputs.release == 'true' || github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: rg353v-v1.0
+          TAG: rg353v-v${{ env.VERSION }}
         run: |
           set -e
           NOTES="EmuRM for the ANBERNIC RG353V (Android 11, 640x480). The full EmuRM app (emulators inside the app, saves, shaders, controller support, Arabic/English), working offline, with a layout made for this screen: everything visible without scrolling through large art, D-pad/stick navigation, no on-screen touch buttons, and light effects only.
 
           Developed by abu00salman. Built from commit ${GITHUB_SHA}."
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" EmuRM-RG353V-v1.0.apk --clobber --repo "$GITHUB_REPOSITORY"
-            gh release edit "$TAG" --notes "$NOTES" --title "EmuRM RG353V Edition v1.0" --latest=false --repo "$GITHUB_REPOSITORY"
+            gh release upload "$TAG" EmuRM-RG353V-v${{ env.VERSION }}.apk --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$TAG" --notes "$NOTES" --title "EmuRM RG353V Edition v${{ env.VERSION }}" --latest=false --repo "$GITHUB_REPOSITORY"
           else
-            gh release create "$TAG" EmuRM-RG353V-v1.0.apk --repo "$GITHUB_REPOSITORY" --title "EmuRM RG353V Edition v1.0" --notes "$NOTES" --latest=false
+            gh release create "$TAG" EmuRM-RG353V-v${{ env.VERSION }}.apk --repo "$GITHUB_REPOSITORY" --title "EmuRM RG353V Edition v${{ env.VERSION }}" --notes "$NOTES" --latest=false
           fi

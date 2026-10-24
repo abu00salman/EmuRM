@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.view.InputDevice
 import android.view.KeyEvent
+import android.widget.Toast
 import android.view.MotionEvent
 import android.content.ContentValues
 import android.content.Intent
@@ -184,6 +185,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         configureWebView()
+        if (isHandheld) Toast.makeText(this, "EmuRM ${BuildConfig.VERSION_NAME}", Toast.LENGTH_LONG).show()
         if (isTelevision || isHandheld) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             setImmersiveMode(true)
