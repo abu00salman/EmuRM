@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CONSOLES } from "@/lib/consoles/registry";
+import { CLASSICS } from "@/lib/classics/catalog";
 
 export const dynamic = "force-static";
 
@@ -17,5 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const c of CONSOLES) {
     pages.push({ url: `${SITE}/console/${c.id}/`, changeFrequency: "monthly", priority: 0.8 });
   }
+  pages.push({ url: `${SITE}/classics/`, changeFrequency: "weekly", priority: 0.9 });
+  for (const g of CLASSICS) pages.push({ url: `${SITE}/classics/${g.id}/`, changeFrequency: "monthly", priority: 0.8 });
+  pages.push({ url: `${SITE}/rebuilt/`, changeFrequency: "monthly", priority: 0.5 });
   return pages;
 }

@@ -1,0 +1,41 @@
+name: Weekly scan for new rebuilt games
+
+# Refreshes src/data/rebuilt-games.json from SubmitGame/awesome-decomp-games and opens a pull
+# request with the diff. Nothing ships until a person reviews and merges that PR. New entries
+# are never marked playable automatically: that stays in src/data/rebuilt-vetted.json and the
+# hand-tested EmuRM Classics list (docs/CLASSICS.md).
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fetch upstream list
+        run: git clone --depth 1 https://github.com/SubmitGame/awesome-decomp-games.git "$RUNNER_TEMP/adg"
+      - name: Rebuild index
+        run: node scripts/build-rebuilt-index.mjs "$RUNNER_TEMP/adg"
+      - name: Check index
+        run: node scripts/test-rebuilt-index.cjs
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/rebuilt-index-scan
+          title: "Rebuilt Games: weekly upstream scan (needs human review)"
+          commit-message: "chore(rebuilt): refresh index from awesome-decomp-games"
+          body: |
+            Automated weekly refresh of `src/data/rebuilt-games.json` from SubmitGame/awesome-decomp-games.
+
+            Review before merging:
+            - new links point at the official project, not a mirror or a hosted copy of commercial data;
+            - no entry is promoted to "Play now" here (that needs a licence check and a gameplay test, see docs/CLASSICS.md).
+          delete-branch: true

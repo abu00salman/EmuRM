@@ -85,6 +85,7 @@ function Footer() {
   return (
     <footer className="rm-footer flex flex-col items-center gap-2 px-[max(1rem,var(--safe-l))] pb-[max(1.5rem,var(--safe-b))] pt-8 text-center text-xs text-faint">
       <p>{t("footer.copyright", { year: new Date().getFullYear() })}</p>
+      <p dir="ltr">Developed by abu00salman</p>
       <VisitorCounter />
     </footer>
   );
@@ -122,7 +123,7 @@ function TopBar() {
   const toggleTheme = useThemeStore((s) => s.toggle);
   const links = [
     { href: "/", label: t("nav.consoles"), icon: "gamepad" as const },
-    { href: "/rebuilt/", label: t("nav.rebuilt"), icon: "rebuilt" as const },
+    { href: "/classics/", label: t("nav.classics"), icon: "play" as const },
     { href: "/discover/", label: t("nav.discover"), icon: "discover" as const },
     { href: "/library/", label: t("nav.library"), icon: "library" as const },
     { href: "/settings/", label: t("nav.settings"), icon: "settings" as const },

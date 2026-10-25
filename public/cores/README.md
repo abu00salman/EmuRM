@@ -72,3 +72,12 @@ cartridge from the pinned source commit (or accepts `MSX_TEST_ROM=/path/testcart
 imports it as ZIP and checks changing video, state save/load, keyboard and
 multi-disk playlist handling. `MSX_TEST_URL` can point to a static export under
 `/EmuRM/`. The diagnostic ROM is not shipped in the public website.
+
+## PrBoom (Doom engine)
+
+`prboom_libretro.{js,wasm}` ships in this folder for the `doom` system that EmuRM Classics uses
+to run Freedoom. It is the unmodified emscripten build from
+[arianrhodsandlot/retroarch-emscripten-build](https://github.com/arianrhodsandlot/retroarch-emscripten-build)
+v1.22.2, built from [libretro/libretro-prboom](https://github.com/libretro/libretro-prboom) (GPL-2.0, see
+`PRBOOM-LICENSE.txt`). `prboom.wad` is the engine's own support lump file from the same
+source tree (GPL-2.0). It contains no id Software game data. The engine loads it as a system file.

@@ -2,6 +2,10 @@ import { CORES } from "./cores";
 import type { ButtonLabel, ConsoleDef, ConsoleId } from "./types";
 
 const nintendoFace: ButtonLabel[] = [{ pad: "b", label: "B" }, { pad: "a", label: "A" }];
+// PrBoom's "classic" RetroPad layout (libretro-prboom/libretro/libretro.c).
+const doomFace: ButtonLabel[] = [
+  { pad: "y", label: "Run" }, { pad: "x", label: "Fire" }, { pad: "b", label: "Strafe" }, { pad: "a", label: "Use" },
+];
 const snesFace: ButtonLabel[] = [
   { pad: "y", label: "Y" }, { pad: "x", label: "X" }, { pad: "b", label: "B" }, { pad: "a", label: "A" },
 ];
@@ -133,6 +137,14 @@ export const CONSOLES: ConsoleDef[] = [
     faceButtons: nintendoFace, shoulderButtons: [{ pad: "l", label: "L" }, { pad: "r", label: "R" }], hasSelect: true,
     bios: [{ fileName: "gba_bios.bin", required: false, description: "Optional — mGBA ships an HLE BIOS" }],
     status: "ready",
+  },
+  {
+    id: "doom", name: "Doom engine (PrBoom)", short: "DOOM", aliases: ["Freedoom", "PrBoom", "WAD"], nicknameAr: "دوم",
+    maker: "id Software engine, PrBoom port", year: 1993, family: "pc", form: "computer",
+    accent: "#C2412D", photo: "doom.png", extensions: ["wad"],
+    cores: [CORES.prboom], aspect: 4 / 3,
+    faceButtons: doomFace, shoulderButtons: [{ pad: "l", label: "◀" }, { pad: "r", label: "▶" }, { pad: "l2", label: "W−" }, { pad: "r2", label: "W+" }],
+    hasSelect: true, bios: [], status: "ready",
   },
 ];
 
