@@ -19,3 +19,5 @@ public/cores/*
 !public/cores/stella2014_libretro.wasm
 AGENTS.md
 CLAUDE.md
+rea-evidence
+.cache
