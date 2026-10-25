@@ -1,0 +1,27 @@
+name: REA audit
+
+# Static audit of the web build and the desktop app with REA (docs/REA.md). Manual run.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: bash scripts/rea-audit.sh | tee rea-summary.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rea-evidence
+          path: |
+            rea-evidence
+            rea-summary.txt
