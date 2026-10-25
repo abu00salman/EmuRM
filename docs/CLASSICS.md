@@ -16,7 +16,7 @@ inside emurm.com, with nothing to download or import and no outside site involve
 4. Each file is at most 25 MiB, because that is Cloudflare's per-file limit. Larger WADs are
    zipped, and the importer unpacks them.
 
-## Playable now (all 12 played into actual gameplay on 2026-10-25)
+## Playable now (all 28 played into actual gameplay on 2026-10-25)
 
 | Game | System / core | Licence | What the test reached |
 | --- | --- | --- | --- |
@@ -32,6 +32,22 @@ inside emurm.com, with nothing to download or import and no outside site involve
 | robotfindskitten | NES / FCEUmm | zlib | Robot moving and examining items |
 | Concentration Room | NES / FCEUmm | GPL-3.0+ (ROM exception) | Board dealt, cursor moving |
 | Falling | NES / FCEUmm | MIT | Falling and steering |
+| AGB_Hack | GBA / mGBA | GPL | Character created, exploring the first dungeon room |
+| Collision Course | GBA / mGBA | Public domain | Ship flying among asteroids |
+| Pnakys | GBA / mGBA | Public domain | Balls dropping and stacking |
+| Geometrix | GBC / Gambatte | GPL-3.0 | Board play, cursor swapping |
+| Double Action Blaster Guys | NES / FCEUmm | GPL-3.0 | Level 1, enemies and shooting |
+| F-FF | NES / FCEUmm | MIT | Racing, lap timer running |
+| Jet Paco | NES / FCEUmm | LGPL-3.0 | Flying around the first room |
+| Lala the Magical | NES / FCEUmm | LGPL-3.0 | First screen, a life lost to an enemy |
+| Ralph 4 | NES / FCEUmm | MIT | Floor 1, Ralph moving |
+| Sgt. Helmet: Training Day | NES / FCEUmm | LGPL-3.0 | Mission A, moving and shooting |
+| Spacey McRacey | NES / FCEUmm | Free release; art CC0 / CC BY 3.0 | Race against bots |
+| Wo Xiang Niao Niao | NES / FCEUmm | LGPL-3.0 | Level 1-1, walking |
+| Yun | NES / FCEUmm | LGPL-3.0 | Level 1, walking |
+| Digger Chan | Master System / Gearsystem | GPL | Digging, score rising |
+| Lander | Master System / Gearsystem | GPL-3.0+ | Level 1, rocket descending |
+| Lander 2 | Master System / Gearsystem | GPL-3.0+ | Take-off and landing ("Great!") |
 
 How to run the test: `npm run build`, serve `out/`, then
 `CLASSICS_TEST_URL=http://127.0.0.1:4100/ npm run test:classics`. If a machine can't reach
@@ -44,6 +60,8 @@ jsDelivr, the script can take the cores from a local folder; see the script's he
 | Mega Cheril Perils (MD) | It plays, but its cut-scenes show cartoon nudity, which doesn't fit a general-audience catalog. (It is also non-commercial, CC BY-NC-SA.) |
 | µCity (GBC) | Boots and reaches map generation, but the test couldn't confirm Start finishing the map. It stays out until it is verified. |
 | Star Evil (NES) | The title screen ignores every input on FCEUmm. |
+| GBA Tactics | Its characters copy Final Fantasy job sprites (Square Enix IP). |
+| NESertBus, Chocobo World Deluxe, Indivisible (NES) | Based on other companies' games or characters. |
 | Cave Story MD, Griel's Quest, Diggerball | Asset licence unclear or not redistributable. |
 
 ## Candidates for the next phase (not yet "Play now")

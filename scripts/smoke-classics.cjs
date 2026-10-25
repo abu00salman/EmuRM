@@ -35,7 +35,13 @@ const PLANS = {
   'robotfindskitten': [3000, E, 2000, 'shot', 'ArrowRight:1200', 'ArrowUp:400', 'shot'],
   'croom': [3000, E, 2000, E, 2000, 'KeyX', 1500, E, 2500, 'shot', 'ArrowRight:1200', 'KeyX', 'ArrowUp:400', 'shot'],
   'falling': [3000, E, 2500, 'shot', 'ArrowLeft:800', 'shot'],
+  'double-action-blaster-guys': [4000, E, 2500, 'KeyX', 2500, E, 4000, 'shot', 'ArrowRight:1200', 'KeyX', 'ArrowLeft:600', 'shot'],
+  'yun': [4000, E, 5000, 'KeyX', 4000, 'shot', 'ArrowRight:1500', 'KeyX', 'ArrowRight:800', 'shot'],
+  'lander-2': [4000, E, 2500, 'KeyX', 2500, E, 2500, 'KeyX', 2500, 'KeyZ', 2000, 'shot', 'ArrowDown:3000', 'shot'],
+  'digger-chan': [6000, 'KeyZ:400', 2000, 'KeyX:400', 2000, E, 2000, 'ShiftRight:400', 2000, 'KeyZ:400', 3000, 'shot', 'ArrowLeft:300', 600, 'ArrowDown:300', 600, 'ArrowDown:300', 1000, 'shot'],
 };
+// Homebrew that a generic "start, confirm, move, press buttons" sequence gets into play.
+for (const id of ['agb-hack', 'collision-course', 'pnakys', 'geometrix', 'f-ff', 'jet-paco', 'lala-the-magical', 'ralph-4', 'sgt-helmet', 'spacey-mcracey', 'wo-xiang-niao-niao', 'lander']) PLANS[id] = [4000, E, 2500, 'KeyX', 2500, E, 2500, 'KeyX', 2500, 'KeyZ', 2000, E, 2500, 'shot', 'ArrowRight:1200', 'KeyX', 'ArrowUp:500', 'ArrowLeft:900', 'KeyZ', 'ArrowDown:500', 'KeyX', 1000, 'shot'];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 (async () => {
