@@ -213,6 +213,11 @@ export const libretroEngine: EmulatorEngine = {
     // filenames: blueMSX uses the extension to identify cartridge/disk/tape media.
     const rom = files.map((f) => ({ fileName: f.name, fileContent: f.blob }));
     const bios = msxSystem ? [] : spec.bios.map((f) => ({ fileName: f.name, fileContent: f.blob }));
+    // PrBoom needs its own prboom.wad support file in the system directory.
+    if (core.id === "prboom") {
+      const res = await fetch(`${BUNDLED_CORE_BASE}/prboom.wad`);
+      if (res.ok) bios.push({ fileName: "prboom.wad", fileContent: await res.blob() });
+    }
 
     // A shader that fails to load must never block the game: fall back to none.
     let shaderName: string | undefined;

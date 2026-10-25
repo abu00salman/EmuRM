@@ -24,6 +24,10 @@ export const CORES = {
     upstream: "https://github.com/libretro/mupen64plus-libretro-nx", hosting: "self", bundled: true,
     notes: "WebGL2 build bundled under public/cores/, from the BinBashBanana/webretro project (MIT) — desktop-class GPU recommended",
   },
+  prboom: {
+    id: "prboom", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/libretro/libretro-prboom", hosting: "self", bundled: true,
+    notes: "Doom-engine source port; bundled under public/cores/ with its prboom.wad support file (GPL-2.0)",
+  },
   gearboy: { id: "gearboy", engine: "libretro", license: "GPL-3.0", upstream: "https://github.com/drhelius/Gearboy", hosting: "cdn", notes: "Alternate Game Boy / Color core" },
   opera: { id: "opera", engine: "libretro", license: "See upstream licence (research use; confirm terms before commercial use)", upstream: "https://github.com/libretro/opera-libretro", hosting: "cdn", notes: "3DO — BIOS required" },
   stella: { id: "stella", engine: "libretro", license: "GPL-2.0", upstream: "https://github.com/stella-emu/stella", hosting: "self", notes: "No public web build — compile with Emscripten, or use stella2014" },

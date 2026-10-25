@@ -9,9 +9,10 @@ export type ConsoleId =
   | "a2600" | "msx" | "nes" | "snes" | "n64"
   | "sms" | "md" | "gg"
   | "gb" | "gbc" | "gba"
-  | "psx" | "pce" | "tdo";
+  | "psx" | "pce" | "tdo"
+  | "doom";
 
-export type Family = "atari" | "nintendo" | "gameboy" | "sega" | "sony" | "msx" | "nec" | "3do";
+export type Family = "atari" | "nintendo" | "gameboy" | "sega" | "sony" | "msx" | "nec" | "3do" | "pc";
 
 /** Physical silhouette used for illustrations and generated covers. */
 export type FormFactor = "home" | "handheld-v" | "handheld-h" | "disc" | "computer";

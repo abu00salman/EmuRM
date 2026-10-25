@@ -11,6 +11,7 @@ import { ConsoleHall } from "./ConsoleHall";
 import { HowToPlay } from "./HowToPlay";
 import { QuickResume } from "./QuickResume";
 import { Icon } from "./player/Icon";
+import { ClassicsRow } from "./classics/ClassicsRow";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const FEATURED = ["psx", "nes", "msx", "md", "gba"];
 
@@ -51,6 +52,8 @@ export function Home() {
       </section>
 
       <QuickResume />
+
+      <ClassicsRow />
 
       <section className="rm-systems" id="console-hall" aria-labelledby="systems-heading">
         <div className="rm-section-heading"><div><p className="rm-eyebrow">{ar ? "عالمك الكلاسيكي" : "YOUR RETRO UNIVERSE"}</p><h2 id="systems-heading">{t("home.headline")}</h2></div><span className="rm-count">{CONSOLES.length} {ar ? "نظامًا" : "systems"} · {total ?? 0} {ar ? "لعبة" : "games"}</span></div>

@@ -14,7 +14,8 @@
     "test:rebuilt": "node scripts/test-rebuilt-index.cjs",
     "build:rebuilt-index": "node scripts/build-rebuilt-index.mjs",
     "test:msx": "node scripts/test-msx-system.cjs",
-    "test:msx:browser": "node scripts/smoke-msx.cjs"
+    "test:msx:browser": "node scripts/smoke-msx.cjs",
+    "test:classics": "node scripts/smoke-classics.cjs"
   },
   "engines": {
     "node": ">=20.9"

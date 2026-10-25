@@ -17,5 +17,9 @@ public/cores/*
 !public/cores/bluemsx-build.json
 !public/cores/stella2014_libretro.js
 !public/cores/stella2014_libretro.wasm
+!public/cores/prboom_libretro.js
+!public/cores/prboom_libretro.wasm
+!public/cores/prboom.wad
+!public/cores/PRBOOM-LICENSE.txt
 AGENTS.md
 CLAUDE.md
