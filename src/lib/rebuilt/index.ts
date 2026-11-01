@@ -1,4 +1,5 @@
 import index from "@/data/rebuilt-games.json";
+import extra from "@/data/rebuilt-extra.json";
 import vetted from "@/data/rebuilt-vetted.json";
 
 /** One entry of the curated index (see scripts/build-rebuilt-index.mjs). */
@@ -37,7 +38,7 @@ export const REBUILT_SOURCE = {
   generatedAt: index.sourceGeneratedAt,
 };
 
-export const REBUILT_GAMES: readonly RebuiltGame[] = index.games as RebuiltGame[];
+export const REBUILT_GAMES: readonly RebuiltGame[] = [...(extra.games as RebuiltGame[]), ...(index.games as RebuiltGame[])].sort((a, b) => b.score - a.score);
 
 const PLAY = new Set<string>(vetted.play);
 const SOON = new Set<string>(vetted.planned);

@@ -2,6 +2,7 @@
 const assert = require("node:assert/strict");
 const idx = require("../src/data/rebuilt-games.json");
 const vetted = require("../src/data/rebuilt-vetted.json");
+const extra = require("../src/data/rebuilt-extra.json");
 
 assert.ok(idx.games.length > 0, "index is empty");
 assert.match(idx.source, /^https:\/\/github\.com\/SubmitGame\/awesome-decomp-games$/);
@@ -13,6 +14,13 @@ for (const g of idx.games) {
   for (const k of ["projectUrl", "homepage", "webUrl"]) if (g[k] != null) assert.ok(g[k].startsWith("https://"), `${g.id}.${k} must be https`);
   assert.ok(g.title && g.platform && g.kind, `${g.id} missing fields`);
   assert.ok(!("play" in g) && !("status" in g), "the index must not carry a playable status; it is derived in code");
+}
+// Hand-added entries follow the same rules and can never be browser-playable or hosted by EmuRM.
+for (const g of extra.games) {
+  assert.ok(!ids.has(g.id), `extra id ${g.id} duplicates the index`); ids.add(g.id);
+  for (const k of ["projectUrl", "homepage", "webUrl"]) if (g[k] != null) assert.ok(g[k].startsWith("https://"), `${g.id}.${k} must be https`);
+  assert.equal(g.browser, false, `${g.id}: extra entries are information only`);
+  assert.equal(g.webUrl, null, `${g.id}: extra entries must not link a hosted copy`);
 }
 // Nothing may be playable without an explicit, hand-vetted entry.
 for (const id of vetted.play) assert.ok(ids.has(id), `vetted id ${id} not in index`);
