@@ -1,0 +1,6 @@
+title: Blind Jump
+source: https://github.com/evanbowman/blind-jump-portable
+license: MIT
+licenseEvidence: https://github.com/evanbowman/blind-jump-portable/blob/master/LICENSE
+file: BlindJump.gba bytes=16565008 sha256=597d11e93567f14f97ba4bc44bf41691b5e0fbac8dd169e6b559bb9086a1739d url=https://github.com/evanbowman/blind-jump-portable/releases/download/2021.11.20.0/BlindJump.gba
+file: LICENSE bytes=1068 sha256=84f793f0fc83e9c53e3e5cd86d9842c3164cadb2eb23162599bbf490a3d386db url=https://raw.githubusercontent.com/evanbowman/blind-jump-portable/master/LICENSE

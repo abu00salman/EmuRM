@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CONSOLES } from "@/lib/consoles/registry";
+import { CURATED_GAMES } from "@/lib/curated/games";
 
 export const dynamic = "force-static";
 
@@ -13,7 +14,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE}/discover/`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/library/`, changeFrequency: "weekly", priority: 0.5 },
+    { url: `${SITE}/curated/`, changeFrequency: "weekly", priority: 0.9 },
   ];
+  for (const game of CURATED_GAMES) {
+    pages.push({ url: `${SITE}/curated/${game.id}/`, changeFrequency: "monthly", priority: 0.7 });
+  }
   for (const c of CONSOLES) {
     pages.push({ url: `${SITE}/console/${c.id}/`, changeFrequency: "monthly", priority: 0.8 });
   }

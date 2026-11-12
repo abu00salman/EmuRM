@@ -14,7 +14,9 @@
     "test:rebuilt": "node scripts/test-rebuilt-index.cjs",
     "build:rebuilt-index": "node scripts/build-rebuilt-index.mjs",
     "test:msx": "node scripts/test-msx-system.cjs",
-    "test:msx:browser": "node scripts/smoke-msx.cjs"
+    "test:msx:browser": "node scripts/smoke-msx.cjs",
+    "import:games": "node scripts/import-games.mjs --fetch",
+    "test:curated": "node scripts/import-games.mjs --self-test --check"
   },
   "engines": {
     "node": ">=20.9"

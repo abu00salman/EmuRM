@@ -1,0 +1,501 @@
+{
+  "version": 1,
+  "games": [
+    {
+      "id": "lunar-limit",
+      "title": "Lunar Limit",
+      "platform": "nes",
+      "type": "instant",
+      "sourceUrl": "https://github.com/pubby/lunarlimit",
+      "license": "MIT",
+      "licenseEvidenceUrl": "https://github.com/pubby/lunarlimit/blob/master/LICENSE.txt",
+      "assetLicenses": [
+        "MIT",
+        "CC-BY-4.0"
+      ],
+      "author": "Pubby",
+      "genres": [
+        "shooter"
+      ],
+      "description": {
+        "en": "A one-screen NES arena shooter. The ship fires on its own; you fly and aim. Code is MIT. Music and sounds by MovieMovies1 are CC BY 4.0.",
+        "ar": "لعبة إطلاق نار على شاشة واحدة لجهاز العائلة. السفينة تطلق وحدها، وأنت تطير وتصوب. الكود برخصة MIT، والموسيقى والأصوات من MovieMovies1 برخصة CC BY 4.0."
+      },
+      "cover": "/games/lunar-limit/cover.svg",
+      "launch": {
+        "kind": "rom",
+        "consoleId": "nes",
+        "file": "/games/lunar-limit/lunarlimit.nes",
+        "filename": "lunarlimit.nes"
+      },
+      "assets": {
+        "kind": "files",
+        "into": "public/games/lunar-limit",
+        "files": [
+          {
+            "url": "https://raw.githubusercontent.com/pubby/lunarlimit/master/lunarlimit.nes",
+            "name": "lunarlimit.nes"
+          },
+          {
+            "url": "https://raw.githubusercontent.com/pubby/lunarlimit/master/LICENSE.txt",
+            "name": "LICENSE.txt"
+          }
+        ]
+      },
+      "redistribution": "permitted",
+      "engine": "libretro/fceumm",
+      "browserPlayable": "hosted",
+      "permissionNote": "LICENSE.txt in the author's repository grants MIT for the code and CC BY 4.0 for MovieMovies1's music and sounds.",
+      "compatibility": {
+        "mobileSafari": "fail",
+        "android": "pass",
+        "controller": "The player maps a keyboard and the Gamepad API. This sandbox has no physical pad, so a controller was not tested.",
+        "saves": "The player has four manual slots plus autosave. Save and load were not pressed in this pass.",
+        "performance": "Title screen and HUD in headless Chromium, and again in Chrome with a 390x844 Android viewport. WebKit 18.4 with an iPhone viewport did not reach the player. See docs/evidence/launch/lunar-limit.png and lunar-limit-android.png."
+      },
+      "status": "verified"
+    },
+    {
+      "id": "concentration-room",
+      "title": "Concentration Room",
+      "platform": "nes",
+      "type": "instant",
+      "sourceUrl": "https://github.com/pinobatch/croom-nes",
+      "license": "GPL-3.0-only",
+      "licenseEvidenceUrl": "https://github.com/pinobatch/croom-nes/blob/master/LICENSE.txt",
+      "author": "Damian Yerrick",
+      "genres": [
+        "puzzle"
+      ],
+      "description": {
+        "en": "A GPL-3.0 NES card game by Damian Yerrick. Flip two emblems and clear the table. The ROM is the author's v0.02a release.",
+        "ar": "لعبة بطاقات لجهاز العائلة من داميان يريك، برخصة GPL-3.0. اقلب شعارين وأفرغ الطاولة. الملف هو إصدار المؤلف v0.02a."
+      },
+      "cover": "/games/concentration-room/cover.svg",
+      "launch": {
+        "kind": "rom",
+        "consoleId": "nes",
+        "file": "/games/concentration-room/croom.nes",
+        "filename": "croom.nes"
+      },
+      "assets": {
+        "kind": "files",
+        "into": "public/games/concentration-room",
+        "files": [
+          {
+            "url": "https://github.com/pinobatch/croom-nes/releases/download/v0.02a/croom.nes",
+            "name": "croom.nes"
+          },
+          {
+            "url": "https://raw.githubusercontent.com/pinobatch/croom-nes/master/LICENSE.txt",
+            "name": "LICENSE.txt"
+          }
+        ]
+      },
+      "redistribution": "permitted",
+      "engine": "libretro/fceumm",
+      "browserPlayable": "hosted",
+      "permissionNote": "The repository LICENSE.txt is the GNU GPL version 3. Source is the linked repository.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "The player maps a keyboard and the Gamepad API. This sandbox has no physical pad.",
+        "saves": "The player has four manual slots plus autosave.",
+        "performance": "Title menu reached in headless Chromium. See docs/evidence/launch/concentration-room.png."
+      },
+      "status": "verified"
+    },
+    {
+      "id": "blind-jump",
+      "title": "Blind Jump",
+      "platform": "gba",
+      "type": "instant",
+      "sourceUrl": "https://github.com/evanbowman/blind-jump-portable",
+      "license": "MIT",
+      "licenseEvidenceUrl": "https://github.com/evanbowman/blind-jump-portable/blob/master/LICENSE",
+      "author": "Evan Bowman",
+      "genres": [
+        "action",
+        "adventure"
+      ],
+      "description": {
+        "en": "An MIT-licensed action adventure for the Game Boy Advance, with procedurally generated rooms. The file is the author's 2021.11.20.0 release.",
+        "ar": "مغامرة حركة لجيم بوي أدفانس برخصة MIT، بغرف تُولَّد إجرائيًا. الملف هو إصدار المؤلف 2021.11.20.0."
+      },
+      "cover": "/games/blind-jump/cover.svg",
+      "launch": {
+        "kind": "rom",
+        "consoleId": "gba",
+        "file": "/games/blind-jump/BlindJump.gba",
+        "filename": "BlindJump.gba"
+      },
+      "assets": {
+        "kind": "files",
+        "into": "public/games/blind-jump",
+        "files": [
+          {
+            "url": "https://github.com/evanbowman/blind-jump-portable/releases/download/2021.11.20.0/BlindJump.gba",
+            "name": "BlindJump.gba"
+          },
+          {
+            "url": "https://raw.githubusercontent.com/evanbowman/blind-jump-portable/master/LICENSE",
+            "name": "LICENSE"
+          }
+        ]
+      },
+      "redistribution": "permitted",
+      "engine": "libretro/mgba",
+      "browserPlayable": "hosted",
+      "permissionNote": "The repository LICENSE is the MIT license, copyright 2019 Evan Bowman.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "The player maps a keyboard and the Gamepad API. This sandbox has no physical pad.",
+        "saves": "The player has four manual slots plus autosave.",
+        "performance": "Language select reached in headless Chromium. See docs/evidence/launch/blind-jump.png."
+      },
+      "status": "verified"
+    },
+    {
+      "id": "super-mario-bros",
+      "title": "Super Mario Bros.",
+      "platform": "nes",
+      "type": "requires-user-file",
+      "sourceUrl": "https://www.nintendo.com/",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://www.nintendo.com/",
+      "author": "Nintendo",
+      "genres": [
+        "platformer"
+      ],
+      "description": {
+        "en": "Nintendo's 1985 NES platformer. EmuRM does not include the ROM. Choose a file you already have; it stays in this browser.",
+        "ar": "لعبة منصات من نينتندو عام 1985 على جهاز العائلة. EmuRM لا يتضمن ملف اللعبة. اختر ملفًا تملكه، ويبقى داخل هذا المتصفح."
+      },
+      "cover": "/games/super-mario-bros/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "nes"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/fceumm",
+      "browserPlayable": "local-file",
+      "permissionNote": "No redistribution license. Nintendo holds the game. Browser decompilations that embed the ROM are not linked or hosted.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Same player as other NES games, once your file is loaded.",
+        "saves": "Same save slots as other NES games, once your file is loaded. Not exercised with this title.",
+        "performance": "Not launched. A commercial ROM was not obtained."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "super-mario-world",
+      "title": "Super Mario World",
+      "platform": "snes",
+      "type": "requires-user-file",
+      "sourceUrl": "https://www.nintendo.com/",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://www.nintendo.com/",
+      "author": "Nintendo",
+      "genres": [
+        "platformer"
+      ],
+      "description": {
+        "en": "Nintendo's 1990 Super Nintendo platformer. The game file is not hosted. Load your own .sfc or .smc locally.",
+        "ar": "لعبة منصات من نينتندو عام 1990 على سوبر نينتندو. ملف اللعبة غير مستضاف. حمّل ملفك بصيغة sfc أو smc محليًا."
+      },
+      "cover": "/games/super-mario-world/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "snes"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/snes9x",
+      "browserPlayable": "local-file",
+      "permissionNote": "No redistribution license. The Snes9x core already used by EmuRM is itself non-commercial.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Same player as other SNES games, once your file is loaded.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "super-mario-64",
+      "title": "Super Mario 64",
+      "platform": "n64",
+      "type": "requires-user-file",
+      "sourceUrl": "https://github.com/n64decomp/sm64",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://github.com/n64decomp/sm64",
+      "author": "Nintendo",
+      "genres": [
+        "platformer"
+      ],
+      "description": {
+        "en": "Nintendo's 1996 Nintendo 64 platformer. The decompilation repository does not include the game data. EmuRM will not build or host a ROM. Load your own .z64 or .n64 locally.",
+        "ar": "لعبة منصات من نينتندو عام 1996 على نينتندو 64. مستودع التفكيك لا يتضمن بيانات اللعبة. EmuRM لا يبني الملف ولا يستضيفه. حمّل ملفك بصيغة z64 أو n64 محليًا."
+      },
+      "cover": "/games/super-mario-64/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "n64"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/mupen64plus_next",
+      "browserPlayable": "local-file",
+      "permissionNote": "The sm64 decomp is source for the code. Nintendo's assets are not licensed for redistribution. Third-party web builds that embed the ROM are not linked.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "The bundled N64 core is aimed at a desktop-class GPU.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched. The bundled core notes a desktop-class GPU."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "sonic-the-hedgehog",
+      "title": "Sonic the Hedgehog",
+      "platform": "md",
+      "type": "requires-user-file",
+      "sourceUrl": "https://github.com/sonicretro/s1disasm",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://github.com/sonicretro/s1disasm",
+      "author": "Sega",
+      "genres": [
+        "platformer"
+      ],
+      "description": {
+        "en": "Sega's 1991 Mega Drive platformer. The disassembly does not include the ROM. Load your own .md or .gen locally.",
+        "ar": "لعبة منصات من سيجا عام 1991 على ميجا درايف. التفكيك لا يتضمن ملف اللعبة. حمّل ملفك بصيغة md أو gen محليًا."
+      },
+      "cover": "/games/sonic-the-hedgehog/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "md"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/genesis_plus_gx",
+      "browserPlayable": "local-file",
+      "permissionNote": "Sonic Retro's disassembly is not a license to redistribute Sega's ROM. Genesis Plus GX, the core EmuRM already uses, is non-commercial.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Same player as other Mega Drive games, once your file is loaded.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "sonic-game-gear",
+      "title": "Sonic the Hedgehog",
+      "platform": "gg",
+      "type": "requires-user-file",
+      "sourceUrl": "https://www.sega.com/",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://www.sega.com/",
+      "author": "Sega",
+      "genres": [
+        "platformer"
+      ],
+      "description": {
+        "en": "The 1991 Game Gear Sonic. EmuRM does not include the ROM. Load your own .gg file locally.",
+        "ar": "سونيك على جيم جير عام 1991. EmuRM لا يتضمن ملف اللعبة. حمّل ملفك بصيغة gg محليًا."
+      },
+      "cover": "/games/sonic-game-gear/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "gg"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/genesis_plus_gx",
+      "browserPlayable": "local-file",
+      "permissionNote": "No redistribution license found for the Game Gear ROM.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Same player as other Game Gear games, once your file is loaded.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "sonic-advance",
+      "title": "Sonic Advance",
+      "platform": "gba",
+      "type": "requires-user-file",
+      "sourceUrl": "https://www.sega.com/",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://www.sega.com/",
+      "author": "Sonic Team",
+      "genres": [
+        "platformer"
+      ],
+      "description": {
+        "en": "The 2001 Game Boy Advance Sonic. The ROM is not hosted. Load your own .gba file locally.",
+        "ar": "سونيك على جيم بوي أدفانس عام 2001. الملف غير مستضاف. حمّل ملفك بصيغة gba محليًا."
+      },
+      "cover": "/games/sonic-advance/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "gba"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/mgba",
+      "browserPlayable": "local-file",
+      "permissionNote": "No redistribution license found. Sega and Sonic Team hold the game.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Same player as other GBA games, once your file is loaded.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "crash-bandicoot",
+      "title": "Crash Bandicoot",
+      "platform": "psx",
+      "type": "requires-user-file",
+      "sourceUrl": "https://www.playstation.com/",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://www.playstation.com/",
+      "author": "Naughty Dog",
+      "genres": [
+        "platformer"
+      ],
+      "description": {
+        "en": "Naughty Dog's 1996 PlayStation platformer. EmuRM does not include a disc image. Load your own .cue/.bin or .chd locally. A BIOS is optional; the core has HLE.",
+        "ar": "لعبة منصات من نوتي دوغ عام 1996 على بلايستيشن. EmuRM لا يتضمن صورة القرص. حمّل ملفك بصيغة cue و bin أو chd محليًا. البيوس اختياري لأن النواة فيها محاكاة عالية المستوى."
+      },
+      "cover": "/games/crash-bandicoot/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "psx"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/pcsx_rearmed",
+      "browserPlayable": "local-file",
+      "permissionNote": "No redistribution license. Sony and Naughty Dog hold the game. Browser copies found in public catalogs were not linked.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "PlayStation pad mapping exists in the player. Not exercised with this title.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched. PS1 speed depends on the device."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "crash-bash",
+      "title": "Crash Bash",
+      "platform": "psx",
+      "type": "requires-user-file",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Crash_Bash",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://en.wikipedia.org/wiki/Crash_Bash",
+      "author": "Eurocom",
+      "genres": [
+        "party"
+      ],
+      "description": {
+        "en": "Eurocom's 2000 PlayStation party game. It is not hosted. Load your own disc image locally. Sites that stream a copy in the browser were rejected.",
+        "ar": "لعبة جماعية من يوروكوم عام 2000 على بلايستيشن. غير مستضافة. حمّل صورة قرصك محليًا. رُفضت المواقع التي تبث نسخة داخل المتصفح."
+      },
+      "cover": "/games/crash-bash/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "psx"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/pcsx_rearmed",
+      "browserPlayable": "local-file",
+      "permissionNote": "No redistribution license. A browser directory that lists Crash Bash Online was rejected because it does not show a license to embed the game.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Not exercised with this title.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "pepsiman",
+      "title": "Pepsiman",
+      "platform": "psx",
+      "type": "requires-user-file",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Pepsiman_(video_game)",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://en.wikipedia.org/wiki/Pepsiman_(video_game)",
+      "author": "KID",
+      "genres": [
+        "action"
+      ],
+      "description": {
+        "en": "KID's 1999 PlayStation action game. No license allowing redistribution was found. EmuRM does not host or link a disc image. Load your own locally.",
+        "ar": "لعبة أكشن من كيد عام 1999 على بلايستيشن. لم يُعثر على ترخيص يسمح بإعادة التوزيع. EmuRM لا يستضيف صورة القرص ولا يربطها. حمّل ملفك محليًا."
+      },
+      "cover": "/games/pepsiman/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "psx"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/pcsx_rearmed",
+      "browserPlayable": "local-file",
+      "permissionNote": "Commercial release by KID. Wikipedia documents the game; it is not a download. No rights holder grant was found.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Not exercised with this title.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched."
+      },
+      "status": "untested"
+    },
+    {
+      "id": "tomb-raider",
+      "title": "Tomb Raider",
+      "platform": "psx",
+      "type": "requires-user-file",
+      "sourceUrl": "https://github.com/XProger/OpenLara",
+      "license": "all-rights-reserved",
+      "licenseEvidenceUrl": "https://github.com/XProger/OpenLara/blob/master/LICENSE",
+      "author": "Core Design",
+      "genres": [
+        "action",
+        "adventure"
+      ],
+      "description": {
+        "en": "Core Design's 1996 Tomb Raider. OpenLara's engine is BSD-2-Clause, but its public web demo bundles the game's own levels. EmuRM does not embed that demo. Load your own PlayStation disc image locally.",
+        "ar": "تومب رايدر من كور ديزاين عام 1996. محرك OpenLara برخصة BSD-2-Clause، لكن العرض العام على الويب يضم مراحل اللعبة نفسها. EmuRM لا يضمّن ذلك العرض. حمّل صورة قرص بلايستيشن الخاصة بك محليًا."
+      },
+      "cover": "/games/tomb-raider/cover.svg",
+      "launch": {
+        "kind": "local-file",
+        "consoleId": "psx"
+      },
+      "redistribution": "not-permitted",
+      "engine": "libretro/pcsx_rearmed",
+      "browserPlayable": "local-file",
+      "permissionNote": "OpenLara LICENSE is BSD-2-Clause for the engine only. The README's WebGL demo includes a Tomb Raider level. That data was not copied or iframed.",
+      "compatibility": {
+        "mobileSafari": "untested",
+        "android": "untested",
+        "controller": "Not exercised with this title.",
+        "saves": "Not exercised with this title.",
+        "performance": "Not launched. OpenLara's web demo was not used."
+      },
+      "status": "untested"
+    }
+  ]
+}

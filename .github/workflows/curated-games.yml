@@ -1,0 +1,28 @@
+name: Curated games
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  curated:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Validate the registry
+        run: node scripts/import-games.mjs --self-test --check
+      - run: npm run build
+      - name: Headless launch tests
+        run: |
+          npx --yes serve@14 out -l 4173 &
+          for _ in $(seq 1 40); do curl -sf http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
+          node scripts/import-games.mjs --launch --flow=1 --base=http://127.0.0.1:4173

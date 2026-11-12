@@ -1,0 +1,8 @@
+title: Lunar Limit
+source: https://github.com/pubby/lunarlimit
+license: MIT
+licenseEvidence: https://github.com/pubby/lunarlimit/blob/master/LICENSE.txt
+assetLicense: MIT
+assetLicense: CC-BY-4.0
+file: lunarlimit.nes bytes=40976 sha256=675f494d04d0adbe7d926eab70464ad9c12558465f7f6e0849aee80204ce38d3 url=https://raw.githubusercontent.com/pubby/lunarlimit/master/lunarlimit.nes
+file: LICENSE.txt bytes=1643 sha256=1cde30ce3b27cd6ae5d2558a4abd63c75eacb88b1865c7d7bdd68eb0d2dd5850 url=https://raw.githubusercontent.com/pubby/lunarlimit/master/LICENSE.txt
