@@ -1,0 +1,26 @@
+{
+  "note": "SPDX ids that explicitly allow redistribution of the work. Non-commercial, no-derivatives, freeware, and all-rights-reserved terms are not on this list.",
+  "spdx": [
+    "MIT",
+    "0BSD",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Apache-2.0",
+    "Zlib",
+    "Unlicense",
+    "WTFPL",
+    "GPL-2.0-only",
+    "GPL-2.0-or-later",
+    "GPL-3.0-only",
+    "GPL-3.0-or-later",
+    "AGPL-3.0-only",
+    "AGPL-3.0-or-later",
+    "MPL-2.0",
+    "CC0-1.0",
+    "CC-BY-3.0",
+    "CC-BY-4.0",
+    "CC-BY-SA-3.0",
+    "CC-BY-SA-4.0"
+  ]
+}

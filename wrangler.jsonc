@@ -1,8 +1,15 @@
 {
   // Static-assets-only Worker: serves the Next.js static export in out/.
   // The Worker name is overridden in CI via --name (repo variable CLOUDFLARE_WORKER_NAME).
+  //
+  // Workers Builds previews run `npx wrangler preview` and do not apply this
+  // file's build settings on their own. Wrangler itself runs `build.command`
+  // before it reads ./out, so a preview does not fail on a missing export.
   "name": "emurm",
   "compatibility_date": "2025-10-01",
+  "build": {
+    "command": "npm ci && npm run build"
+  },
   "assets": {
     "directory": "./out",
     "not_found_handling": "404-page"

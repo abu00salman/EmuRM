@@ -1,0 +1,29 @@
+{
+  "base": "http://127.0.0.1:4173/",
+  "ranAt": "2026-11-12T14:52:02.250Z",
+  "results": [
+    {
+      "id": "lunar-limit",
+      "status": "verified",
+      "note": "rom running, stdev 20.2",
+      "screenshot": "docs/evidence/launch/lunar-limit.png"
+    },
+    {
+      "id": "concentration-room",
+      "status": "verified",
+      "note": "rom running, stdev 119.5",
+      "screenshot": "docs/evidence/launch/concentration-room.png"
+    },
+    {
+      "id": "blind-jump",
+      "status": "verified",
+      "note": "rom running, stdev 66.7",
+      "screenshot": "docs/evidence/launch/blind-jump.png"
+    },
+    {
+      "id": "flow-nes-local-file",
+      "status": "verified",
+      "note": "The Super Mario Bros. page loaded lunarlimit.nes from disk. That file is Pubby's MIT homebrew, not a Mario ROM."
+    }
+  ]
+}

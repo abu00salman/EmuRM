@@ -10,6 +10,7 @@ import { useT, useLocale } from "@/lib/i18n";
 import { ConsoleHall } from "./ConsoleHall";
 import { HowToPlay } from "./HowToPlay";
 import { QuickResume } from "./QuickResume";
+import { CuratedShelf } from "./curated/CuratedShelf";
 import { Icon } from "./player/Icon";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const FEATURED = ["psx", "nes", "msx", "md", "gba"];
@@ -51,6 +52,7 @@ export function Home() {
       </section>
 
       <QuickResume />
+      <CuratedShelf />
 
       <section className="rm-systems" id="console-hall" aria-labelledby="systems-heading">
         <div className="rm-section-heading"><div><p className="rm-eyebrow">{ar ? "عالمك الكلاسيكي" : "YOUR RETRO UNIVERSE"}</p><h2 id="systems-heading">{t("home.headline")}</h2></div><span className="rm-count">{CONSOLES.length} {ar ? "نظامًا" : "systems"} · {total ?? 0} {ar ? "لعبة" : "games"}</span></div>

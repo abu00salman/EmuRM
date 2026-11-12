@@ -1,0 +1,6 @@
+title: Concentration Room
+source: https://github.com/pinobatch/croom-nes
+license: GPL-3.0-only
+licenseEvidence: https://github.com/pinobatch/croom-nes/blob/master/LICENSE.txt
+file: croom.nes bytes=24592 sha256=2ce17df1ad66a8a0533c0a8739f5b5ebe275c264924bbe350c42c5ac0394f20e url=https://github.com/pinobatch/croom-nes/releases/download/v0.02a/croom.nes
+file: LICENSE.txt bytes=35068 sha256=fc82ca8b6fdb18d4e3e85cfd8ab58d1bcd3f1b29abe782895abd91d64763f8e7 url=https://raw.githubusercontent.com/pinobatch/croom-nes/master/LICENSE.txt
